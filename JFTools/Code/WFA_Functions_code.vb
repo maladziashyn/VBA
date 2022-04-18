@@ -1,4 +1,3 @@
-Attribute VB_Name = "WFA_Functions"
 Option Explicit
 
 Function AddInFullFileName(ByVal addinFileName As String, _
