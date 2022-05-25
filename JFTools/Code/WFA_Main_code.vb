@@ -1168,21 +1168,23 @@ Sub WfaDateSlotPreviews()
             Set ws = ActiveSheet
             Set Rng = ws.Cells
             ubnd = Rng(ws.rows.Count, 3).End(xlUp).Row - 1
-            If Rng(1, 15) <> "" Then
-                Call GSPR_Remove_Chart3
+
+            Call GSPR_Remove_Chart3
+            If Rng(1, 14) = "date" _
+                Or (Rng(1, 14) = vbEmpty And Rng(1, 15) <> vbEmpty) Then
                 lr_dates = Rng(ws.rows.Count, 15).End(xlUp).Row
-                Set clr_rng = ws.Range(Rng(1, 15), Rng(lr_dates, 16))
+                Set clr_rng = ws.Range(Rng(1, 14), Rng(lr_dates, 16))
                 clr_rng.Clear
-            Else
-                ' move to RAM
-                tradesSet = Load_Slot_to_RAM3(Rng, ubnd)
-                ' add Calendar x2 columns
-                daysSet = Get_Calendar_Days_Equity3(tradesSet, Rng)
-                ' print out
-                Call Print_2D_Array3(daysSet, True, 0, 14, Rng)
-                ' build chart
-                Call WFA_Chart_Classic3(Rng, 1, 17, myFileName)
             End If
+            ' move to RAM
+            tradesSet = Load_Slot_to_RAM3(Rng, ubnd)
+            ' add Calendar x2 columns
+            daysSet = Get_Calendar_Days_Equity3(tradesSet, Rng)
+            ' print out
+            Call Print_2D_Array3(daysSet, True, 0, 14, Rng)
+            ' build & export chart
+            Call WFA_Chart_Classic3(Rng, 1, 17, myFileName)
+
             wb.Close savechanges:=False
             ' insert as preview
             actSh.Activate

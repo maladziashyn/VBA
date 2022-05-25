@@ -1,11 +1,24 @@
 
 ThisWorkbook
+WFA_OLD
+WFA_Tools_old
 Command_Bars
 Inits
 Sheet3
 Sheet100
+bt_BackTest_Main_Multi
+bt_Inits
+bt_JFX_create
+bt_Join_intervals
+bt_Mixer
+bt_Rep_Extra
+bt_Rep_Multiple
+bt_Rep_Single
+bt_SharpeRatio
+bt_Tools
 WFA_Main
 Sheet1
+Backtest_Group
 Tools
 WFA_Functions
 Sheet4

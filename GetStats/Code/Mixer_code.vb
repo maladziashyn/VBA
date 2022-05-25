@@ -1,26 +1,18 @@
-' НА ЛИСТЕ МИКСА СПИСКОМ ПОБЕДИТЕЛЕЙ
-' И ПЕРЕХОД НА НИХ 1 КНОПКОЙ
 Option Explicit
 Option Base 1
     Const close_date_col As Integer = 8
     Const depo_ini As Integer = 10000
 Private Sub GSPR_show_sheet_index()
-'
-' RIBBON > BUTTON "Индекс"
-'
-    Const msg As String = "Лист номер "
+    Const msg As String = "Sheet number "
     
     On Error Resume Next
     MsgBox msg & ActiveSheet.Index & "."
 End Sub
 Private Sub GSPR_Go_to_sheet_index()
-'
-' RIBBON > BUTTON "К листу"
-'
     Dim sh_idx As Integer
 
     On Error Resume Next
-    sh_idx = InputBox("Введите номер листа:")
+    sh_idx = InputBox("Enter sheet number:")
     Sheets(sh_idx).Activate
 End Sub
 Private Sub GSPR_robo_mixer()
@@ -38,21 +30,20 @@ Private Sub GSPR_robo_mixer()
     Dim sh_ini As Integer, sh_fin As Integer
     
 ' +++++++++++++++++++++++++++++++++++++
-    Const rf_lower As Double = 0      ' МИНИМАЛЬНЫЙ ФАКТОР ВОССТАНОВЛЕНИЯ
-    Const rf_upper As Double = 990    ' МАКСИМАЛЬНЫЙ ФАКТОР ВОССТАНОВЛЕНИЯ
-    Const max_tpm As Double = 99      ' МАКСИМАЛЬНОЕ К-ВО СДЕЛОК В МЕСЯЦ
-    Const min_tpm As Double = 0      ' МИНИМАЛЬНОЕ К-ВО СДЕЛОК В МЕСЯЦ
+    Const rf_lower As Double = 0      ' MINIMUM RECOVERY FACTOR
+    Const rf_upper As Double = 990    ' MAXIMUM RECOVERY FACTOR
+    Const max_tpm As Double = 99      ' MAXIMUM TPM
+    Const min_tpm As Double = 0       ' MINIMUM TPM
     Const min_SR As Double = 0
     Const max_SR As Double = 99
 ' +++++++++++++++++++++++++++++++++++++
     
-    sh_ini = InputBox("Введите номер первого листа для объединения списков сделок:")
-    sh_fin = InputBox("Введите номер последнего листа для объединения списков сделок:")
+    sh_ini = InputBox("Enter first sheet index to join trade lists:")
+    sh_fin = InputBox("Enter last sheet index to join trade lists:")
     
 '    sh_ini = 1
 '    sh_fin = 27
-    
-    
+
     With Application
         .ScreenUpdating = False
         .Calculation = xlCalculationManual
@@ -100,7 +91,7 @@ Private Sub GSPR_robo_mixer()
     algos_mixed = j - 1
     mix_c(1, 2) = rf_lower
     mix_c(2, 2) = rf_upper
-    mix_c(1, 3) = "р-тов"
+    mix_c(1, 3) = "robots"
     mix_c(2, 3) = algos_mixed
 ' add autofilter
     mix_ws.Activate
@@ -115,8 +106,8 @@ Private Sub GSPR_robo_mixer()
     Set Rng = mix_ws.Range(mix_c(3, 1), mix_c(last_row, 11))
     Rng.Sort key1:=mix_c(3, close_date_col), order1:=xlAscending, Header:=xlYes
 ' calculate winning/losing trades
-    mix_c(1, 5) = "плюс"
-    mix_c(2, 5) = "минус"
+    mix_c(1, 5) = "plus"
+    mix_c(2, 5) = "minus"
     Set Rng = mix_ws.Range(mix_c(4, 5), mix_c(last_row, 5))
     mix_c(1, 6) = WorksheetFunction.CountIf(Rng, ">0")
     mix_c(2, 6) = WorksheetFunction.CountIf(Rng, "<=0")
@@ -132,15 +123,15 @@ Private Sub GSPR_robo_mixer()
     End With
 '
     backtest_days = mix_c(last_row, 8) - mix_c(4, 7)
-    mix_c(1, 8) = "дней"
+    mix_c(1, 8) = "days"
     mix_c(2, 8) = backtest_days
     With mix_c(1, 9)
         .Value = 0.01
         .NumberFormat = "0.00%"
     End With
-'    mix_c(2, 10) = "множ"
+'    mix_c(2, 10) = "mult"
 '    mix_c(2, 11) = 1
-    mix_c(1, 11) = "нач.кап."
+    mix_c(1, 11) = "start cap."
     mix_c(1, 12) = depo_ini
     mix_c(3, 12) = depo_ini
     mix_c(3, 13) = depo_ini
@@ -157,7 +148,7 @@ Private Sub GSPR_robo_mixer()
             .NumberFormat = "0.00%"
         End With
     Next i
-    mix_c(2, 11) = "кон.кап."
+    mix_c(2, 11) = "end cap."
     mix_c(2, 12).Formula = "=R" & last_row & "C"
 ' print out statistics
     mix_c(1, 14) = "MDD"
@@ -172,14 +163,14 @@ Private Sub GSPR_robo_mixer()
         .FormulaR1C1 = "=(1+R2C15)^(365/R2C8)-1"
         .NumberFormat = "0.00%"
     End With
-    mix_c(1, 17) = "Восст"
+    mix_c(1, 17) = "Recov"
     With mix_c(2, 17)
         .FormulaR1C1 = "=R2C16/R2C14"
         .NumberFormat = "0.00"
     End With
-    mix_c(1, 18) = "Сделок"
+    mix_c(1, 18) = "Trades"
     mix_c(2, 18).FormulaR1C1 = "=COUNT(R4C8:R" & last_row & "C8)"
-    mix_c(1, 19) = "В мес"
+    mix_c(1, 19) = "Per Mn"
     With mix_c(2, 19)
         .FormulaR1C1 = "=R2C18/(R2C8/30.4)"
         .NumberFormat = "0"
@@ -221,7 +212,6 @@ Private Sub GSPR_robo_mixer()
         .FormulaR1C1 = "=R2C16/(STDEV(R2C11:R" & last_row & "C11)*SQRT(250))"
         .NumberFormat = "0.000"
     End With
-'    mix_ws.Name = mix_sheet_name & "_" & algos_mixed & "_" & max_tpm & "_" & rf_lower & "-" & rf_upper
     mix_ws.Name = mix_sheet_name & "_" & algos_mixed & "_" & Sheets.count
     
     With mix_c(3, 26)
@@ -235,11 +225,11 @@ Private Sub GSPR_robo_mixer()
         .ScreenUpdating = True
     End With
     MsgBox "Done"
+
 End Sub
+
 Private Sub GSPR_trades_to_days()
-'
-' RIBBON > BUTTON "График М"
-'
+    
     Dim date_from As Date
     Dim date_to As Date
     Dim last_row As Integer
@@ -311,7 +301,7 @@ Private Sub GSPR_trades_to_days()
 ' build chart
     Set rng_x = Range(wc(first_row, dt_pr_fc), wc(first_row + UBound(dates) - 1, dt_pr_fc))
     Set rng_y = Range(wc(first_row, dt_pr_fc + 1), wc(first_row + UBound(dates) - 1, dt_pr_fc))
-    ch_title = "Все роботы (" & wc(2, 3).Value & "), год=" & Round(wc(2, 16).Value * 100, 0) & "%, фин.=" & Round(day_fr(UBound(day_fr)), 0) & " usd. Лог. шкала."
+    ch_title = "All algos, annualized ret. (" & wc(2, 3).Value & "), year=" & Round(wc(2, 16).Value * 100, 0) & "%, depo fin.=" & Round(day_fr(UBound(day_fr)), 0) & " usd. Log scale."
 '    ch_title = "All algos, annualized ret.=" & Round(wc(2, 16).Value * 100, 0) & "%, depo fin.=" & Round(day_fr(UBound(day_fr)), 0) & " usd. Log scale."
     min_val = WorksheetFunction.Min(day_fr) - 1
     max_val = WorksheetFunction.Max(day_fr)
@@ -375,10 +365,6 @@ Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
 '    End With
 End Sub
 Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
-'
-' RIBBON > BUTTON "В микс"
-'
-' Copy sheet to mixer.xlsx book
     Dim wb_from As Workbook, wb_to As Workbook
     Dim sh_copy As Worksheet
     Dim new_name As String, ins_abbrev As String

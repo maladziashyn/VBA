@@ -2,7 +2,7 @@ Option Explicit
 
 ' Run GitSave() to export code and modules.
 '
-' All thanks for this code go here:
+' Source:
 ' https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
 ' The code below is slightly modified to include a list of
 ' modules you want to ignore.
@@ -16,7 +16,7 @@ Option Explicit
     
 Sub GitSave()
     
-    ignoreList = Array("Module you want to ignore")
+    ignoreList = Array("Module1_to_ignore", "Module2_to_ignore")
     
     Call DeleteAndMake
     Call ExportModules

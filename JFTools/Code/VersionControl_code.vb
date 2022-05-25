@@ -1,5 +1,12 @@
 Option Explicit
 
+' Run GitSave() to export code and modules.
+'
+' Source:
+' https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
+' The code below is slightly modified to include a list of
+' modules you want to ignore.
+
     Dim ignoreList As Variant
     
     Dim parentFolder As String
@@ -9,13 +16,11 @@ Option Explicit
     
 Sub GitSave()
     
-    ignoreList = Array("Backtest_Group", "bt_BackTest_Main_Multi", "bt_Inits", "bt_JFX_create", _
-            "bt_Join_intervals", "bt_Mixer", "bt_Rep_Extra", "bt_Rep_Multiple", "bt_Rep_Single", _
-            "bt_SharpeRatio", "bt_Tools", "WFA_OLD", "WFA_Tools_old")
+    ignoreList = Array("Module1_to_ignore", "Module2_to_ignore")
     
     Call DeleteAndMake
     Call ExportModules
-'    Call PrintAllCode
+    Call PrintAllCode
     Call PrintModulesCode
     Call PrintAllContainers
     
@@ -52,9 +57,16 @@ Sub PrintAllCode()
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            
+            lineToPrint = vbNewLine & "' MODULE: " & item.CodeModule.Name & vbNewLine
+            If item.CodeModule.CountOfLines > 0 Then
+                lineToPrint = lineToPrint & item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            Else
+                lineToPrint = lineToPrint & "' empty" & vbNewLine
+            End If
 '            Debug.Print lineToPrint
             textToPrint = textToPrint & vbCrLf & lineToPrint
+            
         End If
     Next item
     
@@ -75,7 +87,15 @@ Sub PrintModulesCode()
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            
+            If item.CodeModule.CountOfLines > 0 Then
+                lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            
+            Else
+                lineToPrint = "' empty"
+            End If
+            
+            
             
             If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
             Call SaveTextToFile(lineToPrint, pathToExport & "\" & item.CodeModule.Name & "_code.vb")

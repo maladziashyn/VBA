@@ -1,19 +1,24 @@
-Attribute VB_Name = "Mixer"
 Option Explicit
 Option Base 1
     Const close_date_col As Integer = 8
     Const depo_ini As Integer = 10000
 Private Sub GSPR_show_sheet_index()
-    Const msg As String = "Sheet number "
+'
+' RIBBON > BUTTON "Индекс"
+'
+    Const msg As String = "Лист номер "
     
     On Error Resume Next
     MsgBox msg & ActiveSheet.Index & "."
 End Sub
 Private Sub GSPR_Go_to_sheet_index()
+'
+' RIBBON > BUTTON "К листу"
+'
     Dim sh_idx As Integer
 
     On Error Resume Next
-    sh_idx = InputBox("Enter sheet number:")
+    sh_idx = InputBox("Введите номер листа:")
     Sheets(sh_idx).Activate
 End Sub
 Private Sub GSPR_robo_mixer()
@@ -31,56 +36,37 @@ Private Sub GSPR_robo_mixer()
     Dim sh_ini As Integer, sh_fin As Integer
     
 ' +++++++++++++++++++++++++++++++++++++
-    Const rf_lower As Double = 0      ' MINIMUM RECOVERY FACTOR
-    Const rf_upper As Double = 990    ' MAXIMUM RECOVERY FACTOR
-    Const max_tpm As Double = 99      ' MAXIMUM TPM
-    Const min_tpm As Double = 0       ' MINIMUM TPM
-    Const min_SR As Double = 0
-    Const max_SR As Double = 99
+    Const rf_lower As Double = 0      ' МИНИМАЛЬНЫЙ ФАКТОР ВОССТАНОВЛЕНИЯ
+    Const rf_upper As Double = 990    ' МАКСИМАЛЬНЫЙ ФАКТОР ВОССТАНОВЛЕНИЯ
+    Const max_tpm As Double = 99      ' МАКСИМАЛЬНОЕ К-ВО СДЕЛОК В МЕСЯЦ
 ' +++++++++++++++++++++++++++++++++++++
     
-    sh_ini = InputBox("Enter first sheet index to join trade lists:")
-    sh_fin = InputBox("Enter last sheet index to join trade lists:")
-    
-'    sh_ini = 1
-'    sh_fin = 27
-
-    With Application
-        .ScreenUpdating = False
-        .Calculation = xlCalculationManual
-        .EnableEvents = False
-    End With
-
+    sh_ini = InputBox("Введите номер первого листа для объединения списков сделок:")
+    sh_fin = InputBox("Введите номер последнего листа для объединения списков сделок:")
+    Application.ScreenUpdating = False
 ' create / assign "mix" sheet
-    If Sheets(Sheets.count).Name = mix_sheet_name Then
-        Set mix_ws = Sheets(Sheets.count)
+    If Sheets(Sheets.Count).Name = mix_sheet_name Then
+        Set mix_ws = Sheets(Sheets.Count)
         mix_ws.Cells.Clear
     Else
-        Set mix_ws = Sheets.Add(after:=Sheets(Sheets.count))
+        Set mix_ws = Sheets.Add(after:=Sheets(Sheets.Count))
         mix_ws.Name = mix_sheet_name
     End If
     Set mix_c = mix_ws.Cells
 ' copy trades to "mix" sheet
     j = 1
     For i = sh_ini To sh_fin ' Sheets.Count - 1
+'        Application.StatusBar = i
         Set ws = Sheets(i)
         Set wc = ws.Cells
-' **********************************
-        If wc(6, 2) >= rf_lower And wc(6, 2) <= rf_upper _
-                And wc(3, 2) <= max_tpm And wc(3, 2) >= min_tpm Then
-' **********************************
-        
-' **********************************
-'        If wc(21, 2) >= min_SR Then
-' **********************************
-        
+        If wc(6, 2) >= rf_lower And wc(6, 2) <= rf_upper And wc(3, 2) <= max_tpm Then
             last_row = wc(1, 3).End(xlDown).Row
             If j = 1 Then
                 first_row = 1
                 next_empty_row = 3
             Else
                 first_row = 2
-                next_empty_row = mix_c(mix_ws.Rows.count, 1).End(xlUp).Row + 1
+                next_empty_row = mix_c(mix_ws.rows.Count, 1).End(xlUp).Row + 1
             End If
             Set Rng = ws.Range(wc(first_row, 3), wc(last_row, 13))
             Rng.Copy mix_c(next_empty_row, 1)
@@ -92,11 +78,11 @@ Private Sub GSPR_robo_mixer()
     algos_mixed = j - 1
     mix_c(1, 2) = rf_lower
     mix_c(2, 2) = rf_upper
-    mix_c(1, 3) = "robots"
+    mix_c(1, 3) = "р-тов"
     mix_c(2, 3) = algos_mixed
 ' add autofilter
     mix_ws.Activate
-    mix_ws.Rows("3:3").AutoFilter
+    mix_ws.rows("3:3").AutoFilter
     With ActiveWindow
         .SplitColumn = 0
         .SplitRow = 3
@@ -105,10 +91,10 @@ Private Sub GSPR_robo_mixer()
 ' sort close date ascending
     last_row = mix_c(3, 1).End(xlDown).Row
     Set Rng = mix_ws.Range(mix_c(3, 1), mix_c(last_row, 11))
-    Rng.Sort key1:=mix_c(3, close_date_col), order1:=xlAscending, Header:=xlYes
+    Rng.Sort Key1:=mix_c(3, close_date_col), Order1:=xlAscending, Header:=xlYes
 ' calculate winning/losing trades
-    mix_c(1, 5) = "plus"
-    mix_c(2, 5) = "minus"
+    mix_c(1, 5) = "плюс"
+    mix_c(2, 5) = "минус"
     Set Rng = mix_ws.Range(mix_c(4, 5), mix_c(last_row, 5))
     mix_c(1, 6) = WorksheetFunction.CountIf(Rng, ">0")
     mix_c(2, 6) = WorksheetFunction.CountIf(Rng, "<=0")
@@ -124,22 +110,22 @@ Private Sub GSPR_robo_mixer()
     End With
 '
     backtest_days = mix_c(last_row, 8) - mix_c(4, 7)
-    mix_c(1, 8) = "days"
+    mix_c(1, 8) = "дней"
     mix_c(2, 8) = backtest_days
     With mix_c(1, 9)
         .Value = 0.01
         .NumberFormat = "0.00%"
     End With
-'    mix_c(2, 10) = "mult"
+'    mix_c(2, 10) = "множ"
 '    mix_c(2, 11) = 1
-    mix_c(1, 11) = "start cap."
+    mix_c(1, 11) = "нач.кап."
     mix_c(1, 12) = depo_ini
     mix_c(3, 12) = depo_ini
     mix_c(3, 13) = depo_ini
 ' calculate trade-to-trade equity curve, hwm
     mix_c(3, 14) = "dd"
     For i = 4 To last_row
-        If i Mod 500 = 0 Then
+        If i Mod 100 = 0 Then
             Application.StatusBar = "Adding formula " & i & " (" & last_row & ")."
         End If
         mix_c(i, 12).FormulaR1C1 = "=R[-1]C*(1+RC[-1]*R1C9*100)"
@@ -149,7 +135,7 @@ Private Sub GSPR_robo_mixer()
             .NumberFormat = "0.00%"
         End With
     Next i
-    mix_c(2, 11) = "end cap."
+    mix_c(2, 11) = "кон.кап."
     mix_c(2, 12).Formula = "=R" & last_row & "C"
 ' print out statistics
     mix_c(1, 14) = "MDD"
@@ -164,14 +150,14 @@ Private Sub GSPR_robo_mixer()
         .FormulaR1C1 = "=(1+R2C15)^(365/R2C8)-1"
         .NumberFormat = "0.00%"
     End With
-    mix_c(1, 17) = "Recov"
+    mix_c(1, 17) = "Восст"
     With mix_c(2, 17)
         .FormulaR1C1 = "=R2C16/R2C14"
         .NumberFormat = "0.00"
     End With
-    mix_c(1, 18) = "Trades"
+    mix_c(1, 18) = "Сделок"
     mix_c(2, 18).FormulaR1C1 = "=COUNT(R4C8:R" & last_row & "C8)"
-    mix_c(1, 19) = "Per Mn"
+    mix_c(1, 19) = "В мес"
     With mix_c(2, 19)
         .FormulaR1C1 = "=R2C18/(R2C8/30.4)"
         .NumberFormat = "0"
@@ -213,24 +199,16 @@ Private Sub GSPR_robo_mixer()
         .FormulaR1C1 = "=R2C16/(STDEV(R2C11:R" & last_row & "C11)*SQRT(250))"
         .NumberFormat = "0.000"
     End With
-    mix_ws.Name = mix_sheet_name & "_" & algos_mixed & "_" & Sheets.count
-    
-    With mix_c(3, 26)
-        .Value = min_SR
-        .NumberFormat = "0.00"
-    End With
-    With Application
-        .StatusBar = False
-        .EnableEvents = True
-        .Calculation = xlCalculationAutomatic
-        .ScreenUpdating = True
-    End With
-    MsgBox "Done"
-
+'    mix_ws.Name = mix_sheet_name & "_" & algos_mixed & "_" & max_tpm & "_" & rf_lower & "-" & rf_upper
+    mix_ws.Name = mix_sheet_name & "_" & algos_mixed & "_" & Sheets.Count
+    Application.StatusBar = False
+    Application.ScreenUpdating = True
+    MsgBox "Готово"
 End Sub
-
 Private Sub GSPR_trades_to_days()
-    
+'
+' RIBBON > BUTTON "График М"
+'
     Dim date_from As Date
     Dim date_to As Date
     Dim last_row As Integer
@@ -302,7 +280,7 @@ Private Sub GSPR_trades_to_days()
 ' build chart
     Set rng_x = Range(wc(first_row, dt_pr_fc), wc(first_row + UBound(dates) - 1, dt_pr_fc))
     Set rng_y = Range(wc(first_row, dt_pr_fc + 1), wc(first_row + UBound(dates) - 1, dt_pr_fc))
-    ch_title = "All algos, annualized ret. (" & wc(2, 3).Value & "), year=" & Round(wc(2, 16).Value * 100, 0) & "%, depo fin.=" & Round(day_fr(UBound(day_fr)), 0) & " usd. Log scale."
+    ch_title = "Все роботы (" & wc(2, 3).Value & "), год=" & Round(wc(2, 16).Value * 100, 0) & "%, фин.=" & Round(day_fr(UBound(day_fr)), 0) & " usd. Лог. шкала."
 '    ch_title = "All algos, annualized ret.=" & Round(wc(2, 16).Value * 100, 0) & "%, depo fin.=" & Round(day_fr(UBound(day_fr)), 0) & " usd. Log scale."
     min_val = WorksheetFunction.Min(day_fr) - 1
     max_val = WorksheetFunction.Max(day_fr)
@@ -325,12 +303,6 @@ Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
                                     MinVal As Long, maxVal As Currency)
     Dim chW As Integer, chH As Integer          ' chart width, chart height
     Dim chFontSize As Integer                   ' chart title font size
-    
-'    With Application
-'        .ScreenUpdating = False
-'        .Calculation = xlCalculationManual
-'        .EnableEvents = False
-'    End With
     
     Call Merged_Remove_Charts
     chW = 624   ' standrad cell width = 48 pix
@@ -355,17 +327,16 @@ Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
         .Axes(xlValue).MaximumScale = maxVal
         .Axes(xlValue).ScaleType = xlLogarithmic    ' LOGARITHMIC
         .SetElement (msoElementChartTitleAboveChart) ' chart title position
-        .ChartTitle.Text = ChTitle
-        .ChartTitle.Characters.Font.Size = chFontSize
+        .chartTitle.Text = ChTitle
+        .chartTitle.Characters.Font.Size = chFontSize
         .Axes(xlCategory).TickLabelPosition = xlLow
     End With
-'    With Application
-'        .EnableEvents = True
-'        .Calculation = xlCalculationAutomatic
-'        .ScreenUpdating = True
-'    End With
 End Sub
 Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
+'
+' RIBBON > BUTTON "В микс"
+'
+' Copy sheet to mixer.xlsx book
     Dim wb_from As Workbook, wb_to As Workbook
     Dim sh_copy As Worksheet
     Dim new_name As String, ins_abbrev As String
@@ -377,7 +348,7 @@ Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
     new_name = sh_copy.Cells(1, 2).Value & "_" & ins_abbrev & "_" & sh_copy.Name
     Set wb_to = Workbooks("mixer.xlsx")
 ' copy
-    sh_copy.Copy after:=wb_to.Sheets(wb_to.Sheets.count)
+    sh_copy.Copy after:=wb_to.Sheets(wb_to.Sheets.Count)
     wb_to.ActiveSheet.Name = new_name
 '    wb_from.Activate
 '    wb_from.Close savechanges:=False
@@ -399,18 +370,3 @@ Private Function gspr_get_instrument_abbrev(ByVal fed_ins As String) As String
     End If
     gspr_get_instrument_abbrev = nomin & denom
 End Function
-Sub SharpesToSeparateSheet()
-    Dim i As Integer
-    Dim ws As Worksheet
-    Dim c As Range
-    
-    Set ws = ActiveSheet
-    Set c = ws.Cells
-    c(1, 1) = "sheet"
-    c(1, 2) = "SR"
-    
-    For i = 1 To 27
-        c(i + 1, 1) = i
-        c(i + 1, 2) = Sheets(i).Cells(21, 2)
-    Next i
-End Sub
