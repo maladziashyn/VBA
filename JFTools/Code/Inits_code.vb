@@ -1,75 +1,75 @@
 Option Explicit
 
-    Const addinFileName As String = "JFTools"
-    Const addinVersion As String = "0.22"
-    
-    Const btGroupShNm As String = "Back-test"
-    Dim btGroupWs As Worksheet
-    Dim btGroupC As Range
-    
+Const addinFileName As String = "JFTools"
+Const addinVersion As String = "0.23"
+
+Const btGroupShNm As String = "Back-test"
+Dim btGroupWs As Worksheet
+Dim btGroupC As Range
+
 ' **** WFA Main *** '
-    Const wfaMainShNm As String = "WFA"
-    Const testDate0Row As Integer = 2
-    Const testDate9Row As Integer = 3
-    Const targetMDDRow As Integer = 4
-    Const mddFreedomRow As Integer = 5
-    Const targetDirRow As Integer = 7
-    Const sourceZeroRow As Integer = 8
-    
-    Const stgKeyCol As Integer = 29
-    Const stgValueCol As Integer = 30
+Const wfaMainShNm As String = "WFA"
+Const testDate0Row As Integer = 2
+Const testDate9Row As Integer = 3
+Const targetMDDRow As Integer = 4
+Const mddFreedomRow As Integer = 5
+Const targetDirRow As Integer = 7
+Const sourceZeroRow As Integer = 8
+
+Const stgKeyCol As Integer = 29
+Const stgValueCol As Integer = 30
 '    Const wfaMergeShNm As String = "WFA Merge"
 '    Dim wfaMergeWs As Worksheet
 '    Dim wfaMergeC As Range
-        
-' **** Hidden Settings *** '
-    Const hiddenSetShNm As String = "Hidden Settings"
-    Const scanModeRow As Integer = 18
-    Const scanModeCol As Integer = 8
     
-    Const activeKPIsFRow As Integer = 3
-    Const activeKPIsFCol As Integer = 7
+' **** Hidden Settings *** '
+Const hiddenSetShNm As String = "Hidden Settings"
+Const scanModeRow As Integer = 18
+Const scanModeCol As Integer = 8
+
+Const activeKPIsFRow As Integer = 3
+Const activeKPIsFCol As Integer = 7
 
 ' **** Sorting *** '
-    Const sortShNm As String = "Sorting"
-    Const sortColID As Integer = 2
+Const sortShNm As String = "Sorting"
+Const sortColID As Integer = 2
 
 ' **** other *** '
-    Const dialTitleTargetDir As String = "Locate Target Directory"
-    Const dialTitleSourceDir As String = "Locate Source Directory"
-    Const dialPickParentDir As String = "Locate Parent Directory"
-    Const okButtonName As String = "Okey Dokey"
-    
-    Const scanTableRowOffset As Integer = 3
-    Const scanTableColOffset As Integer = 33
-    
-    Const windowsFirstRow As Integer = 1
-    Const windowsFirstCol As Integer = 25
-    
-    Const permutZeroRow As Integer = 14
-    Const permutFirstCol As Integer = 3
-    
+Const dialTitleTargetDir As String = "Locate Target Directory"
+Const dialTitleSourceDir As String = "Locate Source Directory"
+Const dialPickParentDir As String = "Locate Parent Directory"
+Const okButtonName As String = "Okey Dokey"
+
+Const scanTableRowOffset As Integer = 3
+Const scanTableColOffset As Integer = 33
+
+Const windowsFirstRow As Integer = 1
+Const windowsFirstCol As Integer = 25
+
+Const permutZeroRow As Integer = 14
+Const permutFirstCol As Integer = 3
+
 ' **** WFA Chart **** '
-    Const wfaIsLogScale As Boolean = True
+Const wfaIsLogScale As Boolean = True
 
 ' *** Back-test *** '
-    Const stratFdRow As Integer = 2 ' parent directory row
-    Const stratFdCol As Integer = 2 ' parent directory column
-    Const stratNmRow As Integer = 3 ' strategy name row
-    Const stratNmCol As Integer = 2 ' strategy name column
+Const stratFdRow As Integer = 2 ' parent directory row
+Const stratFdCol As Integer = 2 ' parent directory column
+Const stratNmRow As Integer = 3 ' strategy name row
+Const stratNmCol As Integer = 2 ' strategy name column
 
 ' **** STATEMENT *** '
-    Const statementShNm As String = "Statement"
-    Const fundsHistoryRow As Integer = 2
-    Const portfolioSummaryRow As Integer = 3
-    Const positionsCloseRow As Integer = 4
-    Const targetDirectoryRow As Integer = 7
-    Const srcInsertCol As Integer = 3
-    Const dialTitleFundsHistory As String = "Pick Funds History directory"
-    Const dialTitlePortfolioSummary As String = "Pick Portfolio Summary directory"
-    Const dialTitlePositionsClose As String = "Pick Positions Close directory"
-    Const dialTitleTargetDirectory As String = "Pick Statement Target directory"
-    Const dialTitleStatementRoot As String = "Pick Root Statement directory"
+Const statementShNm As String = "Statement"
+Const fundsHistoryRow As Integer = 2
+Const portfolioSummaryRow As Integer = 3
+Const positionsCloseRow As Integer = 4
+Const targetDirectoryRow As Integer = 7
+Const srcInsertCol As Integer = 3
+Const dialTitleFundsHistory As String = "Pick Funds History directory"
+Const dialTitlePortfolioSummary As String = "Pick Portfolio Summary directory"
+Const dialTitlePositionsClose As String = "Pick Positions Close directory"
+Const dialTitleTargetDirectory As String = "Pick Statement Target directory"
+Const dialTitleStatementRoot As String = "Pick Root Statement directory"
 
 Sub CommandBars_Inits(ByRef addInName As String)
     
@@ -211,15 +211,18 @@ Sub Click_Copy_Dates_From_Selection_Inits(ByRef mainWs As Worksheet, _
     srcDirsZeroRow = sourceZeroRow
     
 End Sub
+
 Sub Main_Sheet_Cells_Inits(ByRef mainWs As Worksheet, _
             ByRef mainC As Range)
             
     Dim addinWbNm As String
+    
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
     Set mainWs = Workbooks(addinWbNm).Sheets(wfaMainShNm)
     Set mainC = mainWs.Cells
     
 End Sub
+
 Sub Click_Locate_Target_Inits(ByRef ws As Worksheet, _
             ByRef fillRng As Range, _
             ByRef fillRow As Integer, _
@@ -229,6 +232,7 @@ Sub Click_Locate_Target_Inits(ByRef ws As Worksheet, _
             ByRef addSource As Boolean)
 ' Sub initiates worksheet, filedialog variables
 ' for "Locate Target Directory" button
+    
     Call Main_Sheet_Cells_Inits(ws, fillRng)
     fillCol = stgKeyCol
     If addSource Then
@@ -239,11 +243,15 @@ Sub Click_Locate_Target_Inits(ByRef ws As Worksheet, _
         dialTitle = dialTitleTargetDir
     End If
     okBtnName = okButtonName
+
 End Sub
+
 Sub Click_Clear_Sources_Inits(ByRef ws As Worksheet, _
             ByRef clrRng As Range)
+    
     Dim c As Range
     Dim lastRow As Integer
+    
     Set ws = Workbooks(AddInFullFileName(addinFileName, addinVersion)).Sheets(wfaMainShNm)
     Set c = ws.Cells
     lastRow = c(ws.rows.Count, stgKeyCol).End(xlUp).Row
@@ -251,11 +259,14 @@ Sub Click_Clear_Sources_Inits(ByRef ws As Worksheet, _
         lastRow = lastRow + 1
     End If
     Set clrRng = ws.Range(c(sourceZeroRow + 1, stgKeyCol), c(lastRow, stgKeyCol))
+
 End Sub
+
 Sub DeSelect_KPIs_Inits(ByRef iHiddenSetWs As Worksheet, _
             ByRef iHiddenSetC As Range, _
             ByRef iCheckAll As Range, _
             ByRef iKpisList As Range)
+    
     Dim addinWbNm As String
     
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
@@ -263,12 +274,16 @@ Sub DeSelect_KPIs_Inits(ByRef iHiddenSetWs As Worksheet, _
     Set iHiddenSetC = iHiddenSetWs.Cells
     Set iCheckAll = iHiddenSetC(2, 8)
     Set iKpisList = iHiddenSetWs.Range(iHiddenSetC(3, 8), iHiddenSetC(12, 8))
+
 End Sub
+
 Sub GenerateIsOsCodes_Inits(ByRef rg As Range, _
             ByRef exitError As Boolean, _
             ByRef addInName As String)
+    
     Dim mainWs As Worksheet
     Dim mainC As Range
+    
     Call Main_Sheet_Cells_Inits(mainWs, mainC)
     addInName = addinFileName
     Set rg = mainC(windowsFirstRow, windowsFirstCol).CurrentRegion
@@ -277,23 +292,31 @@ Sub GenerateIsOsCodes_Inits(ByRef rg As Range, _
         Exit Sub
     End If
     Set rg = rg.Offset(2, 0).Resize(rg.rows.Count - 2)
+    
 End Sub
+
 Sub MergeSummaries_Inits(ByRef initDirPath As String, _
             ByRef okBtnName As String)
+
     Dim addinWbNm As String
     Dim mainC As Range
+    
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
     Set mainC = Workbooks(addinWbNm).Sheets(wfaMainShNm).Cells
     initDirPath = StringRemoveBackslash(mainC(targetDirRow, stgKeyCol).Value)
     okBtnName = okButtonName
+
 End Sub
+
 Sub DeSelect_Instruments_Inits(ByRef setWs As Worksheet, _
             ByRef btWs As Worksheet, _
             ByRef setC As Range, _
             ByRef btC As Range, _
             ByRef selectAll As Range, _
             ByRef instrumentsList As Range)
+
     Dim addinWbNm As String
+    
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
     Set setWs = Workbooks(addinWbNm).Sheets(hiddenSetShNm)
     Set setC = setWs.Cells
@@ -301,25 +324,33 @@ Sub DeSelect_Instruments_Inits(ByRef setWs As Worksheet, _
     Set btC = btWs.Cells
     Set selectAll = setC(1, 2)
     Set instrumentsList = setWs.Range(setC(2, 2), setC(31, 2))
+
 End Sub
+
 Sub LocateParentDirectory_Inits(ByRef parentDirRg As Range, _
             ByRef stratNmRg As Range, _
             ByRef fdTitle As String, _
             ByRef fdButton As String)
+
     Dim addinWbNm As String
+    
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
     Set parentDirRg = Workbooks(addinWbNm).Sheets(btGroupShNm).Cells(stratFdRow, stratFdCol)
     Set stratNmRg = Workbooks(addinWbNm).Sheets(btGroupShNm).Cells(stratNmRow, stratNmCol)
     fdTitle = dialPickParentDir
     fdButton = okButtonName
+
 End Sub
+
 Sub StatementClickLocate_Inits(ByRef mainC As Range, _
             ByRef insertRow As Integer, _
             ByRef insertCol As Integer, _
             ByVal sourceType As String, _
             ByRef dialogTitle As String, _
             ByRef okBtnName As String)
+
     Dim addinWbNm As String
+
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
     Set mainC = Workbooks(addinWbNm).Sheets(statementShNm).Cells
     Select Case sourceType
@@ -341,10 +372,14 @@ Sub StatementClickLocate_Inits(ByRef mainC As Range, _
     End Select
     insertCol = srcInsertCol
     okBtnName = okButtonName
+
 End Sub
+
 Sub Statement_Init_Parameters(ByRef param As Dictionary)
+
     Dim addinWbNm As String
     Dim mainC As Range
+
     addinWbNm = AddInFullFileName(addinFileName, addinVersion)
     Set mainC = Workbooks(addinWbNm).Sheets(statementShNm).Cells
     Set param = New Dictionary
@@ -352,13 +387,17 @@ Sub Statement_Init_Parameters(ByRef param As Dictionary)
     param.Add "Portfolio Summary", mainC(portfolioSummaryRow, srcInsertCol)
     param.Add "Positions Close", mainC(positionsCloseRow, srcInsertCol)
     param.Add "Target Directory", mainC(targetDirectoryRow, srcInsertCol)
+
 End Sub
+
 Sub ClickLocateRoot_InitsPart2(ByRef fundsRow As Integer, _
             ByRef portfolioRow As Integer, _
             ByRef positionsRow As Integer, _
             ByRef targetDirRow As Integer)
+
     fundsRow = fundsHistoryRow
     portfolioRow = portfolioSummaryRow
     positionsRow = positionsCloseRow
     targetDirRow = targetDirectoryRow
+
 End Sub

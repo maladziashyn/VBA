@@ -1,39 +1,35 @@
 Attribute VB_Name = "WFA_Main"
-' ÈÄÅÈ:
-' ÎÑÒÀÍÀÂËÈÂÀÒÜ ÍÀ ÎÑ ÏËÎÕÈÕ ÐÎÁÎÒÎÂ
-' - ÎÁÑ×ÅÒ ÄËß ÏÎÐÒÔÅËß - ÑÐÀÇÓ ÂÑÅ ÏÀÏÊÈ - ÎÄÈÍ ÑÏÈÑÎÊ ÔÀÉËÎÂ (À ÍÅ 3-5)
-'
-' ïðåâüþøêà äëÿ ïîáåäèòåëåé ÈÑ èëè ÎÑ
-'
 Option Explicit
-    Dim A As Variant            ' RESULT ARRAY for each windowSet
-    Dim param As Dictionary
-    Dim datesISOS As Variant
-    Dim fwdCalDays As Variant
-    Dim fwdCalDaysLong As Variant
-    Dim scanWb As Workbook
-    Dim scanWs As Worksheet
-    Dim scanC As Range
-    Dim resultArr As Variant
-    Dim targetWb As Workbook
-    Dim targetWs As Worksheet
-    Dim targetC As Range
-    Dim kpiFormatting As Dictionary
-    
-    Dim iDir As Integer
-    Dim iFile As Integer
-    Dim iSheet As Integer
-    Dim iWindowSet As Integer
-    Dim iPermutation As Integer, permutationID As Integer
-    Dim iDateSlot As Integer
-    
-    Dim newDirPath As String
-    Dim sortWs As Worksheet
-    Dim sortC As Range
-    Dim sortColumnId As Integer
+
+Dim A               As Variant          ' RESULT ARRAY for each windowSet
+Dim param           As Dictionary
+Dim datesISOS       As Variant
+Dim fwdCalDays      As Variant
+Dim fwdCalDaysLong  As Variant
+Dim scanWb          As Workbook
+Dim scanWs          As Worksheet
+Dim scanC           As Range
+Dim resultArr       As Variant
+Dim targetWb        As Workbook
+Dim targetWs        As Worksheet
+Dim targetC         As Range
+Dim kpiFormatting   As Dictionary
+
+Dim iDir            As Integer
+Dim iFile           As Integer
+Dim iSheet          As Integer
+Dim iWindowSet      As Integer
+Dim iPermutation    As Integer
+Dim permutationID   As Integer
+Dim iDateSlot       As Integer
+
+Dim newDirPath      As String
+Dim sortWs          As Worksheet
+Dim sortC           As Range
+Dim sortColumnId    As Integer
 
 Sub WFA_Run()
-' Main sub, runs Walk-Forward Analysis.
+    
     Dim t0 As Double, t9 As Double
     Dim time0 As Double, time9 As Double
     Dim exitOnError As Boolean
@@ -57,20 +53,9 @@ Sub WFA_Run()
     Dim maxPermutations As Integer
     Dim fractionMultiplier As Double
 
-
-    ' debug
-    Dim wbD As Workbook
-    Dim wsD As Worksheet
-    Dim cD As Range
-    Dim wfaMainCells As Range
-    Set wfaMainCells = ActiveSheet.Cells
-'    time0 = Timer
-
     Application.ScreenUpdating = False
     exitOnError = False
     Call Init_Parameters(param, exitOnError, errorMsg, sortWs, sortC, sortColumnId, kpiFormatting)
-    
-'=================================================================================
     
     ' Loop thru directories
     dirsCount = GetNewDirsCount(param("Scan table"), param("Scan mode"))
@@ -96,7 +81,6 @@ Sub WFA_Run()
         winSetsCount = UBound(param("IS/OS windows"), 1) ' 260 / 104
         For iWindowSet = 1 To winSetsCount
             sWindowSet = "WindowSet " & iWindowSet & "/" & winSetsCount & ". "
-            ' Debug.Print param("IS/OS windows")(1, 3)
             
             ' Get 4 dates - rows
             ' INVERTED
@@ -123,17 +107,9 @@ Sub WFA_Run()
 
                 ' Loop thru each sheet
                 sheetsCount = Sheets.Count
-                
-'                ' debug
-'                t0 = Timer
-'                Call CreateNewWorkbookSheetsCountNames(wbD, sheetsCount)
-                
+
 ' ***** SHEET ********************************************************
-'
                 For iSheet = 3 To sheetsCount
-                
-'                    ' debug
-'                    Set cD = wbD.Sheets(iSheet - 2).Cells
                     
                     ' Update status bar
                     sSheet = "Sheet " & iSheet & "/" & sheetsCount & "."
@@ -151,8 +127,6 @@ Sub WFA_Run()
                         permutationID = iPermutation - 1
                         
                         Set critDict = CreateThisCritDict(param("Permutations"), iPermutation)
-'                        ' debug:
-'                        Call Print_2D_Array(param("Permutations"), False, 0, 0, Cells)
 
                         ' Loop thru each IS date-slot
                         For iDateSlot = LBound(datesISOS, 2) To UBound(datesISOS, 2)
@@ -190,15 +164,10 @@ Sub WFA_Run()
                                             ApplyDateFilter(reportRam, startOS, endOS))
                                 End If
                             End If
-'                            ' debug
-'                            Call Print_2D_Array(tradeList, True, 0, 0, cD)
+
                         Next iDateSlot
                     Next iPermutation
                 Next iSheet
-                
-'                ' debug
-'                t9 = Timer
-'                Debug.Print iDir & "-" & iWindowSet & "-" & iFile & ". Time: " & Round(t9 - t0, 5)
 ' ***** SHEET ********************************************************
                 
                 scanWb.Close savechanges:=False
@@ -243,60 +212,52 @@ Sub WFA_Run()
                 End If
             Next iFile
             
-            ' Loop thru result array, sort IS & OS trades, calculate their KPIs
-            
-' =================
-            
+' Loop thru result array, sort IS & OS trades, calculate their KPIs
 ' Once file is done,
 ' sort winners, create Forward Compiled
             maxPermutations = UBound(param("Permutations"), 1) - 1
             For iPermutation = 2 To UBound(param("Permutations"), 1)
                 permutationID = iPermutation - 1
                 
-'                Debug.Print "permutationID: " & permutationID
-                
                 For iDateSlot = LBound(datesISOS, 2) To UBound(datesISOS, 2)
                     Application.StatusBar = sDir & sWindowSet & "Calculations: Permutation " _
                             & permutationID & "/" & maxPermutations & ", DateSlot " & iDateSlot _
                             & "/" & UBound(datesISOS, 2) & "."
-'                    Debug.Print "iDateSlot: " & iDateSlot
+
                     startIS = datesISOS(1, iDateSlot)
                     endIS = datesISOS(2, iDateSlot)
                     startOS = datesISOS(3, iDateSlot)
                     endOS = datesISOS(4, iDateSlot)
 
-                    ' Bubble sort IS array winners
+                    ' Bubble-sort IS array winners
                     A(permutationID)(iDateSlot)(1)(1) = BubbleSort2DArray( _
                             A(permutationID)(iDateSlot)(1)(1), True, True, True, sortColumnId, sortWs, sortC)
+                    
                     ' IS - Alter Fraction to Target MDD
                     fractionMultiplier = GetFractionMultiplier( _
                             A(permutationID)(iDateSlot)(1)(1), _
                             param("MDD freedom"), _
                             param("Target MDD"))
+                    
                     ' Apply fraction multiplier to "Return" column
                     A(permutationID)(iDateSlot)(1)(1) = ApplyFractionMultiplier( _
                             A(permutationID)(iDateSlot)(1)(1), _
                             fractionMultiplier)
+                    
                     ' Calculate KPIs for IS
                     Set A(permutationID)(iDateSlot)(1)(2) = CalcKPIs( _
                             A(permutationID)(iDateSlot)(1)(1), _
                             startIS, endIS, datesISOS(5, iDateSlot), datesISOS(7, iDateSlot))
 
-                    ' Bubble sort OS array winners
+                    ' Bubble-sort OS array winners
                     A(permutationID)(iDateSlot)(2)(1) = BubbleSort2DArray( _
                             A(permutationID)(iDateSlot)(2)(1), True, True, True, sortColumnId, sortWs, sortC)
+                    
                     ' Apply fraction multiplier to "Return" column
-                    
-                    ' debug
-'                    Call Print_2D_Array(A(permutationID)(iDateSlot)(2)(1), True, 0, 0, sortC)
-                    
                     A(permutationID)(iDateSlot)(2)(1) = ApplyFractionMultiplier( _
                             A(permutationID)(iDateSlot)(2)(1), _
                             fractionMultiplier)
-                    
-                    ' debug
-'                    Call Print_2D_Array(A(permutationID)(iDateSlot)(2)(1), True, 0, 0, sortC)
-                    
+
                     ' Calculate KPIs for OS
                     Set A(permutationID)(iDateSlot)(2)(2) = CalcKPIs( _
                             A(permutationID)(iDateSlot)(2)(1), _
@@ -312,6 +273,7 @@ Sub WFA_Run()
                 ' BubbleSort Compiled Forward for this permutation
                 A(permutationID)(0)(1) = BubbleSort2DArray( _
                         A(permutationID)(0)(1), True, True, True, sortColumnId, sortWs, sortC)
+                
                 ' Calculate KPIs for Compiled Forward
                 Set A(permutationID)(0)(2) = CalcKPIs( _
                         A(permutationID)(0)(1), _
@@ -322,13 +284,10 @@ Sub WFA_Run()
 
             Next iPermutation
 
-
-' =================
-
             ' Add new WB for results
             Application.StatusBar = sDir & sWindowSet & "Print, save, close..."
 
-            ' -- sheets = permutations count + summary
+            ' sheets = permutations count + summary
             Call CreateNewWorkbookSheetsCountNames(targetWb, UBound(param("Permutations"), 1))
 
             ' Print the results
@@ -339,24 +298,19 @@ Sub WFA_Run()
 
         Next iWindowSet
     Next iDir
-    
-'=================================================================================
 
-'    time9 = Timer
-'    wfaMainCells(20, 1) = Round(time9 - time0, 5)
     Application.StatusBar = False
     Application.ScreenUpdating = True
+
 End Sub
 
-
-
 Sub PrintResultArraySaveClose()
+    
     Const sr_0 As Double = 0.075
     Const sr_1 As Double = 0.1
     Const sr_2 As Double = 1.5
     Const sr_3 As Double = 2
     Const sr_4 As Double = 3
-    
     
     Const permutZeroRow As Integer = 9
     Const descrColSpan As Integer = 4
@@ -422,13 +376,6 @@ Sub PrintResultArraySaveClose()
                                 .Interior.Color = RGB(70, 255, 70)
                                 ' highlight R-squared
                                 ' GRADIENT
-                                
-                                
-                                ' 0.6
-                                ' 0.8
-                                ' 0.9
-' !!!!!!!!!!!!!!!!!1
-
                                 If targetC(printRow, printCol - 1) >= 0.75 Then
                                     targetC(printRow, printCol - 1).Interior.Color = RGB(0, 255, 0)
                                 End If
@@ -614,9 +561,11 @@ Sub PrintResultArraySaveClose()
             param("Date start"), _
             param("Date end"))
     targetWb.Close
+
 End Sub
+
 Sub PrintWindowInfo()
-    ' Window info
+    
     With targetC(1, 1)
         .Value = "Window set"
         .Font.Bold = True
@@ -639,8 +588,11 @@ Sub PrintWindowInfo()
     targetC(7, 1) = "KPI"
     targetC(6, 2) = param("MaxiMinimize")(1)
     targetC(7, 2) = param("MaxiMinimize")(2)
+
 End Sub
+
 Sub ChartForTradeList()
+    
     Const datesFirstCol As Integer = 5
     Dim tset() As Variant
     Dim dset() As Variant
@@ -691,8 +643,11 @@ Sub ChartForTradeList()
     ' build chart
     Call WFAChartClassic(wc, 3, first_col, wfaInSampleLog, finRes)
     Application.ScreenUpdating = True
+    
 End Sub
+
 Sub ChartForTradeListPreview()
+    
     Const datesFirstCol As Integer = 5
     Dim tset() As Variant
     Dim dset() As Variant
@@ -741,11 +696,13 @@ Sub ChartForTradeListPreview()
     Call Print_2D_Array(dset, True, 1, first_col + 3, wc)
     ' build chart
     Call WFAChartClassic(wc, 3, first_col, wfaInSampleLog, finRes)
+
 End Sub
 
 Function GetDateStartEndForChart(ByVal wc As Range, _
             ByVal firstCol As Integer, _
             ByVal datesFirstCol As Integer) As Variant
+    
     Dim arr(1 To 2) As Variant
     Dim tradeListType As String
     Dim i As Integer
@@ -761,12 +718,15 @@ Function GetDateStartEndForChart(ByVal wc As Range, _
         End If
     Next i
     GetDateStartEndForChart = arr
+
 End Function
+
 Sub CleanDaysAndChart(ByRef ws As Worksheet, _
             ByRef wc As Range, _
             ByVal ch_obj_id As Integer, _
             ByVal first_col As Integer, _
             ByVal last_col As Integer)
+    
     Dim Rng As Range
     Dim days_last_row As Integer
     
@@ -777,10 +737,13 @@ Sub CleanDaysAndChart(ByRef ws As Worksheet, _
     Set Rng = Range(Cells(2, last_col + 1), Cells(days_last_row, last_col + 2))
     Rng.Clear
     ws.Range(columns(last_col + 1), columns(last_col + 2)).ColumnWidth = 8.43
+
 End Sub
+
 Sub DecreaseChIndex(ByRef ws As Worksheet, _
             ByRef wc As Range, _
             ByVal ch_obj_id As Integer)
+    
     Dim i As Integer
     Dim the_last_col As Integer
     Dim the_first_col As Integer
@@ -792,13 +755,16 @@ Sub DecreaseChIndex(ByRef ws As Worksheet, _
             wc(1, i).Value = wc(1, i).Value - 1
         End If
     Next i
+
 End Sub
+
 Function LoadSlotToRAM(ByVal wc As Range, _
             ByVal first_row As Long, _
             ByVal last_row As Long, _
             ByVal first_col As Integer) As Variant
 ' Function loads excel report from WFA-sheet to RAM
 ' Returns (1 To 3, 1 To trades_count) array - INVERTED
+    
     Dim arr() As Variant
     Dim i As Integer, j As Integer
     
@@ -810,10 +776,13 @@ Function LoadSlotToRAM(ByVal wc As Range, _
         arr(3, i) = wc(j, first_col + 3)    ' return
     Next i
     LoadSlotToRAM = arr
+
 End Function
+
 Function GetCalendarDaysEquity(ByVal tset As Variant, _
             ByVal date_0 As Long, _
             ByVal date_1 As Long) As Variant
+    
     Dim i As Integer, j As Integer
     Dim arr() As Variant
     Dim calendar_days As Long
@@ -842,8 +811,11 @@ Function GetCalendarDaysEquity(ByVal tset As Variant, _
         End If
     Next i
     GetCalendarDaysEquity = arr
+
 End Function
+
 Sub NavigateToWfaSheet()
+    
     Dim shIndex As String
     Dim ws As Worksheet
     Dim c As Range
@@ -861,8 +833,11 @@ Sub NavigateToWfaSheet()
         Sheets("Summary").Activate
     End If
     Application.ScreenUpdating = True
+
 End Sub
+
 Sub MergeWfaSummaries()
+    
     Dim fd As FileDialog
     Dim initDirPath As String
     Dim userDirPath As String
@@ -970,8 +945,11 @@ Sub MergeWfaSummaries()
 '    targetWb.Close
     Application.StatusBar = False
     Application.ScreenUpdating = True
+
 End Sub
+
 Sub WfaPreviews()
+    
     Const previewHeight As Integer = 50
     Dim iSheet As Integer
     Dim ws As Worksheet
@@ -1072,7 +1050,9 @@ Sub WfaPreviews()
     tWs.Activate
     Application.StatusBar = False
     Application.ScreenUpdating = True
+
 End Sub
+
 Sub WfaDateSlotPreviews()
     
 ' Open workbook and activate sheet with WFA source.
@@ -1215,17 +1195,23 @@ Sub WfaDateSlotPreviews()
 
     Application.StatusBar = False
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub GSPR_Remove_Chart3()
+    
     Dim img As Shape
     For Each img In ActiveSheet.Shapes
         img.Delete
     Next
+
 End Sub
+
 Function Load_Slot_to_RAM3(ByVal wc As Range, _
                            ByVal upBnd As Long) As Variant
 ' Function loads excel report from WFA-sheet to RAM
 ' Returns (1 To 3, 1 To trades_count) array - INVERTED
+    
     Dim arr() As Variant
     Dim i As Long, j As Long
     ReDim arr(1 To 3, 1 To upBnd)
@@ -1236,10 +1222,13 @@ Function Load_Slot_to_RAM3(ByVal wc As Range, _
         arr(3, i) = wc(j, 13)    ' return
     Next i
     Load_Slot_to_RAM3 = arr
+
 End Function
+
 Function Get_Calendar_Days_Equity3(ByVal tset As Variant, _
                                    ByVal wc As Range) As Variant
 ' INVERTED: columns, rows
+    
     Dim i As Integer, j As Integer
     Dim arr() As Variant
     Dim date_0 As Date
@@ -1270,7 +1259,9 @@ Function Get_Calendar_Days_Equity3(ByVal tset As Variant, _
         End If
     Next i
     Get_Calendar_Days_Equity3 = arr
+
 End Function
+
 Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boolean, _
                        ByVal row_offset As Integer, ByVal col_offset As Integer, _
                        ByVal print_cells As Range)
@@ -1278,6 +1269,7 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 ' Arguments:
 '       1) 2-D array
 '       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
+    
     Dim r As Long
     Dim c As Integer
     Dim print_row As Long
@@ -1315,11 +1307,14 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
             End If
         Next c
     Next r
+
 End Sub
+
 Sub WFA_Chart_Classic3(sc As Range, _
                 ulr As Integer, _
                 ulc As Integer, _
                 ByVal myFileName As String)
+    
     Const ch_wdth_cells As Integer = 9
     Const ch_hght_cells As Integer = 20
     Const my_rnd = 0.1
@@ -1379,11 +1374,13 @@ Sub WFA_Chart_Classic3(sc As Range, _
     End With
 '    sc(1, first_col + 1) = chObj_idx
     sc(1, 15).Select
+
 End Sub
 
-
 Sub WfaDateSlotPreviews_SOURCE()
+    
     Const previewHeight As Integer = 80
+    
     Dim iSheet As Integer
     Dim ws As Worksheet
     Dim wc As Range
@@ -1483,5 +1480,5 @@ Sub WfaDateSlotPreviews_SOURCE()
     tWs.Activate
     Application.StatusBar = False
     Application.ScreenUpdating = True
-End Sub
 
+End Sub

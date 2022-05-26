@@ -2,15 +2,21 @@
 
 ' MODULE: ThisWorkbook
 Option Explicit
+
 Private Sub Workbook_Open()
+    
     Call GSPR_Create_CommandBar
+
 End Sub
+
 Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    
     Call GSPR_Remove_CommandBar
+
 End Sub
 
 ' MODULE: Sheet3
-Option Explicit
+' empty
 
 
 ' MODULE: Mixer
@@ -6718,15 +6724,14 @@ Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
 End Function
 
 ' MODULE: Sheet2
-Option Explicit
+' empty
 
 
 ' MODULE: Sheet4
-Option Explicit
+' empty
 
 
 ' MODULE: Sheet1
-Option Explicit
 
 
 ' MODULE: BackTest_Main_Multi
