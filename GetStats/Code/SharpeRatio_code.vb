@@ -1,5 +1,7 @@
 Option Explicit
-    Dim new_col As Integer
+    
+Dim new_col As Integer
+    
 Sub Scatter_Sharpe()
     Const plotWidth As Integer = 10
     Const plotHeight As Integer = 20

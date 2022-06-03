@@ -1,7 +1,11 @@
 Option Explicit
 
+' Run GitSave() to export code and modules.
+'
+' Source: https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
+' Source is slightly modified to include a list of modules to ignore.
+
     Dim ignoreList As Variant
-    
     Dim parentFolder As String
     
     Const dirNameCode As String = "\Code"
@@ -9,11 +13,11 @@ Option Explicit
     
 Sub GitSave()
     
-    ignoreList = Array("Unsorted")
+    ignoreList = Array("Module1_to_ignore", "Module2_to_ignore")
     
     Call DeleteAndMake
     Call ExportModules
-'    Call PrintAllCode
+    Call PrintAllCode
     Call PrintModulesCode
     Call PrintAllContainers
     
@@ -47,18 +51,27 @@ Sub PrintAllCode()
     Dim item  As Variant
     Dim textToPrint As String
     Dim lineToPrint As String
+    Dim pathToExport As String
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
-'            Debug.Print lineToPrint
+            lineToPrint = vbNewLine & "' MODULE: " & item.CodeModule.Name & vbNewLine
+            If item.CodeModule.CountOfLines > 0 Then
+                lineToPrint = lineToPrint & item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            Else
+                lineToPrint = lineToPrint & "' empty" & vbNewLine
+            End If
             textToPrint = textToPrint & vbCrLf & lineToPrint
         End If
     Next item
     
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameCode
-    If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
-    SaveTextToFile textToPrint, pathToExport & "\all_code.vb"
+    pathToExport = parentFolder & dirNameCode
+    
+    If Dir(pathToExport) <> "" Then
+        Kill pathToExport & "*.*"
+    End If
+    
+    Call SaveTextToFile(textToPrint, pathToExport & "\all_code.vb")
     
 End Sub
 
@@ -73,11 +86,17 @@ Sub PrintModulesCode()
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            If item.CodeModule.CountOfLines > 0 Then
+                lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
+            Else
+                lineToPrint = "' empty"
+            End If
             
-            If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
+            If Dir(pathToExport) <> "" Then
+                Kill pathToExport & "*.*"
+            End If
+            
             Call SaveTextToFile(lineToPrint, pathToExport & "\" & item.CodeModule.Name & "_code.vb")
-        
         End If
     Next item
 
@@ -88,41 +107,42 @@ Sub PrintAllContainers()
     Dim item  As Variant
     Dim textToPrint As String
     Dim lineToPrint As String
+    Dim pathToExport As String
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         lineToPrint = item.Name
         If Not IsStringInList(lineToPrint, ignoreList) Then
-'            Debug.Print lineToPrint
             textToPrint = textToPrint & vbCrLf & lineToPrint
         End If
     Next item
     
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameCode
-    SaveTextToFile textToPrint, pathToExport & "\all_modules.vb"
+    pathToExport = parentFolder & dirNameCode
+    
+    Call SaveTextToFile(textToPrint, pathToExport & "\all_modules.vb")
     
 End Sub
 
 Sub ExportModules()
        
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameModules
+    Dim pathToExport As String
+    Dim wkb As Workbook
+    Dim filePath As String
+    Dim component As VBIDE.VBComponent
+    Dim tryExport As Boolean
+    
+    pathToExport = parentFolder & dirNameModules
     
     If Dir(pathToExport) <> "" Then
         Kill pathToExport & "*.*"
     End If
-     
-    Dim wkb As Workbook: Set wkb = Excel.Workbooks(ThisWorkbook.Name)
     
-    Dim unitsCount As Long
-    Dim filePath As String
-    Dim component As VBIDE.VBComponent
-    Dim tryExport As Boolean
+    Set wkb = Excel.Workbooks(ThisWorkbook.Name)
 
     For Each component In wkb.VBProject.VBComponents
         tryExport = True
         filePath = component.Name
         
         If Not IsStringInList(filePath, ignoreList) Then
-        
             Select Case component.Type
                 Case vbext_ct_ClassModule
                     filePath = filePath & ".cls"
@@ -135,39 +155,36 @@ Sub ExportModules()
             End Select
         
             If tryExport Then
-'                Debug.Print unitsCount & " exporting " & filePath
                 component.Export pathToExport & "\" & filePath
             End If
-            
         End If
-        
     Next
-
-'    Debug.Print "Exported at " & pathToExport
     
 End Sub
 
-Sub SaveTextToFile(dataToPrint As String, pathToExport As String)
+Sub SaveTextToFile(ByRef dataToPrint As String, ByRef pathToExport As String)
     
     Dim fileSystem As Object
     Dim textObject As Object
-    Dim fileName As String
     Dim newFile  As String
-    Dim shellPath  As String
     
-    If Dir(ThisWorkbook.Path & newFile, vbDirectory) = vbNullString Then MkDir ThisWorkbook.Path & newFile
+    If Dir(ThisWorkbook.Path & newFile, vbDirectory) = vbNullString Then
+        MkDir ThisWorkbook.Path & newFile
+    End If
     
     Set fileSystem = CreateObject("Scripting.FileSystemObject")
     Set textObject = fileSystem.CreateTextFile(pathToExport, True)
     
     textObject.WriteLine dataToPrint
     textObject.Close
-        
-    On Error GoTo 0
-    Exit Sub
-
-CreateLogFile_Error:
-
-    MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure CreateLogFile of Sub mod_TDD_Export"
 
 End Sub
+
+Function IsStringInList(ByVal whatString As String, whatList As Variant) As Boolean
+' True if string is found in the list.
+' Pass the list as Array.
+
+    IsStringInList = Not (IsError(Application.Match(whatString, whatList, 0)))
+
+End Function
+

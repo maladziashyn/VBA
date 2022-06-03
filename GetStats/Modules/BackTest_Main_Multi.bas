@@ -1,85 +1,86 @@
 Attribute VB_Name = "BackTest_Main_Multi"
 Option Explicit
-    Dim btWs As Worksheet, setWs As Worksheet
-    Dim btC As Range, setC As Range
-    Dim selectAll As Range, instrumentsList As Range
-    
-    Dim stratFdRng As Range ' strategy folder cell
-    Dim stratNmRng As Range ' strategy name cell
 
-    Dim rdRepNameCol As Integer
-    Dim rdRepDateCol As Integer
-    Dim rdRepCountCol As Integer
-    Dim rdRepDepoIniCol As Integer
-    Dim rdRepRobotNameCol As Integer
-    Dim rdRepTimeFromCol As Integer
-    Dim rdRepTimeToCol As Integer
-    Dim rdRepLinkCol As Integer
+Dim btWs As Worksheet, setWs As Worksheet
+Dim btC As Range, setC As Range
+Dim selectAll As Range, instrumentsList As Range
+
+Dim stratFdRng As Range ' strategy folder cell
+Dim stratNmRng As Range ' strategy name cell
+
+Dim rdRepNameCol As Integer
+Dim rdRepDateCol As Integer
+Dim rdRepCountCol As Integer
+Dim rdRepDepoIniCol As Integer
+Dim rdRepRobotNameCol As Integer
+Dim rdRepTimeFromCol As Integer
+Dim rdRepTimeToCol As Integer
+Dim rdRepLinkCol As Integer
 
 
-    Dim upperRow As Integer
-    Dim leftCol As Integer
-    Dim rightCol As Integer
-    
-    Dim nextFreeRowBTreport As Integer
+Dim upperRow As Integer
+Dim leftCol As Integer
+Dim rightCol As Integer
 
-    Dim activeInstrumentsList As Variant
-    Dim instrLotGroup As Variant
-    Dim dateFrom As Date, dateTo As Date
-    Dim dateFromStr As String, dateToStr As String
-    Dim stratFdPath As String
-    Dim stratNm As String
-    Dim htmlCount As Integer
-    Dim btNextFreeRow As Integer
-    Dim maxHtmlCount As Integer
+Dim nextFreeRowBTreport As Integer
 
-    Dim statusBarFolder As String
-    Dim oneFdFilesList As Variant
+Dim activeInstrumentsList As Variant
+Dim instrLotGroup As Variant
+Dim dateFrom As Date, dateTo As Date
+Dim dateFromStr As String, dateToStr As String
+Dim stratFdPath As String
+Dim stratNm As String
+Dim htmlCount As Integer
+Dim btNextFreeRow As Integer
+Dim maxHtmlCount As Integer
+
+Dim statusBarFolder As String
+Dim oneFdFilesList As Variant
 
 ' separator variables
-    Dim currentDecimal As String
-    Dim undoSep As Boolean, undoUseSyst As Boolean
+Dim currentDecimal As String
+Dim undoSep As Boolean, undoUseSyst As Boolean
 
 '---SHIFTS
 '------ sn, sv
-    Dim s_strat As Integer, s_ins As Integer
-    Dim s_tpm As Integer, s_ar As Integer, s_mdd As Integer, s_rf As Integer, s_rsq As Integer
-    Dim s_date_begin As Integer, s_date_end As Integer, s_mns As Integer
-    Dim s_trades As Integer, s_win_pc As Integer, s_pips As Integer, s_avg_w2l As Integer, s_avg_pip As Integer
-    Dim s_depo_ini As Integer, s_depo_fin As Integer, s_cmsn As Integer, s_link As Integer, s_rep_type As Integer
+Dim s_strat As Integer, s_ins As Integer
+Dim s_tpm As Integer, s_ar As Integer, s_mdd As Integer, s_rf As Integer, s_rsq As Integer
+Dim s_date_begin As Integer, s_date_end As Integer, s_mns As Integer
+Dim s_trades As Integer, s_win_pc As Integer, s_pips As Integer, s_avg_w2l As Integer, s_avg_pip As Integer
+Dim s_depo_ini As Integer, s_depo_fin As Integer, s_cmsn As Integer, s_link As Integer, s_rep_type As Integer
 '------ ov_bas
-    Dim s_ov_strat As Integer, s_ov_ins As Integer, s_ov_htmls As Integer
-    Dim s_ov_mns As Integer, s_ov_from As Integer, s_ov_to As Integer
-    Dim s_ov_params As Integer, s_ov_params_vbl As Integer, s_ov_created As Integer, s_ov_macro_ver As Integer
+Dim s_ov_strat As Integer, s_ov_ins As Integer, s_ov_htmls As Integer
+Dim s_ov_mns As Integer, s_ov_from As Integer, s_ov_to As Integer
+Dim s_ov_params As Integer, s_ov_params_vbl As Integer, s_ov_created As Integer, s_ov_macro_ver As Integer
 
 ' BOOLEAN
-    Dim allZeros As Boolean    ' allZeros
-    Dim openFail As Boolean
-    
+Dim allZeros As Boolean    ' allZeros
+Dim openFail As Boolean
+
 ' STRING
-    Dim repType As String
-    Dim folderToSave As String
-    Dim macroVer As String
-    Dim loopInstrument As String
+Dim repType As String
+Dim folderToSave As String
+Dim macroVer As String
+Dim loopInstrument As String
 
 ' ARRAYS
-    Dim ov() As Variant
-    Dim SV() As Variant
-    Dim Par() As Variant, par_sum() As Variant, par_sum_head() As String
-    Dim sM() As Variant
-    Dim t1() As Variant
-    Dim t2() As Variant
-    Dim fm_date(1 To 2) As Integer, fm_0p00(1 To 10) As Integer, fm_0p00pc(1 To 3) As Integer, fm_clr(1 To 5) As Integer     ' count before changing
+Dim ov() As Variant
+Dim SV() As Variant
+Dim Par() As Variant, par_sum() As Variant, par_sum_head() As String
+Dim sM() As Variant
+Dim t1() As Variant
+Dim t2() As Variant
+Dim fm_date(1 To 2) As Integer, fm_0p00(1 To 10) As Integer, fm_0p00pc(1 To 3) As Integer, fm_clr(1 To 5) As Integer     ' count before changing
 
 ' OBJECTS
-    Dim mb As Workbook
+Dim mb As Workbook
 '    Dim addin_book As Workbook
 
 ' DOUBLE
-    Dim depoIniCheck As Double
+Dim depoIniCheck As Double
 
 ' DATE
-    Dim fdTimeStart As Date
+Dim fdTimeStart As Date
 
 Sub Process_Html_Folders()
 ' LOOP through folders
@@ -110,7 +111,7 @@ Sub Process_Html_Folders()
     ' LOOP THRU many FOLDERS
     For i = 1 To upperB
         loopInstrument = activeInstrumentsList(i)
-        statusBarFolder = "Папок в очереди: " & upperB - i + 1 & " (" & upperB & ")."
+        statusBarFolder = "Folders in queue: " & upperB - i + 1 & " (" & upperB & ")."
         Application.StatusBar = statusBarFolder
         oneFdFilesList = ListFiles(stratFdPath & "\" & activeInstrumentsList(i))
         ' LOOP THRU FILES IN ONE FOLDER
@@ -124,8 +125,11 @@ Sub Process_Html_Folders()
     Application.StatusBar = False
     Application.ScreenUpdating = True
     Beep
+    
 End Sub
+
 Sub Loop_Thru_One_Folder()
+
     fdTimeStart = Now
     Call Prepare_sv_ov_fm
     Call Open_Reports
@@ -139,17 +143,21 @@ Sub Loop_Thru_One_Folder()
 ' save
     Call Save_To_XLSX
     btNextFreeRow = btNextFreeRow + 1
+    
 End Sub
+
 Sub Save_To_XLSX()
+
     Dim temp_s As String, corenm As String
     Dim vers As Integer, j As Integer
     Dim fNm As String
     Dim statusSaving As String
     
-    statusSaving = statusBarFolder & " Сохраняюсь..."
+    statusSaving = statusBarFolder & " Saving..."
     Application.StatusBar = statusSaving
 ' core name
-    corenm = folderToSave & stratNm & "-" & UCase(loopInstrument) & "-" & dateFromStr & "-" & dateToStr & "-r" & ov(s_ov_htmls, 2)
+    corenm = folderToSave & stratNm & "-" & UCase(loopInstrument) & "-" _
+        & dateFromStr & "-" & dateToStr & "-r" & ov(s_ov_htmls, 2)
     fNm = corenm & ".xlsx"
     If Dir(fNm) = "" Then
         mb.SaveAs fileName:=fNm, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
@@ -169,12 +177,15 @@ Sub Save_To_XLSX()
         mb.SaveAs fileName:=fNm, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
     End If
     btC(btNextFreeRow, rdRepNameCol) = fNm
-    btC(btNextFreeRow, rdRepLinkCol) = "открыть"
+    btC(btNextFreeRow, rdRepLinkCol) = "open"
     btWs.Hyperlinks.Add anchor:=btC(btNextFreeRow, rdRepLinkCol), Address:=fNm
     mb.Close savechanges:=False
     Application.StatusBar = False
+    
 End Sub
+
 Sub Check_Window()
+
     Dim ws As Worksheet
     Dim c As Range
     Dim rng_check As Range, rng_c As Range
@@ -275,6 +286,7 @@ Sub Check_Window()
             Exit For
         End If
     Next rng_c
+    
     If btC(btNextFreeRow, rdRepDepoIniCol).Value <> "error" Then
         btC(btNextFreeRow, rdRepDepoIniCol).Value = "ok"
     End If
@@ -297,12 +309,16 @@ Sub Check_Window()
     ' add timestamp
     btC(btNextFreeRow, rdRepTimeFromCol) = fdTimeStart
     btC(btNextFreeRow, rdRepTimeToCol) = Now
+    
 End Sub
+
 Function GetCorrectRobName(ByRef currencyPair As String) As String
     ' stratNm
     ' instrLotGroup
+    
     Dim postfix As String
     Dim i As Integer
+    
     postfix = "not-found"
     For i = 1 To UBound(instrLotGroup, 1)
         If instrLotGroup(i, 1) = currencyPair Then
@@ -311,9 +327,11 @@ Function GetCorrectRobName(ByRef currencyPair As String) As String
         End If
     Next i
     GetCorrectRobName = stratNm + postfix
+    
 End Function
+
 Sub Process_Each_Print()
-' On Error Resume Next
+
     Dim i As Integer
     Dim rb As Workbook
     Dim os As Worksheet, hs As Worksheet   ' report sheet, overview sheet, html-processed sheet
@@ -339,9 +357,9 @@ Sub Process_Each_Print()
         mb.Sheets.Add after:=mb.Sheets(mb.Sheets.count)
     End If
     Set os = mb.Sheets(1)
-    os.Name = "сводка"
+    os.Name = "summary"
     Set ss = mb.Sheets(2)
-    ss.Name = "результаты"
+    ss.Name = "results"
 ' open and process each html-report
     time_started = Now
     counter_timer = 0
@@ -360,9 +378,9 @@ Sub Process_Each_Print()
             time_rem = rem_min & ":" & rem_sec_s
         End If
         If i < timer_step Then
-            sta = "Обрабатываю отчет " & i & " (" & ov(s_ov_htmls, 2) & ")."
+            sta = "Processing report " & i & " (" & ov(s_ov_htmls, 2) & ")."
         Else
-            sta = "Обрабатываю отчет " & i & " (" & ov(s_ov_htmls, 2) & "). Осталось времени " & time_rem
+            sta = "Processing report " & i & " (" & ov(s_ov_htmls, 2) & "). Estimated time remaining " & time_rem
         End If
         Application.StatusBar = statusBarFolder & " " & sta
         Set rb = Workbooks.Open(oneFdFilesList(i))
@@ -384,8 +402,11 @@ Sub Process_Each_Print()
     Application.StatusBar = False
 ' Overview: extract stats and print
     Call Overview_Summary_Extract_Print(os, ss)
+    
 End Sub
+
 Sub Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss As Worksheet)
+
     Dim r As Integer, c As Integer, hr As Integer
     Dim oc As Range, sc As Range
     Dim Rng As Range
@@ -415,13 +436,13 @@ Sub Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss As Worksheet)
     os.Columns(2).AutoFit
 ' fill summary header
     sM(0, 0) = "html_link"
-    sM(0, 1) = "№_ссылка"
-    sM(0, 2) = "сделок_мес"
-    sM(0, 3) = "год_прир"
-    sM(0, 4) = "макс_прос"
-    sM(0, 5) = "восст"
-    sM(0, 6) = "r_кв"
-    sM(0, 7) = "сред_сд_пп"
+    sM(0, 1) = "#_link"
+    sM(0, 2) = "tpm"
+    sM(0, 3) = "ann_ret"
+    sM(0, 4) = "mdd"
+    sM(0, 5) = "rf"
+    sM(0, 6) = "rsq"
+    sM(0, 7) = "avg_tr_pips"
 ' print SUMMARY
     For r = LBound(sM, 1) To UBound(sM, 1)
         For c = 1 To UBound(sM, 2)
@@ -462,13 +483,17 @@ Sub Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss As Worksheet)
 ' add autofilter
     ss.Activate
     ss.Rows("1:1").AutoFilter
+    
     With ActiveWindow
         .SplitColumn = 0
         .SplitRow = 1
         .FreezePanes = True
     End With
+    
 End Sub
+
 Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
+
     Dim r As Integer, c As Integer
     Dim hc As Range
     Dim z As Variant
@@ -487,7 +512,7 @@ Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
         Next c
     Next r
 ' print parameters
-    hc(UBound(SV) + 2, 1) = "Параметры"
+    hc(UBound(SV) + 2, 1) = "Parameters"
     For r = LBound(Par, 1) To UBound(Par, 1)
         For c = LBound(Par, 2) To UBound(Par, 2)
             hc(UBound(SV) + 2 + r, c) = Par(r, c)
@@ -495,10 +520,10 @@ Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
     Next r
 ' print "back to summary" link
     With hc(UBound(SV) + 2, 2)
-        .Value = "результаты"
+        .Value = "results"
         .HorizontalAlignment = xlRight
     End With
-    hs.Hyperlinks.Add anchor:=hc(UBound(SV) + 2, 2), Address:="", SubAddress:="'результаты'!A1"
+    hs.Hyperlinks.Add anchor:=hc(UBound(SV) + 2, 2), Address:="", SubAddress:="'results'!A1"
 
     If allZeros = False Then
     ' print tradelog-1
@@ -539,8 +564,11 @@ Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
     hs.Hyperlinks.Add anchor:=hc(s_link, 2), Address:=sM(i, 0)
     hs.Activate
     hs.Range(Columns(1), Columns(2)).AutoFit
+    
 End Sub
+
 Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
+
     Dim ins_td_r As Integer
     Dim varRow As Variant
     Dim j As Integer, k As Integer, l As Integer
@@ -634,6 +662,7 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
     End If
     
     Call Fill_Tradelogs(rc, ins_td_r)
+    
 ' fill summary stats
     sM(i, 0) = oneFdFilesList(i)
     sM(i, 1) = i
@@ -644,8 +673,11 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
     sM(i, 6) = SV(s_rsq, 2)
     sM(i, 7) = SV(s_avg_pip, 2)
     rb.Close savechanges:=False
+    
 End Sub
+
 Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
+
     Dim r As Integer, c As Integer, k As Integer
     Dim oc_fr As Integer
     Dim oc_lr As Long, ro_d As Long
@@ -724,9 +756,14 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 ' fill returns
     t2(1, 2) = SV(s_depo_ini, 2)
 ' fill sum_cmsn
-    oc_fr = rc.Find(what:="Event log:", after:=rc(ins_td_r + SV(s_trades, 2), 1), LookIn:=xlValues, LookAt _
-        :=xlWhole, searchorder:=xlByColumns, searchdirection:=xlNext, MatchCase:= _
-        False, searchformat:=False).Row + 2 ' header row
+    oc_fr = rc.Find(what:="Event log:", _
+        after:=rc(ins_td_r + SV(s_trades, 2), 1), _
+        LookIn:=xlValues, _
+        LookAt:=xlWhole, _
+        searchorder:=xlByColumns, _
+        searchdirection:=xlNext, _
+        MatchCase:=False, _
+        searchformat:=False).Row + 2          ' header row
     oc_lr = rc(oc_fr, 1).End(xlDown).Row
 '
     ro_d = 1
@@ -850,8 +887,11 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
         rsqY(r) = t2(r, 2)
     Next r
     SV(s_rsq, 2) = WorksheetFunction.RSq(rsqX, rsqY)
+    
 End Sub
+
 Sub Par_Bubblesort()
+
     Dim sj As Integer, sk As Integer
     Dim tmp_c1 As Variant, tmp_c2 As Variant
     
@@ -867,19 +907,26 @@ Sub Par_Bubblesort()
             End If
         Next sk
     Next sj
+    
 End Sub
+
 Sub Open_Reports()
+
     ov(s_ov_htmls, 2) = UBound(oneFdFilesList)
     If ov(s_ov_htmls, 2) > maxHtmlCount Then
-        MsgBox "GetStats не может обработать более " & maxHtmlCount & " отчетов. Отмена."
+        MsgBox "GetStats can not process more than " & maxHtmlCount & " reports. Cancelling."
         openFail = True
         Exit Sub
     End If
     folderToSave = GetSaveFolder(oneFdFilesList(1))
     ReDim sM(0 To ov(s_ov_htmls, 2), 0 To 7)
+    
 End Sub
+
 Function GetSaveFolder(ByVal file_path As String) As String
+
     Dim q As Integer, i As Integer
+    
     q = 0
     i = Len(file_path) + 1
     Do Until q = 2
@@ -889,8 +936,11 @@ Function GetSaveFolder(ByVal file_path As String) As String
         End If
     Loop
     GetSaveFolder = Left(file_path, i)
+    
 End Function
+
 Sub Prepare_sv_ov_fm()
+
     s_strat = 1
     s_ins = s_strat + 1
     s_tpm = s_ins + 1
@@ -913,27 +963,28 @@ Sub Prepare_sv_ov_fm()
     s_rep_type = s_link + 1
     ReDim SV(1 To s_rep_type, 1 To 2)
 ' SN
-    SV(s_strat, 1) = "Стратегия"
-    SV(s_ins, 1) = "Инструмент"
-    SV(s_tpm, 1) = "Сделок в месяц"
-    SV(s_ar, 1) = "Годовой прирост, %"
-    SV(s_mdd, 1) = "Максимальная просадка, %"
-    SV(s_rf, 1) = "Коэффициент восстановления"
-    SV(s_rsq, 1) = "R-квадрат"
-    SV(s_date_begin, 1) = "Начало теста"
-    SV(s_date_end, 1) = "Конец теста"
-    SV(s_mns, 1) = "Месяцев"
-    SV(s_trades, 1) = "Сделок"
-    SV(s_win_pc, 1) = "Прибыльных сделок, %"
-    SV(s_pips, 1) = "Пунктов"
-    SV(s_avg_w2l, 1) = "Сред.приб/убыт, пп"
-    SV(s_avg_pip, 1) = "Средняя сделка, пп"
-    SV(s_depo_ini, 1) = "Начальный капитал"
-    SV(s_depo_fin, 1) = "Конечный капитал"
-    SV(s_cmsn, 1) = "Комиссии"
-    SV(s_link, 1) = "Размер отчета (МБ), ссылка"
-    SV(s_rep_type, 1) = "Тип отчета"
+    SV(s_strat, 1) = "Strategy"
+    SV(s_ins, 1) = "Instrument"
+    SV(s_tpm, 1) = "Trades per month"
+    SV(s_ar, 1) = "Annualized return, %"
+    SV(s_mdd, 1) = "Maximum drawdown, %"
+    SV(s_rf, 1) = "Recovery factor"
+    SV(s_rsq, 1) = "R-squared"
+    SV(s_date_begin, 1) = "Test begin date"
+    SV(s_date_end, 1) = "Test end date"
+    SV(s_mns, 1) = "Months"
+    SV(s_trades, 1) = "Positions closed"
+    SV(s_win_pc, 1) = "Winners, %"
+    SV(s_pips, 1) = "Pips"
+    SV(s_avg_w2l, 1) = "Avg. winner/loser, pips"
+    SV(s_avg_pip, 1) = "Avg. trade, pips"
+    SV(s_depo_ini, 1) = "Initial balance"
+    SV(s_depo_fin, 1) = "End balance"
+    SV(s_cmsn, 1) = "Commissions"
+    SV(s_link, 1) = "Report size (MB), link"
+    SV(s_rep_type, 1) = "Report type"
     SV(s_rep_type, 2) = repType
+
 ' overview
     s_ov_strat = 1
     s_ov_ins = s_ov_strat + 1
@@ -946,16 +997,16 @@ Sub Prepare_sv_ov_fm()
     s_ov_created = s_ov_params + 1
     s_ov_macro_ver = s_ov_created + 1
     ReDim ov(1 To s_ov_macro_ver, 1 To 2)
-    ov(s_ov_strat, 1) = "Стратегия"
-    ov(s_ov_ins, 1) = "Инструмент"
-    ov(s_ov_htmls, 1) = "Обработано отчетов"
-    ov(s_ov_mns, 1) = "Истор. окно, месяцев"
-    ov(s_ov_from, 1) = "Начало теста"
-    ov(s_ov_to, 1) = "Конец теста"
-    ov(s_ov_params, 1) = "Параметров робота"
+    ov(s_ov_strat, 1) = "Strategy"
+    ov(s_ov_ins, 1) = "Instrument"
+    ov(s_ov_htmls, 1) = "Reports processed"
+    ov(s_ov_mns, 1) = "Hist. window, months"
+    ov(s_ov_from, 1) = "Test start date"
+    ov(s_ov_to, 1) = "Test end date"
+    ov(s_ov_params, 1) = "Parameters count"
 '    ov(s_ov_params_vbl, 1) = "Parameters variable"
-    ov(s_ov_created, 1) = "Отчет создан"
-    ov(s_ov_macro_ver, 1) = "Версия"
+    ov(s_ov_created, 1) = "Report generated"
+    ov(s_ov_macro_ver, 1) = "Version"
 ' formats
     ' "yyyy-mm-dd"
     fm_date(1) = s_date_begin
@@ -981,10 +1032,13 @@ Sub Prepare_sv_ov_fm()
     fm_clr(3) = s_mdd
     fm_clr(4) = s_rf
     fm_clr(5) = s_rsq
+    
 End Sub
+
 Function ListFiles(ByVal sPath As String) As Variant
 ' Arg: folder path
 ' Return: list of files in the folder
+    
     Dim vaArray() As Variant
     Dim i As Integer
     Dim oFile As Object
@@ -1003,17 +1057,21 @@ Function ListFiles(ByVal sPath As String) As Variant
         i = i + 1
     Next
     ListFiles = vaArray
+    
 End Function
+
 Sub Pick_Strategy_Folder()
 ' sheet "backtest"
 ' sub shows file dialog, lets user pick strategy folder
+
     Dim fd As FileDialog
     Dim stratName As String
+    
     Call Init_Pick_Strategy_Folder(stratFdRng, stratNmRng)
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     With fd
-        .Title = "Выбрать папку стратегии"
-        .ButtonName = "Выбрать"
+        .Title = "Pick strategy folder"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
         Exit Sub
@@ -1023,9 +1081,13 @@ Sub Pick_Strategy_Folder()
     stratName = Right(stratName, Len(stratName) - InStrRev(stratName, "\", -1, vbTextCompare))
     stratNmRng = stratName
     Columns(1).AutoFit
+    
 End Sub
+
 Sub DeSelect_Instruments()
+
     Dim cell As Range
+    
     Application.ScreenUpdating = False
     Call Init_DeSelect_Instruments(setWs, btWs, setC, btC, _
                 selectAll, instrumentsList)
@@ -1039,8 +1101,11 @@ Sub DeSelect_Instruments()
         Next cell
     End If
     Application.ScreenUpdating = True
+    
 End Sub
+
 Sub Clear_Ready_Reports()
+    
     Dim lastRow As Integer
     Dim Rng As Range
     
@@ -1052,4 +1117,5 @@ Sub Clear_Ready_Reports()
     End If
     Set Rng = btWs.Range(btC(upperRow, leftCol), btC(lastRow, rightCol))
     Rng.Clear
+    
 End Sub

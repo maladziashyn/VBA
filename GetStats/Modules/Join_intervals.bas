@@ -1,6 +1,6 @@
 Attribute VB_Name = "Join_intervals"
 Option Explicit
-    Const addInFName As String = "GetStats_BackTest_v1.11.1.xlsm"
+    Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
     Const joinShName As String = "join"
     Const targetFdRow As Integer = 2
     Const sourceFdFRow As Integer = 5
@@ -158,8 +158,8 @@ Private Sub Remove_tag_from_parameters(ByRef Rng As Range)
 End Sub
 Private Sub Change_sheets_count(ByRef someWB As Workbook, ByVal shCount As Integer)
 ' function returns a new workbook with specified number of sheets
-    Const shNameOne As String = "сводка"
-    Const shNameTwo As String = "результаты"
+    Const shNameOne As String = "summary"
+    Const shNameTwo As String = "results"
     Dim i As Integer
     
     If someWB.Sheets.count > shCount Then
@@ -193,8 +193,8 @@ Private Sub Pick_target_folder()
     Call Init_sheet_cells
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     With fd
-        .Title = "GetStats: Выбрать целевую папку"
-        .ButtonName = "Выбрать"
+        .Title = "Pick target folder"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
         Exit Sub
@@ -217,8 +217,8 @@ Private Sub Add_source_folder()
     nextFreeRow = cJ(wsJ.Rows.count, 1).End(xlUp).Row + 1
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     With fd
-        .Title = "GetStats: Выбрать папку с XLSX отчетами"
-        .ButtonName = "Выбрать"
+        .Title = "Pick folder with XLSX reports"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
         Exit Sub
@@ -756,7 +756,7 @@ Sub Params_To_Summary()
     
     parLRow = clz(parFRow, 1).End(xlDown).Row
     j = 2
-    cRes(1, 1) = "№_ссылка"
+    cRes(1, 1) = "#_link"
     For i = parFRow To parLRow
         cRes(1, j) = clz(i, 1)
         j = j + 1
@@ -777,10 +777,10 @@ Sub Params_To_Summary()
         wsRes.Hyperlinks.Add anchor:=cRes(j, 1), Address:="", SubAddress:="'" & repNum & "'!R22C2"
         ' print "back to summary" link
         With c(22, 2)
-            .Value = "результаты"
+            .Value = "results"
             .HorizontalAlignment = xlRight
         End With
-        ws.Hyperlinks.Add anchor:=c(22, 2), Address:="", SubAddress:="'результаты'!A1"
+        ws.Hyperlinks.Add anchor:=c(22, 2), Address:="", SubAddress:="'results'!A1"
     Next i
     wsRes.Activate
     cRes(2, 2).Activate
@@ -892,12 +892,15 @@ Function pmTradesPerMonth(ByRef date0 As Date, _
 End Function
 Function pmAR(ByRef daysSet As Variant, _
             ByRef date0 As Date, date9 As Date) As Double
+            
     Dim finalEqCurvePoint As Double
 
 ' calc net return
     finalEqCurvePoint = daysSet(2, UBound(daysSet, 2))
     pmAR = finalEqCurvePoint ^ (365 / (date9 - date0 + 1)) - 1
+    
 End Function
+
 Function pmMDD(ByRef tradesSet As Variant) As Double
 ' tradesSet:
 '   INVERTED: COLUMNS, ROWS
@@ -931,8 +934,11 @@ Function pmMDD(ByRef tradesSet As Variant) As Double
         End If
     Next i
     pmMDD = maxDD
+    
 End Function
+
 Function pmRSQ(ByRef daysSet As Variant) As Double
+
     Dim x() As Variant
     Dim y() As Variant
     Dim i As Long
@@ -944,8 +950,11 @@ Function pmRSQ(ByRef daysSet As Variant) As Double
         y(i) = daysSet(2, i)
     Next i
     pmRSQ = WorksheetFunction.RSq(x, y)
+    
 End Function
+
 Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
+
     Dim winners As Long
     Dim c As Range
     
@@ -956,4 +965,5 @@ Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
         End If
     Next c
     pmWinRatio = winners / tradesCount
+    
 End Function

@@ -1,4 +1,4 @@
-Attribute VB_Name = "ToolBoxSubs"
+Attribute VB_Name = "TB_Subs"
 Option Explicit
 
 Sub ActiveSheetDelete()

@@ -722,7 +722,7 @@ Private Sub GSPR_EN_Translate()
     c(10, 1) = "Months"
     c(11, 1) = "Positions closed"
     c(12, 1) = "Winners, %"
-    c(13, 1) = "Pips gained"
+    c(13, 1) = "Pips"
     c(14, 1) = "Avg. winner/loser, pips"
     c(15, 1) = "Avg. trade, pips"
     c(16, 1) = "Initial balance"

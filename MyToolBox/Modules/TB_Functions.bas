@@ -1,4 +1,4 @@
-Attribute VB_Name = "ToolBoxFunctions"
+Attribute VB_Name = "TB_Functions"
 Option Explicit
 
 Function ListFiles(ByVal sPath As String) As Variant

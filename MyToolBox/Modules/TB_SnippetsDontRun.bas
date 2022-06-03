@@ -1,4 +1,4 @@
-Attribute VB_Name = "SnippetsDontRun"
+Attribute VB_Name = "TB_SnippetsDontRun"
 Sub Snippets()
 
 ' Insert a column before colNumber

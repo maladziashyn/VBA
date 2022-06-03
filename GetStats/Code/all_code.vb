@@ -442,7 +442,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.11.1"
+    Const macro_name As String = "GetStats Pro v1.12"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2686,9 +2686,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.11.1.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.12.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.11.1"
+    Const macro_ver As String = "GetStats Pro v1.12"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -5020,7 +5020,7 @@ Private Sub GSPR_EN_Translate()
     c(10, 1) = "Months"
     c(11, 1) = "Positions closed"
     c(12, 1) = "Winners, %"
-    c(13, 1) = "Pips gained"
+    c(13, 1) = "Pips"
     c(14, 1) = "Avg. winner/loser, pips"
     c(15, 1) = "Avg. trade, pips"
     c(16, 1) = "Initial balance"
@@ -5765,7 +5765,7 @@ End Sub
 
 ' MODULE: Join_intervals
 Option Explicit
-    Const addInFName As String = "GetStats_BackTest_v1.11.1.xlsm"
+    Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
     Const joinShName As String = "join"
     Const targetFdRow As Integer = 2
     Const sourceFdFRow As Integer = 5
@@ -5923,8 +5923,8 @@ Private Sub Remove_tag_from_parameters(ByRef Rng As Range)
 End Sub
 Private Sub Change_sheets_count(ByRef someWB As Workbook, ByVal shCount As Integer)
 ' function returns a new workbook with specified number of sheets
-    Const shNameOne As String = "сводка"
-    Const shNameTwo As String = "результаты"
+    Const shNameOne As String = "summary"
+    Const shNameTwo As String = "results"
     Dim i As Integer
     
     If someWB.Sheets.count > shCount Then
@@ -5958,8 +5958,8 @@ Private Sub Pick_target_folder()
     Call Init_sheet_cells
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     With fd
-        .Title = "GetStats: Выбрать целевую папку"
-        .ButtonName = "Выбрать"
+        .Title = "Pick target folder"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
         Exit Sub
@@ -5982,8 +5982,8 @@ Private Sub Add_source_folder()
     nextFreeRow = cJ(wsJ.Rows.count, 1).End(xlUp).Row + 1
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     With fd
-        .Title = "GetStats: Выбрать папку с XLSX отчетами"
-        .ButtonName = "Выбрать"
+        .Title = "Pick folder with XLSX reports"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
         Exit Sub
@@ -6521,7 +6521,7 @@ Sub Params_To_Summary()
     
     parLRow = clz(parFRow, 1).End(xlDown).Row
     j = 2
-    cRes(1, 1) = "№_ссылка"
+    cRes(1, 1) = "#_link"
     For i = parFRow To parLRow
         cRes(1, j) = clz(i, 1)
         j = j + 1
@@ -6542,10 +6542,10 @@ Sub Params_To_Summary()
         wsRes.Hyperlinks.Add anchor:=cRes(j, 1), Address:="", SubAddress:="'" & repNum & "'!R22C2"
         ' print "back to summary" link
         With c(22, 2)
-            .Value = "результаты"
+            .Value = "results"
             .HorizontalAlignment = xlRight
         End With
-        ws.Hyperlinks.Add anchor:=c(22, 2), Address:="", SubAddress:="'результаты'!A1"
+        ws.Hyperlinks.Add anchor:=c(22, 2), Address:="", SubAddress:="'results'!A1"
     Next i
     wsRes.Activate
     cRes(2, 2).Activate
@@ -6657,12 +6657,15 @@ Function pmTradesPerMonth(ByRef date0 As Date, _
 End Function
 Function pmAR(ByRef daysSet As Variant, _
             ByRef date0 As Date, date9 As Date) As Double
+            
     Dim finalEqCurvePoint As Double
 
 ' calc net return
     finalEqCurvePoint = daysSet(2, UBound(daysSet, 2))
     pmAR = finalEqCurvePoint ^ (365 / (date9 - date0 + 1)) - 1
+    
 End Function
+
 Function pmMDD(ByRef tradesSet As Variant) As Double
 ' tradesSet:
 '   INVERTED: COLUMNS, ROWS
@@ -6696,8 +6699,11 @@ Function pmMDD(ByRef tradesSet As Variant) As Double
         End If
     Next i
     pmMDD = maxDD
+    
 End Function
+
 Function pmRSQ(ByRef daysSet As Variant) As Double
+
     Dim x() As Variant
     Dim y() As Variant
     Dim i As Long
@@ -6709,8 +6715,11 @@ Function pmRSQ(ByRef daysSet As Variant) As Double
         y(i) = daysSet(2, i)
     Next i
     pmRSQ = WorksheetFunction.RSq(x, y)
+    
 End Function
+
 Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
+
     Dim winners As Long
     Dim c As Range
     
@@ -6721,6 +6730,7 @@ Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
         End If
     Next c
     pmWinRatio = winners / tradesCount
+    
 End Function
 
 ' MODULE: Sheet2
@@ -6736,86 +6746,87 @@ End Function
 
 ' MODULE: BackTest_Main_Multi
 Option Explicit
-    Dim btWs As Worksheet, setWs As Worksheet
-    Dim btC As Range, setC As Range
-    Dim selectAll As Range, instrumentsList As Range
-    
-    Dim stratFdRng As Range ' strategy folder cell
-    Dim stratNmRng As Range ' strategy name cell
 
-    Dim rdRepNameCol As Integer
-    Dim rdRepDateCol As Integer
-    Dim rdRepCountCol As Integer
-    Dim rdRepDepoIniCol As Integer
-    Dim rdRepRobotNameCol As Integer
-    Dim rdRepTimeFromCol As Integer
-    Dim rdRepTimeToCol As Integer
-    Dim rdRepLinkCol As Integer
+Dim btWs As Worksheet, setWs As Worksheet
+Dim btC As Range, setC As Range
+Dim selectAll As Range, instrumentsList As Range
+
+Dim stratFdRng As Range ' strategy folder cell
+Dim stratNmRng As Range ' strategy name cell
+
+Dim rdRepNameCol As Integer
+Dim rdRepDateCol As Integer
+Dim rdRepCountCol As Integer
+Dim rdRepDepoIniCol As Integer
+Dim rdRepRobotNameCol As Integer
+Dim rdRepTimeFromCol As Integer
+Dim rdRepTimeToCol As Integer
+Dim rdRepLinkCol As Integer
 
 
-    Dim upperRow As Integer
-    Dim leftCol As Integer
-    Dim rightCol As Integer
-    
-    Dim nextFreeRowBTreport As Integer
+Dim upperRow As Integer
+Dim leftCol As Integer
+Dim rightCol As Integer
 
-    Dim activeInstrumentsList As Variant
-    Dim instrLotGroup As Variant
-    Dim dateFrom As Date, dateTo As Date
-    Dim dateFromStr As String, dateToStr As String
-    Dim stratFdPath As String
-    Dim stratNm As String
-    Dim htmlCount As Integer
-    Dim btNextFreeRow As Integer
-    Dim maxHtmlCount As Integer
+Dim nextFreeRowBTreport As Integer
 
-    Dim statusBarFolder As String
-    Dim oneFdFilesList As Variant
+Dim activeInstrumentsList As Variant
+Dim instrLotGroup As Variant
+Dim dateFrom As Date, dateTo As Date
+Dim dateFromStr As String, dateToStr As String
+Dim stratFdPath As String
+Dim stratNm As String
+Dim htmlCount As Integer
+Dim btNextFreeRow As Integer
+Dim maxHtmlCount As Integer
+
+Dim statusBarFolder As String
+Dim oneFdFilesList As Variant
 
 ' separator variables
-    Dim currentDecimal As String
-    Dim undoSep As Boolean, undoUseSyst As Boolean
+Dim currentDecimal As String
+Dim undoSep As Boolean, undoUseSyst As Boolean
 
 '---SHIFTS
 '------ sn, sv
-    Dim s_strat As Integer, s_ins As Integer
-    Dim s_tpm As Integer, s_ar As Integer, s_mdd As Integer, s_rf As Integer, s_rsq As Integer
-    Dim s_date_begin As Integer, s_date_end As Integer, s_mns As Integer
-    Dim s_trades As Integer, s_win_pc As Integer, s_pips As Integer, s_avg_w2l As Integer, s_avg_pip As Integer
-    Dim s_depo_ini As Integer, s_depo_fin As Integer, s_cmsn As Integer, s_link As Integer, s_rep_type As Integer
+Dim s_strat As Integer, s_ins As Integer
+Dim s_tpm As Integer, s_ar As Integer, s_mdd As Integer, s_rf As Integer, s_rsq As Integer
+Dim s_date_begin As Integer, s_date_end As Integer, s_mns As Integer
+Dim s_trades As Integer, s_win_pc As Integer, s_pips As Integer, s_avg_w2l As Integer, s_avg_pip As Integer
+Dim s_depo_ini As Integer, s_depo_fin As Integer, s_cmsn As Integer, s_link As Integer, s_rep_type As Integer
 '------ ov_bas
-    Dim s_ov_strat As Integer, s_ov_ins As Integer, s_ov_htmls As Integer
-    Dim s_ov_mns As Integer, s_ov_from As Integer, s_ov_to As Integer
-    Dim s_ov_params As Integer, s_ov_params_vbl As Integer, s_ov_created As Integer, s_ov_macro_ver As Integer
+Dim s_ov_strat As Integer, s_ov_ins As Integer, s_ov_htmls As Integer
+Dim s_ov_mns As Integer, s_ov_from As Integer, s_ov_to As Integer
+Dim s_ov_params As Integer, s_ov_params_vbl As Integer, s_ov_created As Integer, s_ov_macro_ver As Integer
 
 ' BOOLEAN
-    Dim allZeros As Boolean    ' allZeros
-    Dim openFail As Boolean
-    
+Dim allZeros As Boolean    ' allZeros
+Dim openFail As Boolean
+
 ' STRING
-    Dim repType As String
-    Dim folderToSave As String
-    Dim macroVer As String
-    Dim loopInstrument As String
+Dim repType As String
+Dim folderToSave As String
+Dim macroVer As String
+Dim loopInstrument As String
 
 ' ARRAYS
-    Dim ov() As Variant
-    Dim SV() As Variant
-    Dim Par() As Variant, par_sum() As Variant, par_sum_head() As String
-    Dim sM() As Variant
-    Dim t1() As Variant
-    Dim t2() As Variant
-    Dim fm_date(1 To 2) As Integer, fm_0p00(1 To 10) As Integer, fm_0p00pc(1 To 3) As Integer, fm_clr(1 To 5) As Integer     ' count before changing
+Dim ov() As Variant
+Dim SV() As Variant
+Dim Par() As Variant, par_sum() As Variant, par_sum_head() As String
+Dim sM() As Variant
+Dim t1() As Variant
+Dim t2() As Variant
+Dim fm_date(1 To 2) As Integer, fm_0p00(1 To 10) As Integer, fm_0p00pc(1 To 3) As Integer, fm_clr(1 To 5) As Integer     ' count before changing
 
 ' OBJECTS
-    Dim mb As Workbook
+Dim mb As Workbook
 '    Dim addin_book As Workbook
 
 ' DOUBLE
-    Dim depoIniCheck As Double
+Dim depoIniCheck As Double
 
 ' DATE
-    Dim fdTimeStart As Date
+Dim fdTimeStart As Date
 
 Sub Process_Html_Folders()
 ' LOOP through folders
@@ -6846,7 +6857,7 @@ Sub Process_Html_Folders()
     ' LOOP THRU many FOLDERS
     For i = 1 To upperB
         loopInstrument = activeInstrumentsList(i)
-        statusBarFolder = "Папок в очереди: " & upperB - i + 1 & " (" & upperB & ")."
+        statusBarFolder = "Folders in queue: " & upperB - i + 1 & " (" & upperB & ")."
         Application.StatusBar = statusBarFolder
         oneFdFilesList = ListFiles(stratFdPath & "\" & activeInstrumentsList(i))
         ' LOOP THRU FILES IN ONE FOLDER
@@ -6860,8 +6871,11 @@ Sub Process_Html_Folders()
     Application.StatusBar = False
     Application.ScreenUpdating = True
     Beep
+    
 End Sub
+
 Sub Loop_Thru_One_Folder()
+
     fdTimeStart = Now
     Call Prepare_sv_ov_fm
     Call Open_Reports
@@ -6875,17 +6889,21 @@ Sub Loop_Thru_One_Folder()
 ' save
     Call Save_To_XLSX
     btNextFreeRow = btNextFreeRow + 1
+    
 End Sub
+
 Sub Save_To_XLSX()
+
     Dim temp_s As String, corenm As String
     Dim vers As Integer, j As Integer
     Dim fNm As String
     Dim statusSaving As String
     
-    statusSaving = statusBarFolder & " Сохраняюсь..."
+    statusSaving = statusBarFolder & " Saving..."
     Application.StatusBar = statusSaving
 ' core name
-    corenm = folderToSave & stratNm & "-" & UCase(loopInstrument) & "-" & dateFromStr & "-" & dateToStr & "-r" & ov(s_ov_htmls, 2)
+    corenm = folderToSave & stratNm & "-" & UCase(loopInstrument) & "-" _
+        & dateFromStr & "-" & dateToStr & "-r" & ov(s_ov_htmls, 2)
     fNm = corenm & ".xlsx"
     If Dir(fNm) = "" Then
         mb.SaveAs fileName:=fNm, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
@@ -6905,12 +6923,15 @@ Sub Save_To_XLSX()
         mb.SaveAs fileName:=fNm, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
     End If
     btC(btNextFreeRow, rdRepNameCol) = fNm
-    btC(btNextFreeRow, rdRepLinkCol) = "открыть"
+    btC(btNextFreeRow, rdRepLinkCol) = "open"
     btWs.Hyperlinks.Add anchor:=btC(btNextFreeRow, rdRepLinkCol), Address:=fNm
     mb.Close savechanges:=False
     Application.StatusBar = False
+    
 End Sub
+
 Sub Check_Window()
+
     Dim ws As Worksheet
     Dim c As Range
     Dim rng_check As Range, rng_c As Range
@@ -7011,6 +7032,7 @@ Sub Check_Window()
             Exit For
         End If
     Next rng_c
+    
     If btC(btNextFreeRow, rdRepDepoIniCol).Value <> "error" Then
         btC(btNextFreeRow, rdRepDepoIniCol).Value = "ok"
     End If
@@ -7033,12 +7055,16 @@ Sub Check_Window()
     ' add timestamp
     btC(btNextFreeRow, rdRepTimeFromCol) = fdTimeStart
     btC(btNextFreeRow, rdRepTimeToCol) = Now
+    
 End Sub
+
 Function GetCorrectRobName(ByRef currencyPair As String) As String
     ' stratNm
     ' instrLotGroup
+    
     Dim postfix As String
     Dim i As Integer
+    
     postfix = "not-found"
     For i = 1 To UBound(instrLotGroup, 1)
         If instrLotGroup(i, 1) = currencyPair Then
@@ -7047,9 +7073,11 @@ Function GetCorrectRobName(ByRef currencyPair As String) As String
         End If
     Next i
     GetCorrectRobName = stratNm + postfix
+    
 End Function
+
 Sub Process_Each_Print()
-' On Error Resume Next
+
     Dim i As Integer
     Dim rb As Workbook
     Dim os As Worksheet, hs As Worksheet   ' report sheet, overview sheet, html-processed sheet
@@ -7075,9 +7103,9 @@ Sub Process_Each_Print()
         mb.Sheets.Add after:=mb.Sheets(mb.Sheets.count)
     End If
     Set os = mb.Sheets(1)
-    os.Name = "сводка"
+    os.Name = "summary"
     Set ss = mb.Sheets(2)
-    ss.Name = "результаты"
+    ss.Name = "results"
 ' open and process each html-report
     time_started = Now
     counter_timer = 0
@@ -7096,9 +7124,9 @@ Sub Process_Each_Print()
             time_rem = rem_min & ":" & rem_sec_s
         End If
         If i < timer_step Then
-            sta = "Обрабатываю отчет " & i & " (" & ov(s_ov_htmls, 2) & ")."
+            sta = "Processing report " & i & " (" & ov(s_ov_htmls, 2) & ")."
         Else
-            sta = "Обрабатываю отчет " & i & " (" & ov(s_ov_htmls, 2) & "). Осталось времени " & time_rem
+            sta = "Processing report " & i & " (" & ov(s_ov_htmls, 2) & "). Estimated time remaining " & time_rem
         End If
         Application.StatusBar = statusBarFolder & " " & sta
         Set rb = Workbooks.Open(oneFdFilesList(i))
@@ -7120,8 +7148,11 @@ Sub Process_Each_Print()
     Application.StatusBar = False
 ' Overview: extract stats and print
     Call Overview_Summary_Extract_Print(os, ss)
+    
 End Sub
+
 Sub Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss As Worksheet)
+
     Dim r As Integer, c As Integer, hr As Integer
     Dim oc As Range, sc As Range
     Dim Rng As Range
@@ -7151,13 +7182,13 @@ Sub Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss As Worksheet)
     os.Columns(2).AutoFit
 ' fill summary header
     sM(0, 0) = "html_link"
-    sM(0, 1) = "№_ссылка"
-    sM(0, 2) = "сделок_мес"
-    sM(0, 3) = "год_прир"
-    sM(0, 4) = "макс_прос"
-    sM(0, 5) = "восст"
-    sM(0, 6) = "r_кв"
-    sM(0, 7) = "сред_сд_пп"
+    sM(0, 1) = "#_link"
+    sM(0, 2) = "tpm"
+    sM(0, 3) = "ann_ret"
+    sM(0, 4) = "mdd"
+    sM(0, 5) = "rf"
+    sM(0, 6) = "rsq"
+    sM(0, 7) = "avg_tr_pips"
 ' print SUMMARY
     For r = LBound(sM, 1) To UBound(sM, 1)
         For c = 1 To UBound(sM, 2)
@@ -7198,13 +7229,17 @@ Sub Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss As Worksheet)
 ' add autofilter
     ss.Activate
     ss.Rows("1:1").AutoFilter
+    
     With ActiveWindow
         .SplitColumn = 0
         .SplitRow = 1
         .FreezePanes = True
     End With
+    
 End Sub
+
 Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
+
     Dim r As Integer, c As Integer
     Dim hc As Range
     Dim z As Variant
@@ -7223,7 +7258,7 @@ Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
         Next c
     Next r
 ' print parameters
-    hc(UBound(SV) + 2, 1) = "Параметры"
+    hc(UBound(SV) + 2, 1) = "Parameters"
     For r = LBound(Par, 1) To UBound(Par, 1)
         For c = LBound(Par, 2) To UBound(Par, 2)
             hc(UBound(SV) + 2 + r, c) = Par(r, c)
@@ -7231,10 +7266,10 @@ Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
     Next r
 ' print "back to summary" link
     With hc(UBound(SV) + 2, 2)
-        .Value = "результаты"
+        .Value = "results"
         .HorizontalAlignment = xlRight
     End With
-    hs.Hyperlinks.Add anchor:=hc(UBound(SV) + 2, 2), Address:="", SubAddress:="'результаты'!A1"
+    hs.Hyperlinks.Add anchor:=hc(UBound(SV) + 2, 2), Address:="", SubAddress:="'results'!A1"
 
     If allZeros = False Then
     ' print tradelog-1
@@ -7275,8 +7310,11 @@ Sub Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
     hs.Hyperlinks.Add anchor:=hc(s_link, 2), Address:=sM(i, 0)
     hs.Activate
     hs.Range(Columns(1), Columns(2)).AutoFit
+    
 End Sub
+
 Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
+
     Dim ins_td_r As Integer
     Dim varRow As Variant
     Dim j As Integer, k As Integer, l As Integer
@@ -7370,6 +7408,7 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
     End If
     
     Call Fill_Tradelogs(rc, ins_td_r)
+    
 ' fill summary stats
     sM(i, 0) = oneFdFilesList(i)
     sM(i, 1) = i
@@ -7380,8 +7419,11 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
     sM(i, 6) = SV(s_rsq, 2)
     sM(i, 7) = SV(s_avg_pip, 2)
     rb.Close savechanges:=False
+    
 End Sub
+
 Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
+
     Dim r As Integer, c As Integer, k As Integer
     Dim oc_fr As Integer
     Dim oc_lr As Long, ro_d As Long
@@ -7460,9 +7502,14 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 ' fill returns
     t2(1, 2) = SV(s_depo_ini, 2)
 ' fill sum_cmsn
-    oc_fr = rc.Find(what:="Event log:", after:=rc(ins_td_r + SV(s_trades, 2), 1), LookIn:=xlValues, LookAt _
-        :=xlWhole, searchorder:=xlByColumns, searchdirection:=xlNext, MatchCase:= _
-        False, searchformat:=False).Row + 2 ' header row
+    oc_fr = rc.Find(what:="Event log:", _
+        after:=rc(ins_td_r + SV(s_trades, 2), 1), _
+        LookIn:=xlValues, _
+        LookAt:=xlWhole, _
+        searchorder:=xlByColumns, _
+        searchdirection:=xlNext, _
+        MatchCase:=False, _
+        searchformat:=False).Row + 2          ' header row
     oc_lr = rc(oc_fr, 1).End(xlDown).Row
 '
     ro_d = 1
@@ -7586,8 +7633,11 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
         rsqY(r) = t2(r, 2)
     Next r
     SV(s_rsq, 2) = WorksheetFunction.RSq(rsqX, rsqY)
+    
 End Sub
+
 Sub Par_Bubblesort()
+
     Dim sj As Integer, sk As Integer
     Dim tmp_c1 As Variant, tmp_c2 As Variant
     
@@ -7603,19 +7653,26 @@ Sub Par_Bubblesort()
             End If
         Next sk
     Next sj
+    
 End Sub
+
 Sub Open_Reports()
+
     ov(s_ov_htmls, 2) = UBound(oneFdFilesList)
     If ov(s_ov_htmls, 2) > maxHtmlCount Then
-        MsgBox "GetStats не может обработать более " & maxHtmlCount & " отчетов. Отмена."
+        MsgBox "GetStats can not process more than " & maxHtmlCount & " reports. Cancelling."
         openFail = True
         Exit Sub
     End If
     folderToSave = GetSaveFolder(oneFdFilesList(1))
     ReDim sM(0 To ov(s_ov_htmls, 2), 0 To 7)
+    
 End Sub
+
 Function GetSaveFolder(ByVal file_path As String) As String
+
     Dim q As Integer, i As Integer
+    
     q = 0
     i = Len(file_path) + 1
     Do Until q = 2
@@ -7625,8 +7682,11 @@ Function GetSaveFolder(ByVal file_path As String) As String
         End If
     Loop
     GetSaveFolder = Left(file_path, i)
+    
 End Function
+
 Sub Prepare_sv_ov_fm()
+
     s_strat = 1
     s_ins = s_strat + 1
     s_tpm = s_ins + 1
@@ -7649,27 +7709,28 @@ Sub Prepare_sv_ov_fm()
     s_rep_type = s_link + 1
     ReDim SV(1 To s_rep_type, 1 To 2)
 ' SN
-    SV(s_strat, 1) = "Стратегия"
-    SV(s_ins, 1) = "Инструмент"
-    SV(s_tpm, 1) = "Сделок в месяц"
-    SV(s_ar, 1) = "Годовой прирост, %"
-    SV(s_mdd, 1) = "Максимальная просадка, %"
-    SV(s_rf, 1) = "Коэффициент восстановления"
-    SV(s_rsq, 1) = "R-квадрат"
-    SV(s_date_begin, 1) = "Начало теста"
-    SV(s_date_end, 1) = "Конец теста"
-    SV(s_mns, 1) = "Месяцев"
-    SV(s_trades, 1) = "Сделок"
-    SV(s_win_pc, 1) = "Прибыльных сделок, %"
-    SV(s_pips, 1) = "Пунктов"
-    SV(s_avg_w2l, 1) = "Сред.приб/убыт, пп"
-    SV(s_avg_pip, 1) = "Средняя сделка, пп"
-    SV(s_depo_ini, 1) = "Начальный капитал"
-    SV(s_depo_fin, 1) = "Конечный капитал"
-    SV(s_cmsn, 1) = "Комиссии"
-    SV(s_link, 1) = "Размер отчета (МБ), ссылка"
-    SV(s_rep_type, 1) = "Тип отчета"
+    SV(s_strat, 1) = "Strategy"
+    SV(s_ins, 1) = "Instrument"
+    SV(s_tpm, 1) = "Trades per month"
+    SV(s_ar, 1) = "Annualized return, %"
+    SV(s_mdd, 1) = "Maximum drawdown, %"
+    SV(s_rf, 1) = "Recovery factor"
+    SV(s_rsq, 1) = "R-squared"
+    SV(s_date_begin, 1) = "Test begin date"
+    SV(s_date_end, 1) = "Test end date"
+    SV(s_mns, 1) = "Months"
+    SV(s_trades, 1) = "Positions closed"
+    SV(s_win_pc, 1) = "Winners, %"
+    SV(s_pips, 1) = "Pips"
+    SV(s_avg_w2l, 1) = "Avg. winner/loser, pips"
+    SV(s_avg_pip, 1) = "Avg. trade, pips"
+    SV(s_depo_ini, 1) = "Initial balance"
+    SV(s_depo_fin, 1) = "End balance"
+    SV(s_cmsn, 1) = "Commissions"
+    SV(s_link, 1) = "Report size (MB), link"
+    SV(s_rep_type, 1) = "Report type"
     SV(s_rep_type, 2) = repType
+
 ' overview
     s_ov_strat = 1
     s_ov_ins = s_ov_strat + 1
@@ -7682,16 +7743,16 @@ Sub Prepare_sv_ov_fm()
     s_ov_created = s_ov_params + 1
     s_ov_macro_ver = s_ov_created + 1
     ReDim ov(1 To s_ov_macro_ver, 1 To 2)
-    ov(s_ov_strat, 1) = "Стратегия"
-    ov(s_ov_ins, 1) = "Инструмент"
-    ov(s_ov_htmls, 1) = "Обработано отчетов"
-    ov(s_ov_mns, 1) = "Истор. окно, месяцев"
-    ov(s_ov_from, 1) = "Начало теста"
-    ov(s_ov_to, 1) = "Конец теста"
-    ov(s_ov_params, 1) = "Параметров робота"
+    ov(s_ov_strat, 1) = "Strategy"
+    ov(s_ov_ins, 1) = "Instrument"
+    ov(s_ov_htmls, 1) = "Reports processed"
+    ov(s_ov_mns, 1) = "Hist. window, months"
+    ov(s_ov_from, 1) = "Test start date"
+    ov(s_ov_to, 1) = "Test end date"
+    ov(s_ov_params, 1) = "Parameters count"
 '    ov(s_ov_params_vbl, 1) = "Parameters variable"
-    ov(s_ov_created, 1) = "Отчет создан"
-    ov(s_ov_macro_ver, 1) = "Версия"
+    ov(s_ov_created, 1) = "Report generated"
+    ov(s_ov_macro_ver, 1) = "Version"
 ' formats
     ' "yyyy-mm-dd"
     fm_date(1) = s_date_begin
@@ -7717,10 +7778,13 @@ Sub Prepare_sv_ov_fm()
     fm_clr(3) = s_mdd
     fm_clr(4) = s_rf
     fm_clr(5) = s_rsq
+    
 End Sub
+
 Function ListFiles(ByVal sPath As String) As Variant
 ' Arg: folder path
 ' Return: list of files in the folder
+    
     Dim vaArray() As Variant
     Dim i As Integer
     Dim oFile As Object
@@ -7739,17 +7803,21 @@ Function ListFiles(ByVal sPath As String) As Variant
         i = i + 1
     Next
     ListFiles = vaArray
+    
 End Function
+
 Sub Pick_Strategy_Folder()
 ' sheet "backtest"
 ' sub shows file dialog, lets user pick strategy folder
+
     Dim fd As FileDialog
     Dim stratName As String
+    
     Call Init_Pick_Strategy_Folder(stratFdRng, stratNmRng)
     Set fd = Application.FileDialog(msoFileDialogFolderPicker)
     With fd
-        .Title = "Выбрать папку стратегии"
-        .ButtonName = "Выбрать"
+        .Title = "Pick strategy folder"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
         Exit Sub
@@ -7759,9 +7827,13 @@ Sub Pick_Strategy_Folder()
     stratName = Right(stratName, Len(stratName) - InStrRev(stratName, "\", -1, vbTextCompare))
     stratNmRng = stratName
     Columns(1).AutoFit
+    
 End Sub
+
 Sub DeSelect_Instruments()
+
     Dim cell As Range
+    
     Application.ScreenUpdating = False
     Call Init_DeSelect_Instruments(setWs, btWs, setC, btC, _
                 selectAll, instrumentsList)
@@ -7775,8 +7847,11 @@ Sub DeSelect_Instruments()
         Next cell
     End If
     Application.ScreenUpdating = True
+    
 End Sub
+
 Sub Clear_Ready_Reports()
+    
     Dim lastRow As Integer
     Dim Rng As Range
     
@@ -7788,53 +7863,55 @@ Sub Clear_Ready_Reports()
     End If
     Set Rng = btWs.Range(btC(upperRow, leftCol), btC(lastRow, rightCol))
     Rng.Clear
+    
 End Sub
 
 ' MODULE: Inits
 Option Explicit
 
-    Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
-    Const settingsSheetName As String = "hSettings"
-    Const backSheetName As String = "Back-test"
+Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
+Const settingsSheetName As String = "hSettings"
+Const backSheetName As String = "Back-test"
 
-    Const maxHtmls As Integer = 2000
-    Const reportType As String = "GS_Pro_Single_Core"
-    Const depoIniOK As Double = 10000
+Const maxHtmls As Integer = 2000
+Const reportType As String = "GS_Pro_Single_Core"
+Const depoIniOK As Double = 10000
 
-    Const stratFdRow As Integer = 2 ' strategy folder row
-    Const stratFdCol As Integer = 1 ' strategy folder column
-    Const stratNmRow As Integer = 7 ' strategy name row
-    Const stratNmCol As Integer = 1 ' strategy name column
+Const stratFdRow As Integer = 2 ' strategy folder row
+Const stratFdCol As Integer = 1 ' strategy folder column
+Const stratNmRow As Integer = 7 ' strategy name row
+Const stratNmCol As Integer = 1 ' strategy name column
 
-    Const instrFRow As Integer = 2
-    Const instrLRow As Integer = 31
-    Const instrCol As Integer = 2
-    Const instrGrpFRow As Integer = 2
-    Const instrGrpLRow As Integer = 31
-    Const instrGrpFCol As Integer = 4
-    Const instrGrpLCol As Integer = 5
-    
-    Const dateFromRow As Integer = 10
-    Const dateFromCol As Integer = 2
-    Const dateToRow As Integer = 11
-    Const dateToCol As Integer = 2
-    Const htmlCountRow As Integer = 12
-    Const htmlCountCol As Integer = 2
-    
-    Const readyRepFRow As Integer = 10
-    Const readyRepFCol As Integer = 3
-    Const readyRepLCol As Integer = 10
-    Const readyDateCol As Integer = 4
-    Const readyCountCol As Integer = 5
-    Const readyDepoIniCol As Integer = 6
-    
-    '======
-    Const readyRobotNameCol As Integer = 7
-    '======
-    
-    Const readyTimeFromCol As Integer = 8
-    Const readyTimeToCol As Integer = 9
-    Const readyLinkCol As Integer = 10
+Const instrFRow As Integer = 2
+Const instrLRow As Integer = 31
+Const instrCol As Integer = 2
+Const instrGrpFRow As Integer = 2
+Const instrGrpLRow As Integer = 31
+Const instrGrpFCol As Integer = 4
+Const instrGrpLCol As Integer = 5
+
+Const dateFromRow As Integer = 10
+Const dateFromCol As Integer = 2
+Const dateToRow As Integer = 11
+Const dateToCol As Integer = 2
+Const htmlCountRow As Integer = 12
+Const htmlCountCol As Integer = 2
+
+Const readyRepFRow As Integer = 10
+Const readyRepFCol As Integer = 3
+Const readyRepLCol As Integer = 10
+Const readyDateCol As Integer = 4
+Const readyCountCol As Integer = 5
+Const readyDepoIniCol As Integer = 6
+
+'======
+Const readyRobotNameCol As Integer = 7
+'======
+
+Const readyTimeFromCol As Integer = 8
+Const readyTimeToCol As Integer = 9
+Const readyLinkCol As Integer = 10
+
 Sub Init_Bt_Settings_Sheets(ByRef btWs As Worksheet, _
             ByRef btC As Range, _
             ByRef activeInstrumentsList As Variant, _
@@ -7859,6 +7936,7 @@ Sub Init_Bt_Settings_Sheets(ByRef btWs As Worksheet, _
             ByRef rdRepTimeFromCol As Integer, _
             ByRef rdRepTimeToCol As Integer, _
             ByRef rdRepLinkCol As Integer)
+    
     Dim setWs As Worksheet
     Dim setC As Range
     Dim instrumentsList As Range
@@ -7898,12 +7976,15 @@ Sub Init_Bt_Settings_Sheets(ByRef btWs As Worksheet, _
     rdRepTimeFromCol = readyTimeFromCol
     rdRepTimeToCol = readyTimeToCol
     rdRepLinkCol = readyLinkCol
+    
 End Sub
+
 Function GetInstrumentLotGroups(ByRef Rng As Range, _
             ByRef firstRow As Integer, _
             ByRef lastRow As Integer, _
             ByRef firstCol As Integer, _
             ByRef lastCol As Integer) As Variant
+    
     Dim a() As Variant
     Dim i As Integer, j As Integer
     Dim ubndRows As Integer
@@ -7915,27 +7996,37 @@ Function GetInstrumentLotGroups(ByRef Rng As Range, _
         a(j, 2) = Rng(i, lastCol)
     Next i
     GetInstrumentLotGroups = a
+    
 End Function
+
 Function ConvertDateToString(ByVal someDate As Date) As String
+    
     Dim sY As String, sM As String, sD As String
+    
     sY = Right(Year(someDate), 2)
     sM = Format(Month(someDate), "00")
     sD = Format(Day(someDate), "00")
     ConvertDateToString = sY & sM & sD
+    
 End Function
+
 Function ListActiveInstruments(ByVal instrumentsList As Range) As Variant
+    
     Dim arr() As Variant
     Dim cell As Range
     Dim rngSum As Integer, i As Integer
 ' Args: Instruments True/False list
 ' Returns: Variant array of active instruments
 ' if 0 active instruments, redims arr(0 To 0)
+
     rngSum = 0
+    
     For Each cell In instrumentsList
         If cell Then
             rngSum = rngSum + 1
         End If
     Next cell
+    
     If rngSum > 0 Then
         ReDim arr(1 To rngSum)
         i = 1
@@ -7948,42 +8039,56 @@ Function ListActiveInstruments(ByVal instrumentsList As Range) As Variant
     Else
         ReDim arr(0 To 0)
     End If
+    
     ListActiveInstruments = arr
+    
 End Function
+
 Sub Init_Pick_Strategy_Folder(ByRef stratFdRng As Range, _
             ByRef stratNmRng As Range)
+    
     Set stratFdRng = Workbooks(addInFName).Sheets(backSheetName).Cells(stratFdRow, stratFdCol)
     Set stratNmRng = Workbooks(addInFName).Sheets(backSheetName).Cells(stratNmRow, stratNmCol)
+
 End Sub
+
 Sub Init_DeSelect_Instruments(ByRef setWs As Worksheet, _
             ByRef btWs As Worksheet, _
             ByRef setC As Range, _
             ByRef btC As Range, _
             ByRef selectAll As Range, _
             ByRef instrumentsList As Range)
+    
     Set setWs = Workbooks(addInFName).Sheets(settingsSheetName)
     Set setC = setWs.Cells
     Set btWs = Workbooks(addInFName).Sheets(backSheetName)
     Set btC = btWs.Cells
     Set selectAll = setC(1, 2)
     Set instrumentsList = setWs.Range(setC(2, 2), setC(31, 2))
+    
 End Sub
+
 Sub Init_Clear_Ready_Reports(ByRef btWs As Worksheet, _
             ByRef btC As Range, _
             ByRef upperRow As Integer, _
             ByRef leftCol As Integer, _
             ByRef rightCol As Integer)
+    
     Set btWs = Workbooks(addInFName).Sheets(backSheetName)
     Set btC = btWs.Cells
     upperRow = readyRepFRow
     leftCol = readyRepFCol
     rightCol = readyRepLCol
+    
 End Sub
+
 Sub Separator_Auto_Switcher(ByRef currentDecimal As String, _
             ByRef undoSep As Boolean, _
             ByRef undoUseSyst As Boolean)
+    
     undoSep = False
     undoUseSyst = False
+    
     If Application.UseSystemSeparators Then     ' SYS - ON
         Application.UseSystemSeparators = False
         If Not Application.International(xlDecimalSeparator) = "." Then
@@ -8000,25 +8105,34 @@ Sub Separator_Auto_Switcher(ByRef currentDecimal As String, _
             undoUseSyst = False                ' undo condition 2
         End If
     End If
+    
 End Sub
+
 Sub Separator_Auto_Switcher_Undo(ByRef currentDecimal As String, _
             ByRef undoSep As Boolean, _
             ByRef undoUseSyst As Boolean)
+    
     If undoSep Then
         Application.DecimalSeparator = currentDecimal
         If undoUseSyst Then
             Application.UseSystemSeparators = True
         End If
     End If
+    
 End Sub
+
 Sub InitPositionTags(ByRef positionTags As Dictionary)
+    
     positionTags.Add "_tag", Nothing
     positionTags.Add "_algo_comment", Nothing
+    
 End Sub
 
 ' MODULE: SharpeRatio
 Option Explicit
-    Dim new_col As Integer
+    
+Dim new_col As Integer
+    
 Sub Scatter_Sharpe()
     Const plotWidth As Integer = 10
     Const plotHeight As Integer = 20
@@ -8385,13 +8499,10 @@ Option Explicit
 
 ' Run GitSave() to export code and modules.
 '
-' Source:
-' https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
-' The code below is slightly modified to include a list of
-' modules you want to ignore.
+' Source: https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
+' Source is slightly modified to include a list of modules to ignore.
 
     Dim ignoreList As Variant
-    
     Dim parentFolder As String
     
     Const dirNameCode As String = "\Code"
@@ -8437,25 +8548,27 @@ Sub PrintAllCode()
     Dim item  As Variant
     Dim textToPrint As String
     Dim lineToPrint As String
+    Dim pathToExport As String
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            
             lineToPrint = vbNewLine & "' MODULE: " & item.CodeModule.Name & vbNewLine
             If item.CodeModule.CountOfLines > 0 Then
                 lineToPrint = lineToPrint & item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
             Else
                 lineToPrint = lineToPrint & "' empty" & vbNewLine
             End If
-'            Debug.Print lineToPrint
             textToPrint = textToPrint & vbCrLf & lineToPrint
-            
         End If
     Next item
     
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameCode
-    If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
-    SaveTextToFile textToPrint, pathToExport & "\all_code.vb"
+    pathToExport = parentFolder & dirNameCode
+    
+    If Dir(pathToExport) <> "" Then
+        Kill pathToExport & "*.*"
+    End If
+    
+    Call SaveTextToFile(textToPrint, pathToExport & "\all_code.vb")
     
 End Sub
 
@@ -8470,19 +8583,17 @@ Sub PrintModulesCode()
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            
             If item.CodeModule.CountOfLines > 0 Then
                 lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
-            
             Else
                 lineToPrint = "' empty"
             End If
             
+            If Dir(pathToExport) <> "" Then
+                Kill pathToExport & "*.*"
+            End If
             
-            
-            If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
             Call SaveTextToFile(lineToPrint, pathToExport & "\" & item.CodeModule.Name & "_code.vb")
-        
         End If
     Next item
 
@@ -8493,41 +8604,42 @@ Sub PrintAllContainers()
     Dim item  As Variant
     Dim textToPrint As String
     Dim lineToPrint As String
+    Dim pathToExport As String
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         lineToPrint = item.Name
         If Not IsStringInList(lineToPrint, ignoreList) Then
-'            Debug.Print lineToPrint
             textToPrint = textToPrint & vbCrLf & lineToPrint
         End If
     Next item
     
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameCode
-    SaveTextToFile textToPrint, pathToExport & "\all_modules.vb"
+    pathToExport = parentFolder & dirNameCode
+    
+    Call SaveTextToFile(textToPrint, pathToExport & "\all_modules.vb")
     
 End Sub
 
 Sub ExportModules()
        
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameModules
+    Dim pathToExport As String
+    Dim wkb As Workbook
+    Dim filePath As String
+    Dim component As VBIDE.VBComponent
+    Dim tryExport As Boolean
+    
+    pathToExport = parentFolder & dirNameModules
     
     If Dir(pathToExport) <> "" Then
         Kill pathToExport & "*.*"
     End If
-     
-    Dim wkb As Workbook: Set wkb = Excel.Workbooks(ThisWorkbook.Name)
     
-    Dim unitsCount As Long
-    Dim filePath As String
-    Dim component As VBIDE.VBComponent
-    Dim tryExport As Boolean
+    Set wkb = Excel.Workbooks(ThisWorkbook.Name)
 
     For Each component In wkb.VBProject.VBComponents
         tryExport = True
         filePath = component.Name
         
         If Not IsStringInList(filePath, ignoreList) Then
-        
             Select Case component.Type
                 Case vbext_ct_ClassModule
                     filePath = filePath & ".cls"
@@ -8540,40 +8652,28 @@ Sub ExportModules()
             End Select
         
             If tryExport Then
-'                Debug.Print unitsCount & " exporting " & filePath
                 component.Export pathToExport & "\" & filePath
             End If
-            
         End If
-        
     Next
-
-'    Debug.Print "Exported at " & pathToExport
     
 End Sub
 
-Sub SaveTextToFile(dataToPrint As String, pathToExport As String)
+Sub SaveTextToFile(ByRef dataToPrint As String, ByRef pathToExport As String)
     
     Dim fileSystem As Object
     Dim textObject As Object
-    Dim fileName As String
     Dim newFile  As String
-    Dim shellPath  As String
     
-    If Dir(ThisWorkbook.path & newFile, vbDirectory) = vbNullString Then MkDir ThisWorkbook.path & newFile
+    If Dir(ThisWorkbook.path & newFile, vbDirectory) = vbNullString Then
+        MkDir ThisWorkbook.path & newFile
+    End If
     
     Set fileSystem = CreateObject("Scripting.FileSystemObject")
     Set textObject = fileSystem.CreateTextFile(pathToExport, True)
     
     textObject.WriteLine dataToPrint
     textObject.Close
-        
-    On Error GoTo 0
-    Exit Sub
-
-CreateLogFile_Error:
-
-    MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure CreateLogFile of Sub mod_TDD_Export"
 
 End Sub
 
