@@ -58,14 +58,14 @@ Private Sub GSPRM_Merge_Sharpe()
     
     Set fd = Application.FileDialog(msoFileDialogFilePicker)
     With fd
-        .Title = "GetStats: Выбрать отчеты GetStats, объединение по Sharpe Ratio"
+        .Title = "Select reports to merge by Sharpe Ratio"
         .AllowMultiSelect = True
         .Filters.Clear
-        .Filters.Add "Отчеты надстройки GetStats", "*.xlsx"
-        .ButtonName = "Вперед"
+        .Filters.Add "Reports by GetStats", "*.xlsx"
+'        .ButtonName = "OK"
     End With
     If fd.Show = 0 Then
-        MsgBox "Файлы не выбраны!"
+        MsgBox "No files picked!"
         Exit Sub
     End If
     wbksSelected = fd.SelectedItems.count
@@ -74,26 +74,26 @@ Private Sub GSPRM_Merge_Sharpe()
     
     Application.ScreenUpdating = False
     For i = 1 To wbksSelected
-        Application.StatusBar = "Добавляю лист " & i & " (" & wbksSelected & ")."
+        Application.StatusBar = "Adding sheet " & i & " (" & wbksSelected & ")."
         Set wbB = Workbooks.Open(fd.SelectedItems(i))
         ' Add Parameters to summary sheet
-        Call Params_To_Summary_Sharpe(wbB)
+        If wbB.Sheets("results").Cells(1, 1) = vbEmpty Then
+            Call Params_To_Summary_Sharpe(wbB)
+        End If
         ' Calculate Sharpe ratios
         Call SharpeBeforeMerge(wbB)
-        
-        
         tstr = wbB.Name
         pos = InStr(1, tstr, "-", 1)
         tstr = Right(Left(tstr, pos + 6), 6)
-        If wbB.Sheets(2).Name = "результаты" Then
-            wbB.Sheets("результаты").Copy after:=wbA.Sheets(wbA.Sheets.count)
+        If wbB.Sheets(2).Name = "results" Then
+            wbB.Sheets("results").Copy after:=wbA.Sheets(wbA.Sheets.count)
             Set s = wbA.Sheets(wbA.Sheets.count)
             s.Name = i & "_" & tstr
             lr = s.Cells(1, 1).End(xlDown).Row
             Set rg = s.Range(s.Cells(2, 1), s.Cells(lr, 1))
             rg.Hyperlinks.Delete
             s.Rows(1).EntireRow.Insert
-            s.Cells(1, 1) = "Открыть файл: " & wbB.Name
+            s.Cells(1, 1) = "Open file: " & wbB.Name
             s.Hyperlinks.Add anchor:=s.Cells(1, 1), Address:=wbB.path & "\" & wbB.Name
         End If
         wbB.Close savechanges:=False
@@ -105,7 +105,7 @@ Private Sub GSPRM_Merge_Sharpe()
     Application.StatusBar = False
     Call GSPR_Summary_of_summaries_Sharpe
     Application.ScreenUpdating = True
-    MsgBox "Готово. Сохраните файл """ & wbA.Name & """ по вашему усмотрению.", , "GetStats Pro"
+    MsgBox "Done. Please, save """ & wbA.Name & """ as needed.", , "GetStats Pro"
 End Sub
 Sub Params_To_Summary_Sharpe(ByRef wb As Workbook)
     Const parFRow As Integer = 23
@@ -123,7 +123,7 @@ Sub Params_To_Summary_Sharpe(ByRef wb As Workbook)
     
     parLRow = clz(parFRow, 1).End(xlDown).Row
     j = 2
-    cRes(1, 1) = "№_ссылка"
+    cRes(1, 1) = "#_link"
     For i = parFRow To parLRow
         cRes(1, j) = clz(i, 1)
         j = j + 1
@@ -144,10 +144,10 @@ Sub Params_To_Summary_Sharpe(ByRef wb As Workbook)
         wsRes.Hyperlinks.Add anchor:=cRes(j, 1), Address:="", SubAddress:="'" & repNum & "'!R22C2"
         ' print "back to summary" link
         With c(22, 2)
-            .Value = "результаты"
+            .Value = "results"
             .HorizontalAlignment = xlRight
         End With
-        ws.Hyperlinks.Add anchor:=c(22, 2), Address:="", SubAddress:="'результаты'!A" & j
+        ws.Hyperlinks.Add anchor:=c(22, 2), Address:="", SubAddress:="'results'!A" & j
     Next i
     wsRes.Activate
     cRes(2, 2).Activate
@@ -1203,9 +1203,7 @@ Private Sub GSPR_Summary_of_summaries_Sharpe()
     Next i
 End Sub
 Private Sub GSPR_Change_Folder_Link()
-'
-' RIBBON > BUTTON "Ссылки"
-'
+
     Const err_msg As String = "Не похоже на книгу с отчетами GetStats."
     Dim ws As Worksheet
     Dim sc As Range

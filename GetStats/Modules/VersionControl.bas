@@ -22,6 +22,8 @@ Sub GitSave()
     Call PrintModulesCode
     Call PrintAllContainers
     
+    MsgBox "Code exported"
+    
 End Sub
 
 Sub DeleteAndMake()
