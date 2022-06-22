@@ -1,26 +1,33 @@
 Attribute VB_Name = "Mixer"
 Option Explicit
 Option Base 1
-    Const close_date_col As Integer = 8
-    Const depo_ini As Integer = 10000
+
+Const close_date_col As Integer = 8
+Const depo_ini As Integer = 10000
+
 Private Sub GSPR_show_sheet_index()
+    
     Const msg As String = "Sheet number "
     
     On Error Resume Next
     MsgBox msg & ActiveSheet.Index & "."
+
 End Sub
+
 Private Sub GSPR_Go_to_sheet_index()
+    
     Dim sh_idx As Integer
 
     On Error Resume Next
     sh_idx = InputBox("Enter sheet number:")
     Sheets(sh_idx).Activate
+
 End Sub
+
 Private Sub GSPR_robo_mixer()
-'
-' RIBBON > BUTTON "ָּÊׁ"
-'
+    
     Const mix_sheet_name As String = "mix"
+    
     Dim i As Integer, j As Integer
     Dim ws As Worksheet, mix_ws As Worksheet
     Dim wc As Range, mix_c As Range, Rng As Range
@@ -311,18 +318,27 @@ Private Sub GSPR_trades_to_days()
                     min_val, max_val)
     wc(first_row, dt_pr_fc).Select
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub Merged_Remove_Charts()
+    
     Dim img As Shape
     
     For Each img In ActiveSheet.Shapes
         img.Delete
     Next
+
 End Sub
-Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
-                                    rngX As Range, rngY As Range, _
-                                    ChTitle As String, _
-                                    MinVal As Long, maxVal As Currency)
+
+Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, _
+        ulc As Integer, _
+        rngX As Range, _
+        rngY As Range, _
+        ChTitle As String, _
+        MinVal As Long, _
+        maxVal As Currency)
+    
     Dim chW As Integer, chH As Integer          ' chart width, chart height
     Dim chFontSize As Integer                   ' chart title font size
     
@@ -364,8 +380,11 @@ Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
 '        .Calculation = xlCalculationAutomatic
 '        .ScreenUpdating = True
 '    End With
+
 End Sub
+
 Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
+    
     Dim wb_from As Workbook, wb_to As Workbook
     Dim sh_copy As Worksheet
     Dim new_name As String, ins_abbrev As String
@@ -382,9 +401,13 @@ Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
 '    wb_from.Activate
 '    wb_from.Close savechanges:=False
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Function gspr_get_instrument_abbrev(ByVal fed_ins As String) As String
+    
     Dim nomin As String, denom As String
+    
     nomin = Left(fed_ins, 3)
     denom = Right(fed_ins, 3)
     If nomin = "CHF" Then
@@ -398,8 +421,11 @@ Private Function gspr_get_instrument_abbrev(ByVal fed_ins As String) As String
         denom = LCase(Left(denom, 1))
     End If
     gspr_get_instrument_abbrev = nomin & denom
+
 End Function
+
 Sub SharpesToSeparateSheet()
+    
     Dim i As Integer
     Dim ws As Worksheet
     Dim c As Range
@@ -413,4 +439,5 @@ Sub SharpesToSeparateSheet()
         c(i + 1, 1) = i
         c(i + 1, 2) = Sheets(i).Cells(21, 2)
     Next i
+
 End Sub

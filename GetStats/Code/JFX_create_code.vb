@@ -1,29 +1,28 @@
 Option Explicit
-    Const myFraction As Double = 0.005   ' 0.0067 = 0.67%
-    Const parZRow As Integer = 22
-    Const parFRow As Integer = 23
 
-    Dim parLRow As Integer
-    Dim ws As Worksheet
-    Dim c As Range
-    
-    Dim defaultInstrument As String
-    Dim defaultPeriod As String
-    Dim algoTag As String
-    Dim auxIns As String
-    
-    Dim strategyName As String, insAbbrev As String
-    Dim edHeadRow As Integer
-    Dim edSkipFRow As Integer
-    Dim edSkipLRow As Integer
-    Dim edVarsFRow As Integer
-    Dim edVarsLRow As Integer
-    Dim params() As Variant
+Const myFraction As Double = 0.005   ' 0.0067 = 0.67%
+Const parZRow As Integer = 22
+Const parFRow As Integer = 23
+
+Dim parLRow As Integer
+Dim ws As Worksheet
+Dim c As Range
+
+Dim defaultInstrument As String
+Dim defaultPeriod As String
+Dim algoTag As String
+Dim auxIns As String
+
+Dim strategyName As String, insAbbrev As String
+Dim edHeadRow As Integer
+Dim edSkipFRow As Integer
+Dim edSkipLRow As Integer
+Dim edVarsFRow As Integer
+Dim edVarsLRow As Integer
+Dim params() As Variant
+
 Private Sub Create_JFX_file_Main()
-'
-' RIBBON > BUTTON "JFX"
-'
-' USER GUIDE: COPY FROM Public class to last row with parameters
+    
     Dim i As Integer, j As Integer
     Dim replacedHeading As String
     Dim Rng As Range, cell As Range
@@ -61,8 +60,11 @@ Private Sub Create_JFX_file_Main()
     Next cell
     ws.Range(c(edHeadRow, 2), c(edVarsLRow, 2)).Select
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Function Replaced_var(ByVal origCell As String) As String
+    
     Dim varName As String
     Dim varValue As String
     Dim modPostfix As String
@@ -102,8 +104,11 @@ Private Function Replaced_var(ByVal origCell As String) As String
         End If
         Replaced_var = Left(origCell, j) & modPostfix
     End If
+
 End Function
+
 Private Function JConverted_Period(ByVal p As String) As String
+    
     Dim jcp As String
     
     Select Case p
@@ -115,8 +120,12 @@ Private Function JConverted_Period(ByVal p As String) As String
             jcp = "*****ATTENTION*****"
     End Select
     JConverted_Period = jcp
+
 End Function
-Private Function Index_in_array(ByVal objArr As Variant, ByVal objStr As String) As Integer
+
+Private Function Index_in_array(ByVal objArr As Variant, _
+        ByVal objStr As String) As Integer
+    
     Dim pos As Integer
     Dim i As Integer
     Dim foundStr As Boolean
@@ -134,14 +143,20 @@ Private Function Index_in_array(ByVal objArr As Variant, ByVal objStr As String)
     Else
         Index_in_array = 0
     End If
+
 End Function
+
 Private Function Editor_new_heading(strOrig, insertTag) As String
+    
     Dim j As Integer
 
     j = InStr(14, strOrig, " ", vbTextCompare)
     Editor_new_heading = Left(strOrig, 13) & insertTag & Right(strOrig, Len(strOrig) - j + 1)
+
 End Function
+
 Private Function Strategy_name(ByVal s As String) As String
+    
     Dim pfx As String
     
     pfx = Right(s, 4)
@@ -158,8 +173,11 @@ Private Function Strategy_name(ByVal s As String) As String
     Else
         Strategy_name = s
     End If
+
 End Function
+
 Private Function Instrument_abbreviation(ByVal s As String) As String
+    
     Dim numer As String
     Dim denom As String
     Dim char1 As String, char2 As String
@@ -185,13 +203,17 @@ Private Function Instrument_abbreviation(ByVal s As String) As String
             End If
     End Select
     Instrument_abbreviation = "_" & char1 & char2
+
 End Function
+
 Sub Settings_To_Launch_Log()
+
     Dim i As Integer, first_row As Integer, last_row As Integer
     Dim this_col As Integer
     Dim c As Range, Rng As Range, cell As Range
     Dim s As String, stg As String, algo_tag As String
     Dim k As Integer
+    
     Application.ScreenUpdating = False
     Set c = ActiveSheet.Cells
     Set Rng = Selection
@@ -224,4 +246,5 @@ Sub Settings_To_Launch_Log()
     c(first_row, 2) = algo_tag
     c(first_row + 1, this_col).Select
     Application.ScreenUpdating = True
+
 End Sub

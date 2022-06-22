@@ -22,26 +22,33 @@ End Sub
 ' MODULE: Mixer
 Option Explicit
 Option Base 1
-    Const close_date_col As Integer = 8
-    Const depo_ini As Integer = 10000
+
+Const close_date_col As Integer = 8
+Const depo_ini As Integer = 10000
+
 Private Sub GSPR_show_sheet_index()
+    
     Const msg As String = "Sheet number "
     
     On Error Resume Next
     MsgBox msg & ActiveSheet.Index & "."
+
 End Sub
+
 Private Sub GSPR_Go_to_sheet_index()
+    
     Dim sh_idx As Integer
 
     On Error Resume Next
     sh_idx = InputBox("Enter sheet number:")
     Sheets(sh_idx).Activate
+
 End Sub
+
 Private Sub GSPR_robo_mixer()
-'
-' RIBBON > BUTTON "МИКС"
-'
+    
     Const mix_sheet_name As String = "mix"
+    
     Dim i As Integer, j As Integer
     Dim ws As Worksheet, mix_ws As Worksheet
     Dim wc As Range, mix_c As Range, Rng As Range
@@ -332,18 +339,27 @@ Private Sub GSPR_trades_to_days()
                     min_val, max_val)
     wc(first_row, dt_pr_fc).Select
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub Merged_Remove_Charts()
+    
     Dim img As Shape
     
     For Each img In ActiveSheet.Shapes
         img.Delete
     Next
+
 End Sub
-Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
-                                    rngX As Range, rngY As Range, _
-                                    ChTitle As String, _
-                                    MinVal As Long, maxVal As Currency)
+
+Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, _
+        ulc As Integer, _
+        rngX As Range, _
+        rngY As Range, _
+        ChTitle As String, _
+        MinVal As Long, _
+        maxVal As Currency)
+    
     Dim chW As Integer, chH As Integer          ' chart width, chart height
     Dim chFontSize As Integer                   ' chart title font size
     
@@ -385,8 +401,11 @@ Private Sub Merged_Chart_Classic_wMinMax(ulr As Integer, ulc As Integer, _
 '        .Calculation = xlCalculationAutomatic
 '        .ScreenUpdating = True
 '    End With
+
 End Sub
+
 Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
+    
     Dim wb_from As Workbook, wb_to As Workbook
     Dim sh_copy As Worksheet
     Dim new_name As String, ins_abbrev As String
@@ -403,9 +422,13 @@ Private Sub GSPR_Mixer_Copy_Sheet_To_Book()
 '    wb_from.Activate
 '    wb_from.Close savechanges:=False
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Function gspr_get_instrument_abbrev(ByVal fed_ins As String) As String
+    
     Dim nomin As String, denom As String
+    
     nomin = Left(fed_ins, 3)
     denom = Right(fed_ins, 3)
     If nomin = "CHF" Then
@@ -419,8 +442,11 @@ Private Function gspr_get_instrument_abbrev(ByVal fed_ins As String) As String
         denom = LCase(Left(denom, 1))
     End If
     gspr_get_instrument_abbrev = nomin & denom
+
 End Function
+
 Sub SharpesToSeparateSheet()
+    
     Dim i As Integer
     Dim ws As Worksheet
     Dim c As Range
@@ -434,6 +460,7 @@ Sub SharpesToSeparateSheet()
         c(i + 1, 1) = i
         c(i + 1, 2) = Sheets(i).Cells(21, 2)
     Next i
+
 End Sub
 
 ' MODULE: Rep_Extra
@@ -442,7 +469,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.12"
+    Const macro_name As String = "GetStats Pro v1.13"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -623,16 +650,16 @@ Private Sub GSPR_Open_Report_f()
 ' 1. empty cell
     If rep_adr = "" Then
         open_fail = True
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         Exit Sub
 ' 2. wrong address
     ElseIf Left(rep_adr, 8) <> ctrl_str Then
         open_fail = True
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         Exit Sub
     ElseIf Right(rep_adr, 5) <> ".html" Then
         open_fail = True
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         Exit Sub
     End If
 ' encoding %20
@@ -643,7 +670,7 @@ Private Sub GSPR_Open_Report_f()
     rep_adr = Right(rep_adr, Len(rep_adr) - 8)
 ' 3. check if file exists
     If Dir(rep_adr) = "" Then
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         open_fail = True
         Exit Sub
     End If
@@ -2686,9 +2713,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.12.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.13.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.12"
+    Const macro_ver As String = "GetStats Pro v1.13"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -3088,7 +3115,7 @@ Private Sub GSPRM_Open_Reports()
     End With
     If fd.Show = 0 Then
         open_fail = True
-        MsgBox "Файлы не выбраны!"
+        MsgBox "No files picked!"
         Exit Sub
     End If
     ov(s_ov_htmls, 2) = fd.SelectedItems.count
@@ -5534,31 +5561,30 @@ End Sub
 
 ' MODULE: JFX_create
 Option Explicit
-    Const myFraction As Double = 0.005   ' 0.0067 = 0.67%
-    Const parZRow As Integer = 22
-    Const parFRow As Integer = 23
 
-    Dim parLRow As Integer
-    Dim ws As Worksheet
-    Dim c As Range
-    
-    Dim defaultInstrument As String
-    Dim defaultPeriod As String
-    Dim algoTag As String
-    Dim auxIns As String
-    
-    Dim strategyName As String, insAbbrev As String
-    Dim edHeadRow As Integer
-    Dim edSkipFRow As Integer
-    Dim edSkipLRow As Integer
-    Dim edVarsFRow As Integer
-    Dim edVarsLRow As Integer
-    Dim params() As Variant
+Const myFraction As Double = 0.005   ' 0.0067 = 0.67%
+Const parZRow As Integer = 22
+Const parFRow As Integer = 23
+
+Dim parLRow As Integer
+Dim ws As Worksheet
+Dim c As Range
+
+Dim defaultInstrument As String
+Dim defaultPeriod As String
+Dim algoTag As String
+Dim auxIns As String
+
+Dim strategyName As String, insAbbrev As String
+Dim edHeadRow As Integer
+Dim edSkipFRow As Integer
+Dim edSkipLRow As Integer
+Dim edVarsFRow As Integer
+Dim edVarsLRow As Integer
+Dim params() As Variant
+
 Private Sub Create_JFX_file_Main()
-'
-' RIBBON > BUTTON "JFX"
-'
-' USER GUIDE: COPY FROM Public class to last row with parameters
+    
     Dim i As Integer, j As Integer
     Dim replacedHeading As String
     Dim Rng As Range, cell As Range
@@ -5596,8 +5622,11 @@ Private Sub Create_JFX_file_Main()
     Next cell
     ws.Range(c(edHeadRow, 2), c(edVarsLRow, 2)).Select
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Function Replaced_var(ByVal origCell As String) As String
+    
     Dim varName As String
     Dim varValue As String
     Dim modPostfix As String
@@ -5637,8 +5666,11 @@ Private Function Replaced_var(ByVal origCell As String) As String
         End If
         Replaced_var = Left(origCell, j) & modPostfix
     End If
+
 End Function
+
 Private Function JConverted_Period(ByVal p As String) As String
+    
     Dim jcp As String
     
     Select Case p
@@ -5650,8 +5682,12 @@ Private Function JConverted_Period(ByVal p As String) As String
             jcp = "*****ATTENTION*****"
     End Select
     JConverted_Period = jcp
+
 End Function
-Private Function Index_in_array(ByVal objArr As Variant, ByVal objStr As String) As Integer
+
+Private Function Index_in_array(ByVal objArr As Variant, _
+        ByVal objStr As String) As Integer
+    
     Dim pos As Integer
     Dim i As Integer
     Dim foundStr As Boolean
@@ -5669,14 +5705,20 @@ Private Function Index_in_array(ByVal objArr As Variant, ByVal objStr As String)
     Else
         Index_in_array = 0
     End If
+
 End Function
+
 Private Function Editor_new_heading(strOrig, insertTag) As String
+    
     Dim j As Integer
 
     j = InStr(14, strOrig, " ", vbTextCompare)
     Editor_new_heading = Left(strOrig, 13) & insertTag & Right(strOrig, Len(strOrig) - j + 1)
+
 End Function
+
 Private Function Strategy_name(ByVal s As String) As String
+    
     Dim pfx As String
     
     pfx = Right(s, 4)
@@ -5693,8 +5735,11 @@ Private Function Strategy_name(ByVal s As String) As String
     Else
         Strategy_name = s
     End If
+
 End Function
+
 Private Function Instrument_abbreviation(ByVal s As String) As String
+    
     Dim numer As String
     Dim denom As String
     Dim char1 As String, char2 As String
@@ -5720,13 +5765,17 @@ Private Function Instrument_abbreviation(ByVal s As String) As String
             End If
     End Select
     Instrument_abbreviation = "_" & char1 & char2
+
 End Function
+
 Sub Settings_To_Launch_Log()
+
     Dim i As Integer, first_row As Integer, last_row As Integer
     Dim this_col As Integer
     Dim c As Range, Rng As Range, cell As Range
     Dim s As String, stg As String, algo_tag As String
     Dim k As Integer
+    
     Application.ScreenUpdating = False
     Set c = ActiveSheet.Cells
     Set Rng = Selection
@@ -5759,30 +5808,29 @@ Sub Settings_To_Launch_Log()
     c(first_row, 2) = algo_tag
     c(first_row + 1, this_col).Select
     Application.ScreenUpdating = True
+
 End Sub
 
 ' MODULE: Join_intervals
 Option Explicit
-    Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
-    Const joinShName As String = "join"
-    Const targetFdRow As Integer = 2
-    Const sourceFdFRow As Integer = 5
-    
-    Dim positionTags As New Dictionary
-    
-    Dim wsJ As Worksheet    ' worksheet "Join"
-    Dim cJ As Range         ' cells "Join"
-    Dim targetDateFrom As String, targetDateTo As String
-    Dim targetDateFromDt As Date, targetDateToDt As Date
-    
-    Dim srcFdInfo() As Variant      ' source folders info
-    Dim matchFiles() As Variant     ' corresponding file lists
 
+Const addInFName As String = "GetStats_BackTest_v1.13.xlsm"
+Const joinShName As String = "join"
+Const targetFdRow As Integer = 2
+Const sourceFdFRow As Integer = 5
+
+Dim positionTags As New Dictionary
+
+Dim wsJ As Worksheet    ' worksheet "Join"
+Dim cJ As Range         ' cells "Join"
+Dim targetDateFrom As String, targetDateTo As String
+Dim targetDateFromDt As Date, targetDateToDt As Date
+
+Dim srcFdInfo() As Variant      ' source folders info
+Dim matchFiles() As Variant     ' corresponding file lists
 
 Private Sub Join_Intervals_Main()
-'
-' SHEET "join" > BUTTON "GO"
-'
+    
     Dim i As Integer
     
     Application.ScreenUpdating = False
@@ -5793,7 +5841,6 @@ Private Sub Join_Intervals_Main()
         MsgBox "Error. Target or source folders"
         Exit Sub
     End If
-'
     srcFdInfo = Source_Folders_Info
 ' sanity #2 to 4
     For i = 2 To 4
@@ -5806,8 +5853,11 @@ Private Sub Join_Intervals_Main()
     matchFiles = Matching_files
     Call Join_books
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub Join_books()
+    
     Dim i As Integer, j As Integer, k As Integer, m As Integer
     Dim lastRow As Integer, lastRMatch As Integer
     Dim lastRowFull As Integer
@@ -5908,8 +5958,11 @@ Private Sub Join_books()
         Next j
     Next i
     Application.StatusBar = False
+
 End Sub
+
 Private Sub Remove_tag_from_parameters(ByRef Rng As Range)
+    
     Dim c As Range
     
     For Each c In Rng
@@ -5918,9 +5971,12 @@ Private Sub Remove_tag_from_parameters(ByRef Rng As Range)
             Exit For
         End If
     Next c
+
 End Sub
+
 Private Sub Change_sheets_count(ByRef someWB As Workbook, ByVal shCount As Integer)
 ' function returns a new workbook with specified number of sheets
+    
     Const shNameOne As String = "summary"
     Const shNameTwo As String = "results"
     Dim i As Integer
@@ -5943,13 +5999,13 @@ Private Sub Change_sheets_count(ByRef someWB As Workbook, ByVal shCount As Integ
         someWB.Sheets(i).Name = i - 2
     Next i
     someWB.Sheets(3).Activate
+
 End Sub
+
 Private Sub Pick_target_folder()
-'
-' SHEET "join" > BUTTON "Выбрать целевую папку"
-'
 ' sub adds a folder path to cells(2, 1)
 ' in "Source folders" column (1)
+    
     Dim fd As FileDialog
     
     Application.ScreenUpdating = False
@@ -5965,13 +6021,13 @@ Private Sub Pick_target_folder()
     cJ(targetFdRow, 1) = fd.SelectedItems(1)
     wsJ.Columns(1).AutoFit
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub Add_source_folder()
-'
-' SHEET "join" > BUTTON "Добавить источник"
-'
 ' sub adds a folder path to next free row
 ' in "Source folders" column (1)
+    
     Dim fd As FileDialog
     Dim nextFreeRow As Integer
     
@@ -5989,12 +6045,12 @@ Private Sub Add_source_folder()
     cJ(nextFreeRow, 1) = fd.SelectedItems(1)
     wsJ.Columns(1).AutoFit
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub Clear_source_list()
-'
-' SHEET "join" > BUTTON "Очистить"
-'
 ' sub clears processing list (subfolders)
+    
     Dim Rng As Range
     
     Application.ScreenUpdating = False
@@ -6002,11 +6058,11 @@ Private Sub Clear_source_list()
     Set Rng = wsJ.Range(cJ(sourceFdFRow, 1), cJ(wsJ.Rows.count, 1))
     Rng.Clear
     Application.ScreenUpdating = True
+
 End Sub
+
 Private Sub Rename_source_files_no_postfix_dates()
-'
-' SHEET "join" > BUTTON "Переименовать (legacy)"
-'
+    
     Dim lastRow As Integer
     Dim i As Integer, j As Integer
     Dim Rng As Range, c As Range
@@ -6067,12 +6123,18 @@ Private Sub Rename_source_files_no_postfix_dates()
     Next c
     Application.ScreenUpdating = True
     MsgBox "Renamed " & renameCounter & " files"
+
 End Sub
+
 Private Sub Init_sheet_cells()
+    
     Set wsJ = Workbooks(addInFName).Sheets(joinShName)
     Set cJ = wsJ.Cells
+
 End Sub
+
 Private Function Parameters_Match(ByVal pMain As Variant, ByVal pCompare As Variant) As Boolean
+    
     Dim i As Integer
     
     For i = LBound(pMain) To UBound(pMain)
@@ -6082,8 +6144,11 @@ Private Function Parameters_Match(ByVal pMain As Variant, ByVal pCompare As Vari
         End If
     Next i
     Parameters_Match = True
+
 End Function
+
 Private Function Parameters_to_arr(ByVal Rng As Range, ByVal ubnd As Integer) As Variant
+    
     Dim arr() As Variant
     Dim i As Integer
     Dim c As Range
@@ -6095,8 +6160,11 @@ Private Function Parameters_to_arr(ByVal Rng As Range, ByVal ubnd As Integer) As
         arr(i) = c
     Next c
     Parameters_to_arr = arr
+
 End Function
+
 Private Function Target_WB_Name(ByVal motherWBName As String) As String
+    
     Dim j As Integer, vers As Integer
     Dim temp_s As String
     Dim coreName As String, finalName As String
@@ -6122,7 +6190,9 @@ Private Function Target_WB_Name(ByVal motherWBName As String) As String
         End If
     End If
     Target_WB_Name = finalName
+
 End Function
+
 Private Function Find_Extreme_Date(ByVal searchMax As Boolean, ByVal colID As Integer) As String
     Dim i As Integer
     Dim xVal As Long
@@ -6146,8 +6216,11 @@ Private Function Find_Extreme_Date(ByVal searchMax As Boolean, ByVal colID As In
         Next i
     End If
     Find_Extreme_Date = z
+
 End Function
+
 Private Function Date_String_To_Date(ByVal someDate As String) As Date
+    
     Dim dtYear As Integer
     Dim dtMonth As Integer
     Dim dtDay As Integer
@@ -6161,8 +6234,11 @@ Private Function Date_String_To_Date(ByVal someDate As String) As Date
     dtMonth = Left(Right(someDate, 4), 2)
     dtDay = Right(someDate, 2)
     Date_String_To_Date = CDate(dtDay & "." & dtMonth & "." & dtYear)
+
 End Function
+
 Private Function Matching_files() As Variant
+    
     Dim arr() As Variant
     Dim fName As String, stratIns As String, matchPath As String
     Dim i As Integer, j As Integer
@@ -6181,15 +6257,19 @@ Private Function Matching_files() As Variant
         stratIns = Left(fName, Len(srcFdInfo(1, 3)) + 7)
 'tmpS = "orig = " & arr(i, 1)
         For j = 2 To UBound(arr, 2)             ' columns = folders
-            matchPath = srcFdInfo(j, 1) & "\" & stratIns & "-" & srcFdInfo(j, 5) & "-" & srcFdInfo(j, 6) & "-" & srcFdInfo(j, 4) & ".xlsx"
+            matchPath = srcFdInfo(j, 1) & "\" & stratIns & "-" & srcFdInfo(j, 5) _
+                & "-" & srcFdInfo(j, 6) & "-" & srcFdInfo(j, 4) & ".xlsx"
             arr(i, j) = matchPath
 'tmpS = tmpS & " - " & matchPath
         Next j
 'Debug.Print tmpS
     Next i
     Matching_files = arr
+
 End Function
+
 Private Function Check_Column_Equal(ByVal arr As Variant, ByVal colID As Integer) As Boolean
+    
     Dim s1 As String, s2 As String
     Dim i As Integer
     
@@ -6202,8 +6282,11 @@ Private Function Check_Column_Equal(ByVal arr As Variant, ByVal colID As Integer
     Else
         Check_Column_Equal = False
     End If
+
 End Function
+
 Private Function Check_Target_Source() As Boolean
+    
     Dim sourceFdLRow As Integer
     
     sourceFdLRow = cJ(wsJ.Rows.count, 1).End(xlUp).Row
@@ -6215,7 +6298,9 @@ Private Function Check_Target_Source() As Boolean
     Else
         Check_Target_Source = False
     End If
+
 End Function
+
 Private Function Source_Folders_Info() As Variant
 ' creates a 2D array
 ' column 1: folder path
@@ -6224,6 +6309,7 @@ Private Function Source_Folders_Info() As Variant
 ' column 4: reports
 ' column 5: date from
 ' column 6: date to
+    
     Dim arr() As Variant
     Dim lastRow As Integer
     Dim j As Integer
@@ -6250,9 +6336,12 @@ Private Function Source_Folders_Info() As Variant
         arr(arrRow, 6) = Extract_element_from_string(randFileName, 4)
     Next j
     Source_Folders_Info = arr
+
 End Function
+
 Private Function Extract_element_from_string(ByVal someString As String, _
                                      ByVal elemID As Integer) As String
+    
     Dim outElem As String
     Dim cutName As String
     Dim i As Integer
@@ -6263,8 +6352,11 @@ Private Function Extract_element_from_string(ByVal someString As String, _
         cutName = Replace(cutName, outElem & "-", "", 1, 1, vbTextCompare)
     Next i
     Extract_element_from_string = outElem
+
 End Function
+
 Private Function Count_files(ByVal folderPath As String)
+    
     Dim fName As String
     Dim c As Integer
     
@@ -6274,10 +6366,13 @@ Private Function Count_files(ByVal folderPath As String)
         fName = Dir()
     Loop
     Count_files = c
+
 End Function
+
 Private Function List_Files(ByVal sPath As String) As Variant
 ' Function takes folder path
 ' returns files list in it as 1D array
+    
     Dim vaArray() As Variant
     Dim i As Integer
     Dim oFile As Object
@@ -6296,8 +6391,11 @@ Private Function List_Files(ByVal sPath As String) As Variant
         i = i + 1
     Next
     List_Files = vaArray
+
 End Function
+
 Sub Stats_Chart_from_Joined_Windows()
+    
     Dim ws As Worksheet
     Dim Rng As Range, clr_rng As Range
     Dim ubnd As Long
@@ -6325,13 +6423,17 @@ Sub Stats_Chart_from_Joined_Windows()
         Call WFA_Chart_Classic2(Rng, 1, 17)
     End If
     Application.ScreenUpdating = True
+
 End Sub
+
 Sub WFA_Chart_Classic2(sc As Range, _
                 ulr As Integer, _
                 ulc As Integer)
+    
     Const ch_wdth_cells As Integer = 9
     Const ch_hght_cells As Integer = 20
     Const my_rnd = 0.1
+    
     Dim last_date_row As Integer
     Dim rngX As Range, rngY As Range
     Dim ChTitle As String
@@ -6339,8 +6441,7 @@ Sub WFA_Chart_Classic2(sc As Range, _
     Dim chFontSize As Integer                   ' chart title font size
     Dim rng_to_cover As Range
     Dim chObj_idx As Integer
-    
-   
+       
     chObj_idx = ActiveSheet.ChartObjects.count + 1
     ChTitle = "Equity curve, " & sc(1, 2)
 '    If Left(sc(1, first_col), 2) = "IS" And logScale Then
@@ -6380,10 +6481,13 @@ Sub WFA_Chart_Classic2(sc As Range, _
     End With
 '    sc(1, first_col + 1) = chObj_idx
     sc(1, 15).Select
+
 End Sub
+
 Function Get_Calendar_Days_Equity2(ByVal tset As Variant, _
                                    ByVal wc As Range) As Variant
 ' INVERTED: columns, rows
+    
     Dim i As Integer, j As Integer
     Dim arr() As Variant
     Dim date_0 As Date
@@ -6414,11 +6518,14 @@ Function Get_Calendar_Days_Equity2(ByVal tset As Variant, _
         End If
     Next i
     Get_Calendar_Days_Equity2 = arr
+
 End Function
+
 Function Load_Slot_to_RAM2(ByVal wc As Range, _
                            ByVal upBnd As Long) As Variant
 ' Function loads excel report from WFA-sheet to RAM
 ' Returns (1 To 3, 1 To trades_count) array - INVERTED
+    
     Dim arr() As Variant
     Dim i As Long, j As Long
     
@@ -6430,14 +6537,19 @@ Function Load_Slot_to_RAM2(ByVal wc As Range, _
         arr(3, i) = wc(j, 13)    ' return
     Next i
     Load_Slot_to_RAM2 = arr
+
 End Function
-Private Sub Print_2D_Array2(ByVal print_arr As Variant, ByVal is_inverted As Boolean, _
-                       ByVal row_offset As Integer, ByVal col_offset As Integer, _
-                       ByVal print_cells As Range)
+
+Private Sub Print_2D_Array2(ByVal print_arr As Variant, _
+        ByVal is_inverted As Boolean, _
+        ByVal row_offset As Integer, _
+        ByVal col_offset As Integer, _
+        ByVal print_cells As Range)
 ' Procedure prints any 2-dimensional array in a new Workbook, sheet 1.
 ' Arguments:
 '       1) 2-D array
 '       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
+    
     Dim r As Long
     Dim c As Integer
     Dim print_row As Long
@@ -6475,15 +6587,21 @@ Private Sub Print_2D_Array2(ByVal print_arr As Variant, ByVal is_inverted As Boo
             End If
         Next c
     Next r
+
 End Sub
+
 Private Sub GSPR_Remove_Chart2()
+    
     Dim img As Shape
     
     For Each img In ActiveSheet.Shapes
         img.Delete
     Next
+
 End Sub
+
 Private Sub Add_Key_Stats()
+    
     Dim ws As Worksheet
     Dim c As Range
     Dim i As Integer
@@ -6497,13 +6615,15 @@ Private Sub Add_Key_Stats()
             .Value = c(11, 2) / ((c(9, 2) - c(8, 2) + 1) / (365 / 12))
             .NumberFormat = "0.00"
         End With
-        
     Next i
-    
     Application.ScreenUpdating = True
+
 End Sub
+
 Sub Params_To_Summary()
+    
     Const parFRow As Integer = 23
+    
     Dim parLRow As Integer
     Dim i As Integer, j  As Integer, k As Integer, m As Integer
     Dim wsRes As Worksheet, ws As Worksheet
@@ -6550,8 +6670,11 @@ Sub Params_To_Summary()
     wsRes.Rows("1:1").AutoFilter
     ActiveWindow.FreezePanes = True
     Application.ScreenUpdating = True
+
 End Sub
+
 Sub CalcMore()
+    
     Dim ws As Worksheet
     Dim Rng As Range
     Dim ubnd As Long
@@ -6646,15 +6769,20 @@ Sub CalcMore()
     Call Calc_Sharpe_Ratio
     ActiveSheet.Range(Columns(1), Columns(2)).AutoFit
     Application.ScreenUpdating = True
+
 End Sub
+
 Function pmTradesPerMonth(ByRef date0 As Date, _
-            ByRef date9 As Date, _
-            ByRef tradeCount As Long) As Double
+        ByRef date9 As Date, _
+        ByRef tradeCount As Long) As Double
 
     pmTradesPerMonth = tradeCount / ((date9 - date0 + 1) / 30.4)
+
 End Function
+
 Function pmAR(ByRef daysSet As Variant, _
-            ByRef date0 As Date, date9 As Date) As Double
+        ByRef date0 As Date, _
+        ByRef date9 As Date) As Double
             
     Dim finalEqCurvePoint As Double
 
@@ -6761,7 +6889,6 @@ Dim rdRepTimeFromCol As Integer
 Dim rdRepTimeToCol As Integer
 Dim rdRepLinkCol As Integer
 
-
 Dim upperRow As Integer
 Dim leftCol As Integer
 Dim rightCol As Integer
@@ -6818,7 +6945,7 @@ Dim fm_date(1 To 2) As Integer, fm_0p00(1 To 10) As Integer, fm_0p00pc(1 To 3) A
 
 ' OBJECTS
 Dim mb As Workbook
-'    Dim addin_book As Workbook
+Dim wbAddIn As Workbook
 
 ' DOUBLE
 Dim depoIniCheck As Double
@@ -6836,7 +6963,7 @@ Sub Process_Html_Folders()
     Dim upperB As Integer
     
     Application.ScreenUpdating = False
-    Call Init_Bt_Settings_Sheets(btWs, btC, _
+    Call Init_Bt_Settings_Sheets(wbAddIn, setWs, btWs, btC, _
             activeInstrumentsList, instrLotGroup, stratFdPath, stratNm, _
             dateFrom, dateTo, htmlCount, _
             dateFromStr, dateToStr, btNextFreeRow, _
@@ -6846,7 +6973,7 @@ Sub Process_Html_Folders()
             rdRepTimeToCol, rdRepLinkCol)
     If UBound(activeInstrumentsList) = 0 Then
         Application.ScreenUpdating = True
-        MsgBox "Не выбраны инструменты."
+        MsgBox "Instruments not selected."
         Exit Sub
     End If
     ' Separator - autoswitcher
@@ -6862,6 +6989,8 @@ Sub Process_Html_Folders()
         openFail = False
         Call Loop_Thru_One_Folder
         If openFail Then
+            Application.StatusBar = False
+            Application.ScreenUpdating = True
             Exit For
         End If
     Next i
@@ -6980,7 +7109,12 @@ Sub Check_Window()
             End With
         End If
         ' check robotName
-        correctRobName = GetCorrectRobName(c(2, 2))
+        Select Case setWs.Range("CodeSource")
+            Case 1
+                correctRobName = GetCorrectRobName(c(2, 2))
+            Case 2
+                correctRobName = btWs.Range("StrategyName")
+        End Select
         If c(1, 2) = correctRobName Then
             Sheets(2).Cells(chk_row, add_c4) = "ok"
         Else
@@ -6990,6 +7124,7 @@ Sub Check_Window()
             End With
         End If
     Next i
+    
     Sheets(2).Activate
     Sheets(2).Rows("1:1").AutoFilter
     Sheets(2).Rows("1:1").AutoFilter
@@ -7550,7 +7685,7 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
         Loop
         t2(k, 4) = t2(k, 4) + 1
     Next r
-' ============== AVERAGE COMMISSION ==============================
+' ============== AVERAGE COMMISSION: begin ==============================
 ' calculate average commission for a trade
     c = 1
     For r = 1 To UBound(t2, 1)
@@ -7564,7 +7699,7 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
             c = r + 1
         End If
     Next r
-' ============== AVERAGE COMMISSION ==============================
+' ============== AVERAGE COMMISSION: end ==============================
 ' fill t1 - equity curve
     k = 1
     For r = 1 To UBound(t1, 1)
@@ -7867,7 +8002,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.13.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -7881,10 +8016,10 @@ Const stratNmRow As Integer = 7 ' strategy name row
 Const stratNmCol As Integer = 1 ' strategy name column
 
 Const instrFRow As Integer = 2
-Const instrLRow As Integer = 31
+Const instrLRow As Integer = 47
 Const instrCol As Integer = 2
 Const instrGrpFRow As Integer = 2
-Const instrGrpLRow As Integer = 31
+Const instrGrpLRow As Integer = 47
 Const instrGrpFCol As Integer = 4
 Const instrGrpLCol As Integer = 5
 
@@ -7910,39 +8045,29 @@ Const readyTimeFromCol As Integer = 8
 Const readyTimeToCol As Integer = 9
 Const readyLinkCol As Integer = 10
 
-Sub Init_Bt_Settings_Sheets(ByRef btWs As Worksheet, _
-            ByRef btC As Range, _
-            ByRef activeInstrumentsList As Variant, _
-            ByRef instrumentLotGroup As Variant, _
-            ByRef stratFdPath As String, _
-            ByRef stratNm As String, _
-            ByRef dateFrom As Date, _
-            ByRef dateTo As Date, _
-            ByRef htmlCount As Integer, _
-            ByRef dateFromStr As String, _
-            ByRef dateToStr As String, _
-            ByRef btNextFreeRow As Integer, _
-            ByRef maxHtmlCount As Integer, _
-            ByRef repType As String, _
-            ByRef macroVer As String, _
-            ByRef depoIniCheck As Double, _
-            ByRef rdRepNameCol As Integer, _
-            ByRef rdRepDateCol As Integer, _
-            ByRef rdRepCountCol As Integer, _
-            ByRef rdRepDepoIniCol As Integer, _
-            ByRef rdRepRobotNameCol As Integer, _
-            ByRef rdRepTimeFromCol As Integer, _
-            ByRef rdRepTimeToCol As Integer, _
-            ByRef rdRepLinkCol As Integer)
+Sub Init_Bt_Settings_Sheets(ByRef wbAddIn As Workbook, _
+        ByRef setWs As Worksheet, ByRef btWs As Worksheet, _
+        ByRef btC As Range, ByRef activeInstrumentsList As Variant, _
+        ByRef instrumentLotGroup As Variant, ByRef stratFdPath As String, _
+        ByRef stratNm As String, ByRef dateFrom As Date, _
+        ByRef dateTo As Date, ByRef htmlCount As Integer, _
+        ByRef dateFromStr As String, ByRef dateToStr As String, _
+        ByRef btNextFreeRow As Integer, ByRef maxHtmlCount As Integer, _
+        ByRef repType As String, ByRef macroVer As String, _
+        ByRef depoIniCheck As Double, ByRef rdRepNameCol As Integer, _
+        ByRef rdRepDateCol As Integer, ByRef rdRepCountCol As Integer, _
+        ByRef rdRepDepoIniCol As Integer, ByRef rdRepRobotNameCol As Integer, _
+        ByRef rdRepTimeFromCol As Integer, ByRef rdRepTimeToCol As Integer, _
+        ByRef rdRepLinkCol As Integer)
     
-    Dim setWs As Worksheet
     Dim setC As Range
     Dim instrumentsList As Range
     Dim lastCh As String
     
-    Set btWs = Workbooks(addInFName).Sheets(backSheetName)
+    Set wbAddIn = Workbooks(addInFName)
+    Set btWs = wbAddIn.Sheets(backSheetName)
     Set btC = btWs.Cells
-    Set setWs = Workbooks(addInFName).Sheets(settingsSheetName)
+    Set setWs = wbAddIn.Sheets(settingsSheetName)
     Set setC = setWs.Cells
     Set instrumentsList = setWs.Range(setC(instrFRow, instrCol), setC(instrLRow, instrCol))
     activeInstrumentsList = ListActiveInstruments(instrumentsList)
@@ -8062,7 +8187,7 @@ Sub Init_DeSelect_Instruments(ByRef setWs As Worksheet, _
     Set btWs = Workbooks(addInFName).Sheets(backSheetName)
     Set btC = btWs.Cells
     Set selectAll = setC(1, 2)
-    Set instrumentsList = setWs.Range(setC(2, 2), setC(31, 2))
+    Set instrumentsList = setWs.Range(setC(2, 2), setC(47, 2))
     
 End Sub
 
@@ -8209,7 +8334,7 @@ Sub MergeScatters()
         .ButtonName = "Вперед"
     End With
     If fd.Show = 0 Then
-        MsgBox "Файлы не выбраны!"
+        MsgBox "No files picked!"
         Exit Sub
     End If
     sel_count = fd.SelectedItems.count
@@ -8249,7 +8374,7 @@ Sub MergeScatters()
     Application.StatusBar = False
     Application.ScreenUpdating = True
     
-    MsgBox "Готово. Сохраните файл """ & wbA.Name & """ по вашему усмотрению.", , "GetStats Pro"
+    MsgBox "Done. Please save """ & wbA.Name & """ as needed.", , "GetStats Pro"
 End Sub
 Sub SharpeScattersToOneBook()
     Dim wbFrom As Workbook, wbTo As Workbook

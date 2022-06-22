@@ -81,7 +81,7 @@ Sub MergeScatters()
         .ButtonName = "Вперед"
     End With
     If fd.Show = 0 Then
-        MsgBox "Файлы не выбраны!"
+        MsgBox "No files picked!"
         Exit Sub
     End If
     sel_count = fd.SelectedItems.count
@@ -121,7 +121,7 @@ Sub MergeScatters()
     Application.StatusBar = False
     Application.ScreenUpdating = True
     
-    MsgBox "Готово. Сохраните файл """ & wbA.Name & """ по вашему усмотрению.", , "GetStats Pro"
+    MsgBox "Done. Please save """ & wbA.Name & """ as needed.", , "GetStats Pro"
 End Sub
 Sub SharpeScattersToOneBook()
     Dim wbFrom As Workbook, wbTo As Workbook

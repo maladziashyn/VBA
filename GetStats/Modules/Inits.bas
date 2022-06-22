@@ -1,7 +1,7 @@
 Attribute VB_Name = "Inits"
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.12.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.13.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -15,10 +15,10 @@ Const stratNmRow As Integer = 7 ' strategy name row
 Const stratNmCol As Integer = 1 ' strategy name column
 
 Const instrFRow As Integer = 2
-Const instrLRow As Integer = 31
+Const instrLRow As Integer = 47
 Const instrCol As Integer = 2
 Const instrGrpFRow As Integer = 2
-Const instrGrpLRow As Integer = 31
+Const instrGrpLRow As Integer = 47
 Const instrGrpFCol As Integer = 4
 Const instrGrpLCol As Integer = 5
 
@@ -44,39 +44,29 @@ Const readyTimeFromCol As Integer = 8
 Const readyTimeToCol As Integer = 9
 Const readyLinkCol As Integer = 10
 
-Sub Init_Bt_Settings_Sheets(ByRef btWs As Worksheet, _
-            ByRef btC As Range, _
-            ByRef activeInstrumentsList As Variant, _
-            ByRef instrumentLotGroup As Variant, _
-            ByRef stratFdPath As String, _
-            ByRef stratNm As String, _
-            ByRef dateFrom As Date, _
-            ByRef dateTo As Date, _
-            ByRef htmlCount As Integer, _
-            ByRef dateFromStr As String, _
-            ByRef dateToStr As String, _
-            ByRef btNextFreeRow As Integer, _
-            ByRef maxHtmlCount As Integer, _
-            ByRef repType As String, _
-            ByRef macroVer As String, _
-            ByRef depoIniCheck As Double, _
-            ByRef rdRepNameCol As Integer, _
-            ByRef rdRepDateCol As Integer, _
-            ByRef rdRepCountCol As Integer, _
-            ByRef rdRepDepoIniCol As Integer, _
-            ByRef rdRepRobotNameCol As Integer, _
-            ByRef rdRepTimeFromCol As Integer, _
-            ByRef rdRepTimeToCol As Integer, _
-            ByRef rdRepLinkCol As Integer)
+Sub Init_Bt_Settings_Sheets(ByRef wbAddIn As Workbook, _
+        ByRef setWs As Worksheet, ByRef btWs As Worksheet, _
+        ByRef btC As Range, ByRef activeInstrumentsList As Variant, _
+        ByRef instrumentLotGroup As Variant, ByRef stratFdPath As String, _
+        ByRef stratNm As String, ByRef dateFrom As Date, _
+        ByRef dateTo As Date, ByRef htmlCount As Integer, _
+        ByRef dateFromStr As String, ByRef dateToStr As String, _
+        ByRef btNextFreeRow As Integer, ByRef maxHtmlCount As Integer, _
+        ByRef repType As String, ByRef macroVer As String, _
+        ByRef depoIniCheck As Double, ByRef rdRepNameCol As Integer, _
+        ByRef rdRepDateCol As Integer, ByRef rdRepCountCol As Integer, _
+        ByRef rdRepDepoIniCol As Integer, ByRef rdRepRobotNameCol As Integer, _
+        ByRef rdRepTimeFromCol As Integer, ByRef rdRepTimeToCol As Integer, _
+        ByRef rdRepLinkCol As Integer)
     
-    Dim setWs As Worksheet
     Dim setC As Range
     Dim instrumentsList As Range
     Dim lastCh As String
     
-    Set btWs = Workbooks(addInFName).Sheets(backSheetName)
+    Set wbAddIn = Workbooks(addInFName)
+    Set btWs = wbAddIn.Sheets(backSheetName)
     Set btC = btWs.Cells
-    Set setWs = Workbooks(addInFName).Sheets(settingsSheetName)
+    Set setWs = wbAddIn.Sheets(settingsSheetName)
     Set setC = setWs.Cells
     Set instrumentsList = setWs.Range(setC(instrFRow, instrCol), setC(instrLRow, instrCol))
     activeInstrumentsList = ListActiveInstruments(instrumentsList)
@@ -196,7 +186,7 @@ Sub Init_DeSelect_Instruments(ByRef setWs As Worksheet, _
     Set btWs = Workbooks(addInFName).Sheets(backSheetName)
     Set btC = btWs.Cells
     Set selectAll = setC(1, 2)
-    Set instrumentsList = setWs.Range(setC(2, 2), setC(31, 2))
+    Set instrumentsList = setWs.Range(setC(2, 2), setC(47, 2))
     
 End Sub
 

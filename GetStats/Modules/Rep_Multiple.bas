@@ -1,9 +1,9 @@
 Attribute VB_Name = "Rep_Multiple"
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.12.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.13.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.12"
+    Const macro_ver As String = "GetStats Pro v1.13"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -403,7 +403,7 @@ Private Sub GSPRM_Open_Reports()
     End With
     If fd.Show = 0 Then
         open_fail = True
-        MsgBox "Файлы не выбраны!"
+        MsgBox "No files picked!"
         Exit Sub
     End If
     ov(s_ov_htmls, 2) = fd.SelectedItems.count

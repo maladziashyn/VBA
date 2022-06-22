@@ -16,7 +16,6 @@ Dim rdRepTimeFromCol As Integer
 Dim rdRepTimeToCol As Integer
 Dim rdRepLinkCol As Integer
 
-
 Dim upperRow As Integer
 Dim leftCol As Integer
 Dim rightCol As Integer
@@ -73,7 +72,7 @@ Dim fm_date(1 To 2) As Integer, fm_0p00(1 To 10) As Integer, fm_0p00pc(1 To 3) A
 
 ' OBJECTS
 Dim mb As Workbook
-'    Dim addin_book As Workbook
+Dim wbAddIn As Workbook
 
 ' DOUBLE
 Dim depoIniCheck As Double
@@ -91,7 +90,7 @@ Sub Process_Html_Folders()
     Dim upperB As Integer
     
     Application.ScreenUpdating = False
-    Call Init_Bt_Settings_Sheets(btWs, btC, _
+    Call Init_Bt_Settings_Sheets(wbAddIn, setWs, btWs, btC, _
             activeInstrumentsList, instrLotGroup, stratFdPath, stratNm, _
             dateFrom, dateTo, htmlCount, _
             dateFromStr, dateToStr, btNextFreeRow, _
@@ -101,7 +100,7 @@ Sub Process_Html_Folders()
             rdRepTimeToCol, rdRepLinkCol)
     If UBound(activeInstrumentsList) = 0 Then
         Application.ScreenUpdating = True
-        MsgBox "Не выбраны инструменты."
+        MsgBox "Instruments not selected."
         Exit Sub
     End If
     ' Separator - autoswitcher
@@ -117,6 +116,8 @@ Sub Process_Html_Folders()
         openFail = False
         Call Loop_Thru_One_Folder
         If openFail Then
+            Application.StatusBar = False
+            Application.ScreenUpdating = True
             Exit For
         End If
     Next i
@@ -235,7 +236,12 @@ Sub Check_Window()
             End With
         End If
         ' check robotName
-        correctRobName = GetCorrectRobName(c(2, 2))
+        Select Case setWs.Range("CodeSource")
+            Case 1
+                correctRobName = GetCorrectRobName(c(2, 2))
+            Case 2
+                correctRobName = btWs.Range("StrategyName")
+        End Select
         If c(1, 2) = correctRobName Then
             Sheets(2).Cells(chk_row, add_c4) = "ok"
         Else
@@ -245,6 +251,7 @@ Sub Check_Window()
             End With
         End If
     Next i
+    
     Sheets(2).Activate
     Sheets(2).Rows("1:1").AutoFilter
     Sheets(2).Rows("1:1").AutoFilter
@@ -805,7 +812,7 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
         Loop
         t2(k, 4) = t2(k, 4) + 1
     Next r
-' ============== AVERAGE COMMISSION ==============================
+' ============== AVERAGE COMMISSION: begin ==============================
 ' calculate average commission for a trade
     c = 1
     For r = 1 To UBound(t2, 1)
@@ -819,7 +826,7 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
             c = r + 1
         End If
     Next r
-' ============== AVERAGE COMMISSION ==============================
+' ============== AVERAGE COMMISSION: end ==============================
 ' fill t1 - equity curve
     k = 1
     For r = 1 To UBound(t1, 1)

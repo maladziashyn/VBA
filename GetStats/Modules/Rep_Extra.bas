@@ -4,7 +4,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.12"
+    Const macro_name As String = "GetStats Pro v1.13"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -185,16 +185,16 @@ Private Sub GSPR_Open_Report_f()
 ' 1. empty cell
     If rep_adr = "" Then
         open_fail = True
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         Exit Sub
 ' 2. wrong address
     ElseIf Left(rep_adr, 8) <> ctrl_str Then
         open_fail = True
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         Exit Sub
     ElseIf Right(rep_adr, 5) <> ".html" Then
         open_fail = True
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         Exit Sub
     End If
 ' encoding %20
@@ -205,7 +205,7 @@ Private Sub GSPR_Open_Report_f()
     rep_adr = Right(rep_adr, Len(rep_adr) - 8)
 ' 3. check if file exists
     If Dir(rep_adr) = "" Then
-        MsgBox "Неправильный формат адреса. Скопируйте из браузера.", 48, "GetStats Pro"
+        MsgBox "Wrong address format. Please copy from browser.", 48, "GetStats"
         open_fail = True
         Exit Sub
     End If
