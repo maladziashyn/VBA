@@ -1109,7 +1109,16 @@ Function CalcKPIs(ByVal tradeSet As Variant, _
 '    Call CreateServiceDict(servDict, tradeReturnOnly)
     Set servDict = CreateServiceDict(tradeReturnOnly)
     resultDict("R-squared") = WorksheetFunction.RSq(calDaysLong, dailyEq)
-    resultDict("Annualized Return") = dailyEq(UBound(dailyEq)) ^ (365 / (UBound(calDays) - 1)) - 1
+    
+    ' If account goes below zero DUE TO ERROR ON BACK-TEST
+    ' This will essentially eliminate bad back-tests from WFA,
+    ' but will not help spot & correct the error on back-test.
+    If dailyEq(UBound(dailyEq)) > 0 Then
+        resultDict("Annualized Return") = dailyEq(UBound(dailyEq)) ^ (365 / (UBound(calDays) - 1)) - 1
+    Else
+        resultDict("Annualized Return") = -0.99999
+    End If
+    
     resultDict("Sharpe Ratio") = CalcKPIs_SharpeRatio(tradeReturnOnly, resultDict("Annualized Return"))
     resultDict("MDD") = WorksheetFunction.Max(ddArr)
     resultDict("Recovery Factor") = CalcKPIs_RecoveryFactor(resultDict("Annualized Return"), resultDict("MDD"))
