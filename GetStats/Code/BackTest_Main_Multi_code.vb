@@ -647,11 +647,11 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
         SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
     End If
 ' Initial deposit
-    SV(s_depo_ini, 2) = rc(5, 2)
+    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 '' Finish deposit
-'    sv(s_depo_fin, 2) = CDbl(rc(6, 2))
+'    SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", ""))
 ' Commissions
-    SV(s_cmsn, 2) = rc(8, 2)
+    SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
     
     If rc(ins_td_r, 2) = 0 Then
         allZeros = True

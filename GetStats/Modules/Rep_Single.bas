@@ -233,14 +233,14 @@ Private Sub GSPR_Extract_stats()
 ' TPM
     SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
 ' Initial deposit
-    SV(s_depo_ini, 2) = rc(5, 2)
+    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 ' Commissions
-    SV(s_cmsn, 2) = rc(8, 2)
+    SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
 ' File size
     SV(s_link, 2) = Round(FileLen(rep_adr) / 1024 ^ 2, 2)
     If SV(s_trades, 2) = 0 Then
         all_zeros = True
-        SV(s_depo_fin, 2) = CDbl(rc(6, 2)) ' Finish deposit
+        SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", "")) ' Finish deposit
     Else
         Call GSPR_Fill_Tradelog
     End If

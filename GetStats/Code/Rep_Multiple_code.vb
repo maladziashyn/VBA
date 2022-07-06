@@ -1,8 +1,8 @@
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.13.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.14.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.13"
+    Const macro_ver As String = "GetStats Pro v1.14"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
