@@ -138,7 +138,7 @@ End Sub
 Option Explicit
 
 Const addinFileName As String = "JFTools"
-Const addinVersion As String = "0.23"
+Const addinVersion As String = "0.24"
 
 Const btGroupShNm As String = "Back-test"
 Dim btGroupWs As Worksheet
@@ -287,7 +287,8 @@ Sub Init_Parameters(ByRef param As Dictionary, _
 ' from range on mainC
 ' 1-based 3-column array of IS and OS weeks with their codes
 ' NOT INVERTED
-    param.Add "IS/OS windows", GetIsOsWindows(mainWs, mainC, windowsFirstRow, windowsFirstCol)
+    param.Add "IS/OS windows", GetIsOsWindows(mainWs, mainC, windowsFirstRow, windowsFirstCol, _
+        param("Date start"), param("Date end"))
 
 ' "MaxiMinimize"
 ' Variant
@@ -386,16 +387,16 @@ End Sub
 Sub Click_Clear_Sources_Inits(ByRef ws As Worksheet, _
             ByRef clrRng As Range)
     
-    Dim c As Range
+    Dim C As Range
     Dim lastRow As Integer
     
     Set ws = Workbooks(AddInFullFileName(addinFileName, addinVersion)).Sheets(wfaMainShNm)
-    Set c = ws.Cells
-    lastRow = c(ws.rows.Count, stgKeyCol).End(xlUp).Row
+    Set C = ws.Cells
+    lastRow = C(ws.rows.Count, stgKeyCol).End(xlUp).Row
     If lastRow = sourceZeroRow Then
         lastRow = lastRow + 1
     End If
-    Set clrRng = ws.Range(c(sourceZeroRow + 1, stgKeyCol), c(lastRow, stgKeyCol))
+    Set clrRng = ws.Range(C(sourceZeroRow + 1, stgKeyCol), C(lastRow, stgKeyCol))
 
 End Sub
 
@@ -577,7 +578,10 @@ Dim sortC           As Range
 Dim sortColumnId    As Integer
 
 Sub WFA_Run()
-    
+
+'Dim timer0 As Single
+'timer0 = Timer
+
     Dim t0 As Double, t9 As Double
     Dim time0 As Double, time9 As Double
     Dim exitOnError As Boolean
@@ -605,6 +609,13 @@ Sub WFA_Run()
     exitOnError = False
     Call Init_Parameters(param, exitOnError, errorMsg, sortWs, sortC, sortColumnId, kpiFormatting)
     
+    If VarType(param("IS/OS windows")) = 11 Then
+        MsgBox "No suitable IS/OS windows." & vbNewLine _
+            & "Please add relevant values."
+        Application.ScreenUpdating = True
+        Exit Sub
+    End If
+    
     ' Loop thru directories
     dirsCount = GetNewDirsCount(param("Scan table"), param("Scan mode"))
     For iDir = 1 To dirsCount
@@ -627,6 +638,8 @@ Sub WFA_Run()
         ' Loop thru window sets
         ' 1 RESULT FILE = 1 WINDOW SET
         winSetsCount = UBound(param("IS/OS windows"), 1) ' 260 / 104
+        
+        
         For iWindowSet = 1 To winSetsCount
             sWindowSet = "WindowSet " & iWindowSet & "/" & winSetsCount & ". "
             
@@ -658,6 +671,10 @@ Sub WFA_Run()
 
 ' ***** SHEET ********************************************************
                 For iSheet = 3 To sheetsCount
+                    
+                    If iSheet Mod 50 = 0 Then
+                        DoEvents
+                    End If
                     
                     ' Update status bar
                     sSheet = "Sheet " & iSheet & "/" & sheetsCount & "."
@@ -849,6 +866,8 @@ Sub WFA_Run()
 
     Application.StatusBar = False
     Application.ScreenUpdating = True
+
+'Debug.Print Round(Timer - timer0, 2)
 
 End Sub
 
@@ -1366,12 +1385,12 @@ Sub NavigateToWfaSheet()
     
     Dim shIndex As String
     Dim ws As Worksheet
-    Dim c As Range
+    Dim C As Range
     Application.ScreenUpdating = False
     If ActiveSheet.Name = "Summary" Then
         Set ws = ActiveSheet
-        Set c = ws.Cells
-        shIndex = c(ActiveCell.Row, 1).Value
+        Set C = ws.Cells
+        shIndex = C(ActiveCell.Row, 1).Value
         If shIndex <> "" Then
             If IsNumeric(shIndex) Then
                 Sheets(shIndex).Activate
@@ -1536,7 +1555,7 @@ Sub WfaPreviews()
         Application.ScreenUpdating = True
         Exit Sub
     End If
-    exportDir = GetParentDirectory(ActiveWorkbook.Path) & "\tmpImgExport"
+    exportDir = GetParentDirectory(ActiveWorkbook.path) & "\tmpImgExport"
     If Dir(exportDir, vbDirectory) = "" Then
         MkDir exportDir
     End If
@@ -1676,7 +1695,7 @@ Sub WfaDateSlotPreviews()
         Set rg = ActiveCell.CurrentRegion
     End If
 
-    exportDir = GetParentDirectory(ActiveWorkbook.Path) & "\tmpImgExport"
+    exportDir = GetParentDirectory(ActiveWorkbook.path) & "\tmpImgExport"
     myFileName = exportDir & "\excelImg.gif"
     If Dir(exportDir, vbDirectory) = "" Then
         MkDir exportDir
@@ -1819,7 +1838,7 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
     
     Dim r As Long
-    Dim c As Integer
+    Dim C As Integer
     Dim print_row As Long
     Dim print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
@@ -1846,14 +1865,14 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = c + add_cols + col_offset
+        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = C + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(c, r)
+                print_cells(print_row, print_col) = print_arr(C, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, c)
+                print_cells(print_row, print_col) = print_arr(r, C)
             End If
-        Next c
+        Next C
     Next r
 
 End Sub
@@ -1966,7 +1985,7 @@ Sub WfaDateSlotPreviews_SOURCE()
         Application.ScreenUpdating = True
         Exit Sub
     End If
-    exportDir = GetParentDirectory(ActiveWorkbook.Path) & "\tmpImgExport"
+    exportDir = GetParentDirectory(ActiveWorkbook.path) & "\tmpImgExport"
     If Dir(exportDir, vbDirectory) = "" Then
         MkDir exportDir
     End If
@@ -2318,7 +2337,7 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
     
 '    Dim wb_print As Workbook
 '    Dim c_print As Range
-    Dim r As Integer, c As Integer
+    Dim r As Integer, C As Integer
     Dim print_row As Integer, print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
     Dim add_rows As Integer, add_cols As Integer
@@ -2344,14 +2363,14 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = c + add_cols + col_offset
+        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = C + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(c, r)
+                print_cells(print_row, print_col) = print_arr(C, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, c)
+                print_cells(print_row, print_col) = print_arr(r, C)
             End If
-        Next c
+        Next C
     Next r
 End Sub
 Sub GenerateIsOsCodes()
@@ -2968,13 +2987,13 @@ End Function
 Function RngToCollection(ByVal srcRng As Range) As Collection
 ' Moves range values to collection.
     
-    Dim coll As New Collection
+    Dim Coll As New Collection
     Dim cell As Range
     
     For Each cell In srcRng
-        coll.Add cell.Value
+        Coll.Add cell.Value
     Next cell
-    Set RngToCollection = coll
+    Set RngToCollection = Coll
 
 End Function
 
@@ -3010,19 +3029,61 @@ End Function
 Function GetIsOsWindows(ByVal mainWs As Worksheet, _
                         ByVal mainC As Range, _
                         ByVal windowsFirstRow As Integer, _
-                        ByVal windowsFirstCol As Integer) As Variant
+                        ByVal windowsFirstCol As Integer, _
+                        ByVal DateStart As Date, _
+                        ByVal DateEnd As Date) As Variant
 ' Return 1-based 3 column array of IS and OS weeks with their codes.
 ' NOT INVERTED.
+' Filtered: windows exceeding available dates will be filtered out.
     
-    Dim arr As Variant
+    Dim C As New Collection
+    Dim MinOSTo As Date
+    Dim OSFrom As Date
+    Dim OSTo As Date
+    Dim i As Long
     Dim rg As Range
+    Dim arr As Variant
     
     Set rg = mainC(windowsFirstRow, windowsFirstCol).CurrentRegion
     Set rg = rg.Offset(2).Resize(rg.rows.Count - 2)
     arr = rg    ' NOT INVERTED, rows 1 to 20, columns 1 to 3
-    GetIsOsWindows = arr
-
+    
+    ' Filter out exceeding windows
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        OSFrom = DateAdd("ww", arr(i, 1), DateStart)
+        OSTo = DateAdd("d", arr(i, 2) * 7 - 1, OSFrom)
+        MinOSTo = DateAdd("d", Int(DateDiff("d", OSFrom, OSTo) * 0.75), OSTo)
+        If DateEnd >= MinOSTo Then
+            C.Add Array(arr(i, 1), arr(i, 2), arr(i, 3))
+        End If
+    Next i
+    
+    If C.Count = 0 Then
+        GetIsOsWindows = False
+    Else
+        ' Convert collection to array
+        GetIsOsWindows = ConvertCollToArr(C)
+    End If
+    
 End Function
+
+Function ConvertCollToArr(ByVal Coll As Collection) As Variant
+    
+    Dim i As Long, j As Long
+    Dim A As Variant
+    
+    ReDim A(1 To Coll.Count, 1 To 3)
+    
+    For i = LBound(A, 1) To UBound(A, 1)
+        For j = LBound(A, 2) To UBound(A, 2)
+            A(i, j) = Coll(i)(j - 1)
+        Next j
+    Next i
+    
+    ConvertCollToArr = A
+    
+End Function
+
 
 ' ***************************************************************************************************
 
@@ -3307,6 +3368,7 @@ Function GetFourDates(ByVal availStart As Long, _
     arr(2, i) = arr(1, i) + 7 * weeksIS - 1
     arr(3, i) = arr(2, i) + 1
     arr(4, i) = arr(3, i) + 7 * weeksOS - 1
+    
     Do While arr(2, i) + 7 * weeksOS < availEnd
         i = i + 1
         ReDim Preserve arr(1 To 8, 1 To i)
@@ -3344,14 +3406,14 @@ Function GenerateLongDays(ByVal ubnd As Long) As Variant
     Next i
     GenerateLongDays = arr
 End Function
-Function GenerateCalendarDays(ByVal dateStart As Date, _
-            ByVal dateEnd As Date) As Variant
+Function GenerateCalendarDays(ByVal DateStart As Date, _
+            ByVal DateEnd As Date) As Variant
     Dim arr As Variant
     Dim cDays As Integer
     Dim i As Integer
-    cDays = dateEnd - dateStart + 2
+    cDays = DateEnd - DateStart + 2
     ReDim arr(1 To cDays)
-    arr(1) = dateStart - 1
+    arr(1) = DateStart - 1
     For i = 2 To UBound(arr)
         arr(i) = arr(i - 1) + 1
     Next i
@@ -3622,11 +3684,11 @@ Function GetTargetWBSaveName(ByVal targetDir As String, _
             ByVal windowCode As String, _
             ByVal stratOrInstrumentName As String, _
             ByVal dateBegin As Date, _
-            ByVal dateEnd As Date) As String
+            ByVal DateEnd As Date) As String
     Dim dtBeginString As String
     Dim dtEndString As String
     dtBeginString = GetDateAsString(dateBegin)
-    dtEndString = GetDateAsString(dateEnd)
+    dtEndString = GetDateAsString(DateEnd)
     GetTargetWBSaveName = targetDir & "\wfa-" & windowCode & "-" & stratOrInstrumentName _
         & "-" & dtBeginString & "-" & dtEndString & ".xlsx"
 End Function
@@ -3881,8 +3943,8 @@ Function GetMaxiMinimize(ByVal stgSheet As Worksheet, _
     GetMaxiMinimize = arr
 End Function
 Function GetDailyEquityFromTradeSet(ByVal tradeSet As Variant, _
-            ByVal dateStart As Date, _
-            ByVal dateEnd As Date) As Variant
+            ByVal DateStart As Date, _
+            ByVal DateEnd As Date) As Variant
 ' Not Inverted
 ' arr(1 to days, 1 to 2)
 ' column 1 - calendar days
@@ -3892,9 +3954,9 @@ Function GetDailyEquityFromTradeSet(ByVal tradeSet As Variant, _
     Dim i As Long
     Dim j As Long
 ' day-by-day equity (including weekends)
-    calendarDays = dateEnd - dateStart + 2
+    calendarDays = DateEnd - DateStart + 2
     ReDim arr(1 To calendarDays, 1 To 2)
-    arr(1, 1) = dateStart - 1
+    arr(1, 1) = DateStart - 1
     arr(1, 2) = 1
     j = 1
     For i = 2 To UBound(arr, 1)
@@ -3915,8 +3977,8 @@ Function GetDailyEquityFromTradeSet(ByVal tradeSet As Variant, _
 End Function
 
 Function CalcKPIs(ByVal tradeSet As Variant, _
-            ByVal dateStart As Date, _
-            ByVal dateEnd As Date, _
+            ByVal DateStart As Date, _
+            ByVal DateEnd As Date, _
             ByVal calDays As Variant, _
             ByVal calDaysLong As Variant) As Dictionary
     Dim resultDict As Dictionary
@@ -3981,7 +4043,7 @@ Function CalcKPIs(ByVal tradeSet As Variant, _
     resultDict("Sharpe Ratio") = CalcKPIs_SharpeRatio(tradeReturnOnly, resultDict("Annualized Return"))
     resultDict("MDD") = WorksheetFunction.Max(ddArr)
     resultDict("Recovery Factor") = CalcKPIs_RecoveryFactor(resultDict("Annualized Return"), resultDict("MDD"))
-    resultDict("Trades per Month") = UBound(tradeSet, 2) / ((dateEnd - dateStart + 1) * 12 / 365)
+    resultDict("Trades per Month") = UBound(tradeSet, 2) / ((DateEnd - DateStart + 1) * 12 / 365)
     resultDict("Win Ratio") = servDict("Winners Count") / UBound(tradeReturnOnly)
     resultDict("Avg Winner/Loser") = CalcKPIs_AvgWinnerToLoser(servDict)
     resultDict("Avg Trade") = WorksheetFunction.Average(tradeReturnOnly)
@@ -4242,16 +4304,16 @@ Function ExtendTradeList(ByVal originalList As Variant, _
     Dim r As Long
     Dim rowInExtended As Long
     Dim origUbnd As Long
-    Dim c As Integer
+    Dim C As Integer
 
     origUbnd = UBound(originalList, 2)
     extendedList = originalList
     ReDim Preserve extendedList(1 To 4, 0 To origUbnd + UBound(newList, 2))
     For r = 1 To UBound(newList, 2)
         rowInExtended = origUbnd + r
-        For c = LBound(newList, 1) To UBound(newList, 1)
-            extendedList(c, rowInExtended) = newList(c, r)
-        Next c
+        For C = LBound(newList, 1) To UBound(newList, 1)
+            extendedList(C, rowInExtended) = newList(C, r)
+        Next C
     Next r
     ExtendTradeList = extendedList
 End Function
@@ -5319,8 +5381,8 @@ Sub DescriptionFilterChart()
     Dim calDays As Variant
     Dim calDaysLong As Variant
     Dim dailyEquity As Variant
-    Dim dateEnd As Variant
-    Dim dateStart As Variant
+    Dim DateEnd As Variant
+    Dim DateStart As Variant
     Dim desVal As Variant
     Dim onlyCloseDates As Variant
     Dim onlyOpenDates As Variant
@@ -5379,8 +5441,8 @@ Sub DescriptionFilterChart()
             onlyCloseDates(i) = CLng(tradesList(2, i))
         End If
     Next i
-    dateStart = WorksheetFunction.Min(onlyOpenDates)
-    dateEnd = WorksheetFunction.Max(onlyCloseDates)
+    DateStart = WorksheetFunction.Min(onlyOpenDates)
+    DateEnd = WorksheetFunction.Max(onlyCloseDates)
     ' sort tradeslist
     Set tmpWs = Worksheets.Add(after:=Sheets(ActiveWorkbook.Sheets.Count))
     Set tmpC = tmpWs.Cells
@@ -5389,10 +5451,10 @@ Sub DescriptionFilterChart()
     tmpWs.Delete
     Application.DisplayAlerts = True
     
-    dailyEquity = GetDailyEquityFromTradeSet(tradesList, dateStart, dateEnd)
-    calDays = GenerateCalendarDays(dateStart, dateEnd)
+    dailyEquity = GetDailyEquityFromTradeSet(tradesList, DateStart, DateEnd)
+    calDays = GenerateCalendarDays(DateStart, DateEnd)
     calDaysLong = GenerateLongDays(UBound(calDays))
-    Set kpis = CalcKPIs(tradesList, dateStart, dateEnd, calDays, calDaysLong)
+    Set kpis = CalcKPIs(tradesList, DateStart, DateEnd, calDays, calDaysLong)
 ' Print to new sheet
     Set tarWs = Worksheets.Add(after:=Sheets(ActiveWorkbook.Sheets.Count))
     desVal = Replace(desVal, "/", "", 1, -1, vbTextCompare)
@@ -5416,13 +5478,10 @@ Option Explicit
 
 ' Run GitSave() to export code and modules.
 '
-' Source:
-' https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
-' The code below is slightly modified to include a list of
-' modules you want to ignore.
+' Source: https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
+' Source is slightly modified to include a list of modules to ignore.
 
     Dim ignoreList As Variant
-    
     Dim parentFolder As String
     
     Const dirNameCode As String = "\Code"
@@ -5438,6 +5497,8 @@ Sub GitSave()
     Call PrintModulesCode
     Call PrintAllContainers
     
+    MsgBox "Code exported"
+    
 End Sub
 
 Sub DeleteAndMake()
@@ -5448,7 +5509,7 @@ Sub DeleteAndMake()
     
     Set fso = CreateObject("Scripting.FileSystemObject")
     
-    parentFolder = ThisWorkbook.Path
+    parentFolder = ThisWorkbook.path
     childA = parentFolder & dirNameCode
     childB = parentFolder & dirNameModules
         
@@ -5468,25 +5529,27 @@ Sub PrintAllCode()
     Dim item  As Variant
     Dim textToPrint As String
     Dim lineToPrint As String
+    Dim pathToExport As String
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            
             lineToPrint = vbNewLine & "' MODULE: " & item.CodeModule.Name & vbNewLine
             If item.CodeModule.CountOfLines > 0 Then
                 lineToPrint = lineToPrint & item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
             Else
                 lineToPrint = lineToPrint & "' empty" & vbNewLine
             End If
-'            Debug.Print lineToPrint
             textToPrint = textToPrint & vbCrLf & lineToPrint
-            
         End If
     Next item
     
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameCode
-    If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
-    SaveTextToFile textToPrint, pathToExport & "\all_code.vb"
+    pathToExport = parentFolder & dirNameCode
+    
+    If Dir(pathToExport) <> "" Then
+        Kill pathToExport & "*.*"
+    End If
+    
+    Call SaveTextToFile(textToPrint, pathToExport & "\all_code.vb")
     
 End Sub
 
@@ -5501,19 +5564,17 @@ Sub PrintModulesCode()
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         If Not IsStringInList(item.Name, ignoreList) Then
-            
             If item.CodeModule.CountOfLines > 0 Then
                 lineToPrint = item.CodeModule.Lines(1, item.CodeModule.CountOfLines)
-            
             Else
                 lineToPrint = "' empty"
             End If
             
+            If Dir(pathToExport) <> "" Then
+                Kill pathToExport & "*.*"
+            End If
             
-            
-            If Dir(pathToExport) <> "" Then Kill pathToExport & "*.*"
             Call SaveTextToFile(lineToPrint, pathToExport & "\" & item.CodeModule.Name & "_code.vb")
-        
         End If
     Next item
 
@@ -5524,41 +5585,42 @@ Sub PrintAllContainers()
     Dim item  As Variant
     Dim textToPrint As String
     Dim lineToPrint As String
+    Dim pathToExport As String
     
     For Each item In ThisWorkbook.VBProject.VBComponents
         lineToPrint = item.Name
         If Not IsStringInList(lineToPrint, ignoreList) Then
-'            Debug.Print lineToPrint
             textToPrint = textToPrint & vbCrLf & lineToPrint
         End If
     Next item
     
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameCode
-    SaveTextToFile textToPrint, pathToExport & "\all_modules.vb"
+    pathToExport = parentFolder & dirNameCode
+    
+    Call SaveTextToFile(textToPrint, pathToExport & "\all_modules.vb")
     
 End Sub
 
 Sub ExportModules()
        
-    Dim pathToExport As String: pathToExport = parentFolder & dirNameModules
+    Dim pathToExport As String
+    Dim wkb As Workbook
+    Dim filePath As String
+    Dim component As VBIDE.VBComponent
+    Dim tryExport As Boolean
+    
+    pathToExport = parentFolder & dirNameModules
     
     If Dir(pathToExport) <> "" Then
         Kill pathToExport & "*.*"
     End If
-     
-    Dim wkb As Workbook: Set wkb = Excel.Workbooks(ThisWorkbook.Name)
     
-    Dim unitsCount As Long
-    Dim filePath As String
-    Dim component As VBIDE.VBComponent
-    Dim tryExport As Boolean
+    Set wkb = Excel.Workbooks(ThisWorkbook.Name)
 
     For Each component In wkb.VBProject.VBComponents
         tryExport = True
         filePath = component.Name
         
         If Not IsStringInList(filePath, ignoreList) Then
-        
             Select Case component.Type
                 Case vbext_ct_ClassModule
                     filePath = filePath & ".cls"
@@ -5571,40 +5633,28 @@ Sub ExportModules()
             End Select
         
             If tryExport Then
-'                Debug.Print unitsCount & " exporting " & filePath
                 component.Export pathToExport & "\" & filePath
             End If
-            
         End If
-        
     Next
-
-'    Debug.Print "Exported at " & pathToExport
     
 End Sub
 
-Sub SaveTextToFile(dataToPrint As String, pathToExport As String)
+Sub SaveTextToFile(ByRef dataToPrint As String, ByRef pathToExport As String)
     
     Dim fileSystem As Object
     Dim textObject As Object
-    Dim fileName As String
     Dim newFile  As String
-    Dim shellPath  As String
     
-    If Dir(ThisWorkbook.Path & newFile, vbDirectory) = vbNullString Then MkDir ThisWorkbook.Path & newFile
+    If Dir(ThisWorkbook.path & newFile, vbDirectory) = vbNullString Then
+        MkDir ThisWorkbook.path & newFile
+    End If
     
     Set fileSystem = CreateObject("Scripting.FileSystemObject")
     Set textObject = fileSystem.CreateTextFile(pathToExport, True)
     
     textObject.WriteLine dataToPrint
     textObject.Close
-        
-    On Error GoTo 0
-    Exit Sub
-
-CreateLogFile_Error:
-
-    MsgBox "Error " & Err.Number & " (" & Err.Description & ") in procedure CreateLogFile of Sub mod_TDD_Export"
 
 End Sub
 

@@ -577,8 +577,8 @@ Sub DescriptionFilterChart()
     Dim calDays As Variant
     Dim calDaysLong As Variant
     Dim dailyEquity As Variant
-    Dim dateEnd As Variant
-    Dim dateStart As Variant
+    Dim DateEnd As Variant
+    Dim DateStart As Variant
     Dim desVal As Variant
     Dim onlyCloseDates As Variant
     Dim onlyOpenDates As Variant
@@ -637,8 +637,8 @@ Sub DescriptionFilterChart()
             onlyCloseDates(i) = CLng(tradesList(2, i))
         End If
     Next i
-    dateStart = WorksheetFunction.Min(onlyOpenDates)
-    dateEnd = WorksheetFunction.Max(onlyCloseDates)
+    DateStart = WorksheetFunction.Min(onlyOpenDates)
+    DateEnd = WorksheetFunction.Max(onlyCloseDates)
     ' sort tradeslist
     Set tmpWs = Worksheets.Add(after:=Sheets(ActiveWorkbook.Sheets.Count))
     Set tmpC = tmpWs.Cells
@@ -647,10 +647,10 @@ Sub DescriptionFilterChart()
     tmpWs.Delete
     Application.DisplayAlerts = True
     
-    dailyEquity = GetDailyEquityFromTradeSet(tradesList, dateStart, dateEnd)
-    calDays = GenerateCalendarDays(dateStart, dateEnd)
+    dailyEquity = GetDailyEquityFromTradeSet(tradesList, DateStart, DateEnd)
+    calDays = GenerateCalendarDays(DateStart, DateEnd)
     calDaysLong = GenerateLongDays(UBound(calDays))
-    Set kpis = CalcKPIs(tradesList, dateStart, dateEnd, calDays, calDaysLong)
+    Set kpis = CalcKPIs(tradesList, DateStart, DateEnd, calDays, calDaysLong)
 ' Print to new sheet
     Set tarWs = Worksheets.Add(after:=Sheets(ActiveWorkbook.Sheets.Count))
     desVal = Replace(desVal, "/", "", 1, -1, vbTextCompare)

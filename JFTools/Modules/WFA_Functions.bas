@@ -109,13 +109,13 @@ End Function
 Function RngToCollection(ByVal srcRng As Range) As Collection
 ' Moves range values to collection.
     
-    Dim coll As New Collection
+    Dim Coll As New Collection
     Dim cell As Range
     
     For Each cell In srcRng
-        coll.Add cell.Value
+        Coll.Add cell.Value
     Next cell
-    Set RngToCollection = coll
+    Set RngToCollection = Coll
 
 End Function
 
@@ -151,19 +151,61 @@ End Function
 Function GetIsOsWindows(ByVal mainWs As Worksheet, _
                         ByVal mainC As Range, _
                         ByVal windowsFirstRow As Integer, _
-                        ByVal windowsFirstCol As Integer) As Variant
+                        ByVal windowsFirstCol As Integer, _
+                        ByVal DateStart As Date, _
+                        ByVal DateEnd As Date) As Variant
 ' Return 1-based 3 column array of IS and OS weeks with their codes.
 ' NOT INVERTED.
+' Filtered: windows exceeding available dates will be filtered out.
     
-    Dim arr As Variant
+    Dim C As New Collection
+    Dim MinOSTo As Date
+    Dim OSFrom As Date
+    Dim OSTo As Date
+    Dim i As Long
     Dim rg As Range
+    Dim arr As Variant
     
     Set rg = mainC(windowsFirstRow, windowsFirstCol).CurrentRegion
     Set rg = rg.Offset(2).Resize(rg.rows.Count - 2)
     arr = rg    ' NOT INVERTED, rows 1 to 20, columns 1 to 3
-    GetIsOsWindows = arr
-
+    
+    ' Filter out exceeding windows
+    For i = LBound(arr, 1) To UBound(arr, 1)
+        OSFrom = DateAdd("ww", arr(i, 1), DateStart)
+        OSTo = DateAdd("d", arr(i, 2) * 7 - 1, OSFrom)
+        MinOSTo = DateAdd("d", Int(DateDiff("d", OSFrom, OSTo) * 0.75), OSTo)
+        If DateEnd >= MinOSTo Then
+            C.Add Array(arr(i, 1), arr(i, 2), arr(i, 3))
+        End If
+    Next i
+    
+    If C.Count = 0 Then
+        GetIsOsWindows = False
+    Else
+        ' Convert collection to array
+        GetIsOsWindows = ConvertCollToArr(C)
+    End If
+    
 End Function
+
+Function ConvertCollToArr(ByVal Coll As Collection) As Variant
+    
+    Dim i As Long, j As Long
+    Dim A As Variant
+    
+    ReDim A(1 To Coll.Count, 1 To 3)
+    
+    For i = LBound(A, 1) To UBound(A, 1)
+        For j = LBound(A, 2) To UBound(A, 2)
+            A(i, j) = Coll(i)(j - 1)
+        Next j
+    Next i
+    
+    ConvertCollToArr = A
+    
+End Function
+
 
 ' ***************************************************************************************************
 
@@ -448,6 +490,7 @@ Function GetFourDates(ByVal availStart As Long, _
     arr(2, i) = arr(1, i) + 7 * weeksIS - 1
     arr(3, i) = arr(2, i) + 1
     arr(4, i) = arr(3, i) + 7 * weeksOS - 1
+    
     Do While arr(2, i) + 7 * weeksOS < availEnd
         i = i + 1
         ReDim Preserve arr(1 To 8, 1 To i)
@@ -485,14 +528,14 @@ Function GenerateLongDays(ByVal ubnd As Long) As Variant
     Next i
     GenerateLongDays = arr
 End Function
-Function GenerateCalendarDays(ByVal dateStart As Date, _
-            ByVal dateEnd As Date) As Variant
+Function GenerateCalendarDays(ByVal DateStart As Date, _
+            ByVal DateEnd As Date) As Variant
     Dim arr As Variant
     Dim cDays As Integer
     Dim i As Integer
-    cDays = dateEnd - dateStart + 2
+    cDays = DateEnd - DateStart + 2
     ReDim arr(1 To cDays)
-    arr(1) = dateStart - 1
+    arr(1) = DateStart - 1
     For i = 2 To UBound(arr)
         arr(i) = arr(i - 1) + 1
     Next i
@@ -763,11 +806,11 @@ Function GetTargetWBSaveName(ByVal targetDir As String, _
             ByVal windowCode As String, _
             ByVal stratOrInstrumentName As String, _
             ByVal dateBegin As Date, _
-            ByVal dateEnd As Date) As String
+            ByVal DateEnd As Date) As String
     Dim dtBeginString As String
     Dim dtEndString As String
     dtBeginString = GetDateAsString(dateBegin)
-    dtEndString = GetDateAsString(dateEnd)
+    dtEndString = GetDateAsString(DateEnd)
     GetTargetWBSaveName = targetDir & "\wfa-" & windowCode & "-" & stratOrInstrumentName _
         & "-" & dtBeginString & "-" & dtEndString & ".xlsx"
 End Function
@@ -1022,8 +1065,8 @@ Function GetMaxiMinimize(ByVal stgSheet As Worksheet, _
     GetMaxiMinimize = arr
 End Function
 Function GetDailyEquityFromTradeSet(ByVal tradeSet As Variant, _
-            ByVal dateStart As Date, _
-            ByVal dateEnd As Date) As Variant
+            ByVal DateStart As Date, _
+            ByVal DateEnd As Date) As Variant
 ' Not Inverted
 ' arr(1 to days, 1 to 2)
 ' column 1 - calendar days
@@ -1033,9 +1076,9 @@ Function GetDailyEquityFromTradeSet(ByVal tradeSet As Variant, _
     Dim i As Long
     Dim j As Long
 ' day-by-day equity (including weekends)
-    calendarDays = dateEnd - dateStart + 2
+    calendarDays = DateEnd - DateStart + 2
     ReDim arr(1 To calendarDays, 1 To 2)
-    arr(1, 1) = dateStart - 1
+    arr(1, 1) = DateStart - 1
     arr(1, 2) = 1
     j = 1
     For i = 2 To UBound(arr, 1)
@@ -1056,8 +1099,8 @@ Function GetDailyEquityFromTradeSet(ByVal tradeSet As Variant, _
 End Function
 
 Function CalcKPIs(ByVal tradeSet As Variant, _
-            ByVal dateStart As Date, _
-            ByVal dateEnd As Date, _
+            ByVal DateStart As Date, _
+            ByVal DateEnd As Date, _
             ByVal calDays As Variant, _
             ByVal calDaysLong As Variant) As Dictionary
     Dim resultDict As Dictionary
@@ -1122,7 +1165,7 @@ Function CalcKPIs(ByVal tradeSet As Variant, _
     resultDict("Sharpe Ratio") = CalcKPIs_SharpeRatio(tradeReturnOnly, resultDict("Annualized Return"))
     resultDict("MDD") = WorksheetFunction.Max(ddArr)
     resultDict("Recovery Factor") = CalcKPIs_RecoveryFactor(resultDict("Annualized Return"), resultDict("MDD"))
-    resultDict("Trades per Month") = UBound(tradeSet, 2) / ((dateEnd - dateStart + 1) * 12 / 365)
+    resultDict("Trades per Month") = UBound(tradeSet, 2) / ((DateEnd - DateStart + 1) * 12 / 365)
     resultDict("Win Ratio") = servDict("Winners Count") / UBound(tradeReturnOnly)
     resultDict("Avg Winner/Loser") = CalcKPIs_AvgWinnerToLoser(servDict)
     resultDict("Avg Trade") = WorksheetFunction.Average(tradeReturnOnly)
@@ -1383,16 +1426,16 @@ Function ExtendTradeList(ByVal originalList As Variant, _
     Dim r As Long
     Dim rowInExtended As Long
     Dim origUbnd As Long
-    Dim c As Integer
+    Dim C As Integer
 
     origUbnd = UBound(originalList, 2)
     extendedList = originalList
     ReDim Preserve extendedList(1 To 4, 0 To origUbnd + UBound(newList, 2))
     For r = 1 To UBound(newList, 2)
         rowInExtended = origUbnd + r
-        For c = LBound(newList, 1) To UBound(newList, 1)
-            extendedList(c, rowInExtended) = newList(c, r)
-        Next c
+        For C = LBound(newList, 1) To UBound(newList, 1)
+            extendedList(C, rowInExtended) = newList(C, r)
+        Next C
     Next r
     ExtendTradeList = extendedList
 End Function

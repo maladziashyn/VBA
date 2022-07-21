@@ -2,7 +2,7 @@ Attribute VB_Name = "Inits"
 Option Explicit
 
 Const addinFileName As String = "JFTools"
-Const addinVersion As String = "0.23"
+Const addinVersion As String = "0.24"
 
 Const btGroupShNm As String = "Back-test"
 Dim btGroupWs As Worksheet
@@ -151,7 +151,8 @@ Sub Init_Parameters(ByRef param As Dictionary, _
 ' from range on mainC
 ' 1-based 3-column array of IS and OS weeks with their codes
 ' NOT INVERTED
-    param.Add "IS/OS windows", GetIsOsWindows(mainWs, mainC, windowsFirstRow, windowsFirstCol)
+    param.Add "IS/OS windows", GetIsOsWindows(mainWs, mainC, windowsFirstRow, windowsFirstCol, _
+        param("Date start"), param("Date end"))
 
 ' "MaxiMinimize"
 ' Variant
@@ -250,16 +251,16 @@ End Sub
 Sub Click_Clear_Sources_Inits(ByRef ws As Worksheet, _
             ByRef clrRng As Range)
     
-    Dim c As Range
+    Dim C As Range
     Dim lastRow As Integer
     
     Set ws = Workbooks(AddInFullFileName(addinFileName, addinVersion)).Sheets(wfaMainShNm)
-    Set c = ws.Cells
-    lastRow = c(ws.rows.Count, stgKeyCol).End(xlUp).Row
+    Set C = ws.Cells
+    lastRow = C(ws.rows.Count, stgKeyCol).End(xlUp).Row
     If lastRow = sourceZeroRow Then
         lastRow = lastRow + 1
     End If
-    Set clrRng = ws.Range(c(sourceZeroRow + 1, stgKeyCol), c(lastRow, stgKeyCol))
+    Set clrRng = ws.Range(C(sourceZeroRow + 1, stgKeyCol), C(lastRow, stgKeyCol))
 
 End Sub
 

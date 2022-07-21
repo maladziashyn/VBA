@@ -29,7 +29,10 @@ Dim sortC           As Range
 Dim sortColumnId    As Integer
 
 Sub WFA_Run()
-    
+
+'Dim timer0 As Single
+'timer0 = Timer
+
     Dim t0 As Double, t9 As Double
     Dim time0 As Double, time9 As Double
     Dim exitOnError As Boolean
@@ -57,6 +60,13 @@ Sub WFA_Run()
     exitOnError = False
     Call Init_Parameters(param, exitOnError, errorMsg, sortWs, sortC, sortColumnId, kpiFormatting)
     
+    If VarType(param("IS/OS windows")) = 11 Then
+        MsgBox "No suitable IS/OS windows." & vbNewLine _
+            & "Please add relevant values."
+        Application.ScreenUpdating = True
+        Exit Sub
+    End If
+    
     ' Loop thru directories
     dirsCount = GetNewDirsCount(param("Scan table"), param("Scan mode"))
     For iDir = 1 To dirsCount
@@ -79,6 +89,8 @@ Sub WFA_Run()
         ' Loop thru window sets
         ' 1 RESULT FILE = 1 WINDOW SET
         winSetsCount = UBound(param("IS/OS windows"), 1) ' 260 / 104
+        
+        
         For iWindowSet = 1 To winSetsCount
             sWindowSet = "WindowSet " & iWindowSet & "/" & winSetsCount & ". "
             
@@ -110,6 +122,10 @@ Sub WFA_Run()
 
 ' ***** SHEET ********************************************************
                 For iSheet = 3 To sheetsCount
+                    
+                    If iSheet Mod 50 = 0 Then
+                        DoEvents
+                    End If
                     
                     ' Update status bar
                     sSheet = "Sheet " & iSheet & "/" & sheetsCount & "."
@@ -301,6 +317,8 @@ Sub WFA_Run()
 
     Application.StatusBar = False
     Application.ScreenUpdating = True
+
+'Debug.Print Round(Timer - timer0, 2)
 
 End Sub
 
@@ -818,12 +836,12 @@ Sub NavigateToWfaSheet()
     
     Dim shIndex As String
     Dim ws As Worksheet
-    Dim c As Range
+    Dim C As Range
     Application.ScreenUpdating = False
     If ActiveSheet.Name = "Summary" Then
         Set ws = ActiveSheet
-        Set c = ws.Cells
-        shIndex = c(ActiveCell.Row, 1).Value
+        Set C = ws.Cells
+        shIndex = C(ActiveCell.Row, 1).Value
         If shIndex <> "" Then
             If IsNumeric(shIndex) Then
                 Sheets(shIndex).Activate
@@ -988,7 +1006,7 @@ Sub WfaPreviews()
         Application.ScreenUpdating = True
         Exit Sub
     End If
-    exportDir = GetParentDirectory(ActiveWorkbook.Path) & "\tmpImgExport"
+    exportDir = GetParentDirectory(ActiveWorkbook.path) & "\tmpImgExport"
     If Dir(exportDir, vbDirectory) = "" Then
         MkDir exportDir
     End If
@@ -1128,7 +1146,7 @@ Sub WfaDateSlotPreviews()
         Set rg = ActiveCell.CurrentRegion
     End If
 
-    exportDir = GetParentDirectory(ActiveWorkbook.Path) & "\tmpImgExport"
+    exportDir = GetParentDirectory(ActiveWorkbook.path) & "\tmpImgExport"
     myFileName = exportDir & "\excelImg.gif"
     If Dir(exportDir, vbDirectory) = "" Then
         MkDir exportDir
@@ -1271,7 +1289,7 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
     
     Dim r As Long
-    Dim c As Integer
+    Dim C As Integer
     Dim print_row As Long
     Dim print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
@@ -1298,14 +1316,14 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = c + add_cols + col_offset
+        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = C + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(c, r)
+                print_cells(print_row, print_col) = print_arr(C, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, c)
+                print_cells(print_row, print_col) = print_arr(r, C)
             End If
-        Next c
+        Next C
     Next r
 
 End Sub
@@ -1418,7 +1436,7 @@ Sub WfaDateSlotPreviews_SOURCE()
         Application.ScreenUpdating = True
         Exit Sub
     End If
-    exportDir = GetParentDirectory(ActiveWorkbook.Path) & "\tmpImgExport"
+    exportDir = GetParentDirectory(ActiveWorkbook.path) & "\tmpImgExport"
     If Dir(exportDir, vbDirectory) = "" Then
         MkDir exportDir
     End If

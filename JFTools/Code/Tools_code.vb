@@ -163,7 +163,7 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
     
 '    Dim wb_print As Workbook
 '    Dim c_print As Range
-    Dim r As Integer, c As Integer
+    Dim r As Integer, C As Integer
     Dim print_row As Integer, print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
     Dim add_rows As Integer, add_cols As Integer
@@ -189,14 +189,14 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = c + add_cols + col_offset
+        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = C + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(c, r)
+                print_cells(print_row, print_col) = print_arr(C, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, c)
+                print_cells(print_row, print_col) = print_arr(r, C)
             End If
-        Next c
+        Next C
     Next r
 End Sub
 Sub GenerateIsOsCodes()
