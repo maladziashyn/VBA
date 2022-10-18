@@ -4,7 +4,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.14"
+    Const macro_name As String = "GetStats Pro v1.16"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2244,3 +2244,5 @@ Private Sub GSPR_Charts_Hist_Y(chsht As Worksheet, _
     End With
     Cells(ulr, ulc).Activate
 End Sub
+
+

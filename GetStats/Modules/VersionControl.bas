@@ -19,10 +19,10 @@ Sub GitSave()
     Call DeleteAndMake
     Call ExportModules
     Call PrintAllCode
-    Call PrintModulesCode
-    Call PrintAllContainers
+'    Call PrintModulesCode
+'    Call PrintAllContainers
     
-    MsgBox "Code exported"
+    MsgBox "Code exported.", , "GetStats"
     
 End Sub
 
@@ -190,3 +190,4 @@ Function IsStringInList(ByVal whatString As String, whatList As Variant) As Bool
     IsStringInList = Not (IsError(Application.Match(whatString, whatList, 0)))
 
 End Function
+

@@ -653,8 +653,32 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
 '    SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", ""))
 ' Commissions
     SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
-    
-    If rc(ins_td_r, 2) = 0 Then
+
+' Check if has "MERGED" trades
+' quick & dirty fix == BEGIN
+    Dim RowTbLast As Long
+    Dim rgMerged As Range, rgPL As Range, cell As Range
+    Dim hasMerged As Boolean
+
+    hasMerged = False
+
+    Set rgPL = rc.Find(what:="Profit/Loss in pips", _
+        after:=rc(1, 6), _
+        LookIn:=xlValues, _
+        LookAt:=xlWhole, _
+        searchorder:=xlByColumns, _
+        searchdirection:=xlNext)
+    RowTbLast = rc(rgPL.Row, rgPL.Column).End(xlDown).Row
+    Set rgMerged = rb.Sheets(1).Range(rc(rgPL.Row + 1, 5), rc(RowTbLast, 5))
+    For Each cell In rgMerged
+        If cell.Value = "MERGED" Or cell.Value = "ERROR" Then
+            hasMerged = True
+            Exit For
+        End If
+    Next cell
+
+    If rc(ins_td_r, 2) = 0 Or hasMerged = True Then
+' quick & dirty fix == END
         allZeros = True
         sM(i, 0) = oneFdFilesList(i)
         sM(i, 1) = i
@@ -1126,3 +1150,5 @@ Sub Clear_Ready_Reports()
     Rng.Clear
     
 End Sub
+
+

@@ -1,7 +1,7 @@
 Attribute VB_Name = "Join_intervals"
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.14.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.16.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -1045,3 +1045,5 @@ Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
     pmWinRatio = winners / tradesCount
     
 End Function
+
+

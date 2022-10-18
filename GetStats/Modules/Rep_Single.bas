@@ -188,7 +188,12 @@ Private Sub GSPR_Extract_stats()
     Dim s As String, s2 As String, ch As String
     Dim rc As Range
     
+    Dim RowTbLast As Long
+    Dim rgMerged As Range, rgPL As Range, cell As Range
+    Dim hasMerged As Boolean
+    
     all_zeros = False
+    hasMerged = False
     Set rc = rb.Sheets(1).Cells
 ' strategy name
     s = rc(3, 1).Value
@@ -238,7 +243,24 @@ Private Sub GSPR_Extract_stats()
     SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
 ' File size
     SV(s_link, 2) = Round(FileLen(rep_adr) / 1024 ^ 2, 2)
-    If SV(s_trades, 2) = 0 Then
+' Check for "MERGED"
+' quick & dirty fix
+    Set rgPL = rc.Find(what:="Profit/Loss in pips", _
+        after:=rc(1, 6), _
+        LookIn:=xlValues, _
+        LookAt:=xlWhole, _
+        searchorder:=xlByColumns, _
+        searchdirection:=xlNext)
+    RowTbLast = rc(rgPL.Row, rgPL.Column).End(xlDown).Row
+    Set rgMerged = rs.Range(rc(rgPL.Row + 1, 5), rc(RowTbLast, 5))
+    For Each cell In rgMerged
+        If cell.Value = "MERGED" Or cell.Value = "ERROR" Then
+            hasMerged = True
+            Exit For
+        End If
+    Next cell
+' move on
+    If SV(s_trades, 2) = 0 Or hasMerged = True Then
         all_zeros = True
         SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", "")) ' Finish deposit
     Else
@@ -809,3 +831,5 @@ Private Sub GSPR_Hist_Y(sc As Range, _
 '        .Placement = xlFreeFloating     ' do not resize chart if cells resized
     End With
 End Sub
+
+

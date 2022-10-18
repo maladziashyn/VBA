@@ -1,7 +1,7 @@
 Attribute VB_Name = "Inits"
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.14.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.16.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -249,3 +249,5 @@ Sub InitPositionTags(ByRef positionTags As Dictionary)
     positionTags.Add "_algo_comment", Nothing
     
 End Sub
+
+

@@ -7,19 +7,14 @@ Dim user_switched As Boolean
     
 Sub GSPR_Remove_CommandBar()
     
+    Dim i As Long
+    
     On Error Resume Next
     
-    Application.CommandBars("GSPR-1").Delete
-    Application.CommandBars("GSPR-2").Delete
-    Application.CommandBars("GSPR-3").Delete
-    Application.CommandBars("GSPR-4").Delete
-    Application.CommandBars("GSPR-5").Delete
-    Application.CommandBars("GSPR-6").Delete
-    Application.CommandBars("GSPR-7").Delete
-    Application.CommandBars("GSPR-8").Delete
-    Application.CommandBars("GSPR-9").Delete
-    Application.CommandBars("GSPR-10").Delete
-
+    For i = 1 To 10
+        Application.CommandBars("GSPR-" & i).Delete
+    Next i
+    
 End Sub
 
 Sub GSPR_Create_CommandBar()
@@ -423,3 +418,5 @@ Private Sub GSPR_Separator_OFF()
     End If
 
 End Sub
+
+

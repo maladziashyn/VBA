@@ -274,7 +274,15 @@ Sub Calc_Sharpe_Ratio()
             
             days_count = Cells(9, 2) - Cells(8, 2) + 1
             net_return = current_balance - 1
+            
+'            cagr = (1 + net_return) ^ (365 / days_count) - 1
+            On Error Resume Next
             cagr = (1 + net_return) ^ (365 / days_count) - 1
+            If Err.Number = 5 Then
+                cagr = 0
+            End If
+            On Error GoTo 0
+            
             With Cells(4, 2)
                 .Value = cagr
                 .NumberFormat = "0.00%"
@@ -363,3 +371,5 @@ Sub SharpePivot()
     
     Application.ScreenUpdating = True
 End Sub
+
+

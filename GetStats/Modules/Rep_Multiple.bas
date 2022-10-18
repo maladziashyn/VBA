@@ -1,9 +1,9 @@
 Attribute VB_Name = "Rep_Multiple"
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.14.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.16.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.14"
+    Const macro_ver As String = "GetStats Pro v1.16"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -209,7 +209,13 @@ Sub Calc_Sharpe_Ratio_Sheet()
             
             days_count = Cells(9, 2) - Cells(8, 2) + 1
             net_return = current_balance - 1
+            On Error Resume Next
             cagr = (1 + net_return) ^ (365 / days_count) - 1
+            If Err.Number = 5 Then
+                cagr = 0
+            End If
+            On Error GoTo 0
+
             With Cells(4, 2)
                 .Value = cagr
                 .NumberFormat = "0.00%"
@@ -1608,3 +1614,5 @@ Sub Remove_Checks()
     Application.StatusBar = False
     Application.ScreenUpdating = True
 End Sub
+
+

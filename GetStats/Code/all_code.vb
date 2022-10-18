@@ -463,13 +463,15 @@ Sub SharpesToSeparateSheet()
 
 End Sub
 
+
+
 ' MODULE: Rep_Extra
 Option Explicit
 Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.14"
+    Const macro_name As String = "GetStats Pro v1.16"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2710,12 +2712,14 @@ Private Sub GSPR_Charts_Hist_Y(chsht As Worksheet, _
     Cells(ulr, ulc).Activate
 End Sub
 
+
+
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.14.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.16.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.14"
+    Const macro_ver As String = "GetStats Pro v1.16"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -2921,7 +2925,13 @@ Sub Calc_Sharpe_Ratio_Sheet()
             
             days_count = Cells(9, 2) - Cells(8, 2) + 1
             net_return = current_balance - 1
+            On Error Resume Next
             cagr = (1 + net_return) ^ (365 / days_count) - 1
+            If Err.Number = 5 Then
+                cagr = 0
+            End If
+            On Error GoTo 0
+
             With Cells(4, 2)
                 .Value = cagr
                 .NumberFormat = "0.00%"
@@ -4321,6 +4331,8 @@ Sub Remove_Checks()
     Application.ScreenUpdating = True
 End Sub
 
+
+
 ' MODULE: Rep_Single
 Option Explicit
 Option Base 1
@@ -4511,7 +4523,12 @@ Private Sub GSPR_Extract_stats()
     Dim s As String, s2 As String, ch As String
     Dim rc As Range
     
+    Dim RowTbLast As Long
+    Dim rgMerged As Range, rgPL As Range, cell As Range
+    Dim hasMerged As Boolean
+    
     all_zeros = False
+    hasMerged = False
     Set rc = rb.Sheets(1).Cells
 ' strategy name
     s = rc(3, 1).Value
@@ -4561,7 +4578,24 @@ Private Sub GSPR_Extract_stats()
     SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
 ' File size
     SV(s_link, 2) = Round(FileLen(rep_adr) / 1024 ^ 2, 2)
-    If SV(s_trades, 2) = 0 Then
+' Check for "MERGED"
+' quick & dirty fix
+    Set rgPL = rc.Find(what:="Profit/Loss in pips", _
+        after:=rc(1, 6), _
+        LookIn:=xlValues, _
+        LookAt:=xlWhole, _
+        searchorder:=xlByColumns, _
+        searchdirection:=xlNext)
+    RowTbLast = rc(rgPL.Row, rgPL.Column).End(xlDown).Row
+    Set rgMerged = rs.Range(rc(rgPL.Row + 1, 5), rc(RowTbLast, 5))
+    For Each cell In rgMerged
+        If cell.Value = "MERGED" Or cell.Value = "ERROR" Then
+            hasMerged = True
+            Exit For
+        End If
+    Next cell
+' move on
+    If SV(s_trades, 2) = 0 Or hasMerged = True Then
         all_zeros = True
         SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", "")) ' Finish deposit
     Else
@@ -5133,6 +5167,8 @@ Private Sub GSPR_Hist_Y(sc As Range, _
     End With
 End Sub
 
+
+
 ' MODULE: Tools
 Option Explicit
 
@@ -5142,19 +5178,14 @@ Dim user_switched As Boolean
     
 Sub GSPR_Remove_CommandBar()
     
+    Dim i As Long
+    
     On Error Resume Next
     
-    Application.CommandBars("GSPR-1").Delete
-    Application.CommandBars("GSPR-2").Delete
-    Application.CommandBars("GSPR-3").Delete
-    Application.CommandBars("GSPR-4").Delete
-    Application.CommandBars("GSPR-5").Delete
-    Application.CommandBars("GSPR-6").Delete
-    Application.CommandBars("GSPR-7").Delete
-    Application.CommandBars("GSPR-8").Delete
-    Application.CommandBars("GSPR-9").Delete
-    Application.CommandBars("GSPR-10").Delete
-
+    For i = 1 To 10
+        Application.CommandBars("GSPR-" & i).Delete
+    Next i
+    
 End Sub
 
 Sub GSPR_Create_CommandBar()
@@ -5559,6 +5590,8 @@ Private Sub GSPR_Separator_OFF()
 
 End Sub
 
+
+
 ' MODULE: JFX_create
 Option Explicit
 
@@ -5811,10 +5844,12 @@ Sub Settings_To_Launch_Log()
 
 End Sub
 
+
+
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.14.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.16.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -6859,6 +6894,8 @@ Function pmWinRatio(ByRef Rng As Range, ByRef tradesCount As Long) As Double
     
 End Function
 
+
+
 ' MODULE: Sheet2
 ' empty
 
@@ -7525,8 +7562,32 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
 '    SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", ""))
 ' Commissions
     SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
-    
-    If rc(ins_td_r, 2) = 0 Then
+
+' Check if has "MERGED" trades
+' quick & dirty fix == BEGIN
+    Dim RowTbLast As Long
+    Dim rgMerged As Range, rgPL As Range, cell As Range
+    Dim hasMerged As Boolean
+
+    hasMerged = False
+
+    Set rgPL = rc.Find(what:="Profit/Loss in pips", _
+        after:=rc(1, 6), _
+        LookIn:=xlValues, _
+        LookAt:=xlWhole, _
+        searchorder:=xlByColumns, _
+        searchdirection:=xlNext)
+    RowTbLast = rc(rgPL.Row, rgPL.Column).End(xlDown).Row
+    Set rgMerged = rb.Sheets(1).Range(rc(rgPL.Row + 1, 5), rc(RowTbLast, 5))
+    For Each cell In rgMerged
+        If cell.Value = "MERGED" Or cell.Value = "ERROR" Then
+            hasMerged = True
+            Exit For
+        End If
+    Next cell
+
+    If rc(ins_td_r, 2) = 0 Or hasMerged = True Then
+' quick & dirty fix == END
         allZeros = True
         sM(i, 0) = oneFdFilesList(i)
         sM(i, 1) = i
@@ -7999,10 +8060,12 @@ Sub Clear_Ready_Reports()
     
 End Sub
 
+
+
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.14.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.16.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8250,6 +8313,8 @@ Sub InitPositionTags(ByRef positionTags As Dictionary)
     positionTags.Add "_algo_comment", Nothing
     
 End Sub
+
+
 
 ' MODULE: SharpeRatio
 Option Explicit
@@ -8527,7 +8592,15 @@ Sub Calc_Sharpe_Ratio()
             
             days_count = Cells(9, 2) - Cells(8, 2) + 1
             net_return = current_balance - 1
+            
+'            cagr = (1 + net_return) ^ (365 / days_count) - 1
+            On Error Resume Next
             cagr = (1 + net_return) ^ (365 / days_count) - 1
+            If Err.Number = 5 Then
+                cagr = 0
+            End If
+            On Error GoTo 0
+            
             With Cells(4, 2)
                 .Value = cagr
                 .NumberFormat = "0.00%"
@@ -8617,6 +8690,8 @@ Sub SharpePivot()
     Application.ScreenUpdating = True
 End Sub
 
+
+
 ' MODULE: VersionControl
 Option Explicit
 
@@ -8638,10 +8713,10 @@ Sub GitSave()
     Call DeleteAndMake
     Call ExportModules
     Call PrintAllCode
-    Call PrintModulesCode
-    Call PrintAllContainers
+'    Call PrintModulesCode
+'    Call PrintAllContainers
     
-    MsgBox "Code exported"
+    MsgBox "Code exported.", , "GetStats"
     
 End Sub
 
@@ -8809,3 +8884,4 @@ Function IsStringInList(ByVal whatString As String, whatList As Variant) As Bool
     IsStringInList = Not (IsError(Application.Match(whatString, whatList, 0)))
 
 End Function
+
