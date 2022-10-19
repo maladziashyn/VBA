@@ -324,7 +324,9 @@ Sub Sharpe_to_all()
     Rows(1).AutoFilter
     Application.ScreenUpdating = True
 End Sub
+
 Sub SharpePivot()
+    
     Dim fd As FileDialog
     Dim wb As Workbook
     Dim tWb As Workbook
@@ -334,6 +336,12 @@ Sub SharpePivot()
     Dim i As Integer
     Dim rg As Range
     Dim insertRow As Long
+    Dim msgAnswer As Variant
+    
+    msgAnswer = MsgBox("Separate window?", vbYesNoCancel)
+    If msgAnswer = vbCancel Then
+        Exit Sub
+    End If
     
     Application.ScreenUpdating = False
     
@@ -358,7 +366,9 @@ Sub SharpePivot()
     For i = 1 To fd.SelectedItems.count
         Set wb = Workbooks.Open(fd.SelectedItems(i))
         wb.Sheets(2).Activate
-        Call Params_To_Summary
+        If msgAnswer = vbNo Then
+            Call Params_To_Summary
+        End If
         Call Sharpe_to_all
         
         Set rg = ActiveCell.CurrentRegion
@@ -370,6 +380,7 @@ Sub SharpePivot()
     Next i
     
     Application.ScreenUpdating = True
+    
 End Sub
 
 

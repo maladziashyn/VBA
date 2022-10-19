@@ -471,7 +471,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.16"
+    Const macro_name As String = "GetStats Pro v1.17"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2717,9 +2717,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.16.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.17.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.16"
+    Const macro_ver As String = "GetStats Pro v1.17"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -5849,7 +5849,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.16.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.17.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -8065,7 +8065,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.16.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.17.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8642,7 +8642,9 @@ Sub Sharpe_to_all()
     Rows(1).AutoFilter
     Application.ScreenUpdating = True
 End Sub
+
 Sub SharpePivot()
+    
     Dim fd As FileDialog
     Dim wb As Workbook
     Dim tWb As Workbook
@@ -8652,6 +8654,12 @@ Sub SharpePivot()
     Dim i As Integer
     Dim rg As Range
     Dim insertRow As Long
+    Dim msgAnswer As Variant
+    
+    msgAnswer = MsgBox("Separate window?", vbYesNoCancel)
+    If msgAnswer = vbCancel Then
+        Exit Sub
+    End If
     
     Application.ScreenUpdating = False
     
@@ -8676,7 +8684,9 @@ Sub SharpePivot()
     For i = 1 To fd.SelectedItems.count
         Set wb = Workbooks.Open(fd.SelectedItems(i))
         wb.Sheets(2).Activate
-        Call Params_To_Summary
+        If msgAnswer = vbNo Then
+            Call Params_To_Summary
+        End If
         Call Sharpe_to_all
         
         Set rg = ActiveCell.CurrentRegion
@@ -8688,6 +8698,7 @@ Sub SharpePivot()
     Next i
     
     Application.ScreenUpdating = True
+    
 End Sub
 
 
