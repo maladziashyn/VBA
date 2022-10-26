@@ -1,9 +1,9 @@
 Attribute VB_Name = "Rep_Multiple"
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.17.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.20.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.17"
+    Const macro_ver As String = "GetStats Pro v1.20"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -649,6 +649,7 @@ Private Sub GSPRM_Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
     Dim win_ct As Integer, los_ct As Integer
     Dim rsqX() As Double, rsqY() As Double
     Dim s As String
+    Dim ArrCommis As Variant
     
 ' get trade log first row - header
     tl_r = rc.Find(what:="Closed orders:", after:=rc(ins_td_r, 1), LookIn:=xlValues, LookAt _
@@ -729,11 +730,13 @@ Private Sub GSPRM_Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 ' compare dates
         If t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1))) Then
             Do While t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1)))
-                If rc(oc_fr + ro_d, 2) = "Commissions" Then
+                If Left(rc(oc_fr + ro_d, 2), 6) = "Commis" Then
                     s = rc(oc_fr + ro_d, 3)
-                    s = Right(s, Len(s) - 13)
-                    s = Left(s, Len(s) - 1)
-                    s = Replace(s, ".", ",", 1, 1, 1)   ' cmsn extracted
+                    ArrCommis = Split(s, " ")
+                    s = ArrCommis(UBound(ArrCommis))
+                    s = Replace(s, ".", ",")
+                    s = Replace(s, "[", "")
+                    s = Replace(s, "]", "")
                     If CDbl(s) <> 0 Then
                         t2(r, 3) = CDbl(s)              ' enter cmsn
                     End If
@@ -1276,7 +1279,7 @@ Private Sub GSPR_Check_Window()
     Dim dates_ok_counter As Integer
 
     Set addin_book = Workbooks(addin_file_name)
-    Set addin_c = addin_book.Sheets("настройки").Cells
+    Set addin_c = addin_book.Sheets("Settings").Cells
     win_start = addin_c(3, 2)
     win_end = addin_c(4, 2)
     html_count = addin_c(5, 2)

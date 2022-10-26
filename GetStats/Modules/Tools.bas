@@ -11,7 +11,7 @@ Sub GSPR_Remove_CommandBar()
     
     On Error Resume Next
     
-    For i = 1 To 10
+    For i = 1 To 9
         Application.CommandBars("GSPR-" & i).Delete
     Next i
     
@@ -28,7 +28,6 @@ Sub GSPR_Create_CommandBar()
     Dim cBar7 As CommandBar
     Dim cBar8 As CommandBar
     Dim cBar9 As CommandBar
-    Dim cBar10 As CommandBar
     Dim cControl As CommandBarControl
     
     Call GSPR_Remove_CommandBar
@@ -68,13 +67,8 @@ Sub GSPR_Create_CommandBar()
     Set cBar9 = Application.CommandBars.Add
     cBar9.Name = "GSPR-9"
     cBar9.Visible = True
-' Create toolbar 10
-    Set cBar10 = Application.CommandBars.Add
-    cBar10.Name = "GSPR-10"
-    cBar10.Visible = True
 
 ' ROW 1 ===========
-
     Set cControl = cBar1.Controls.Add
     With cControl
         .FaceId = 351
@@ -92,19 +86,8 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "Extra"
     End With
-
-' ROW 2 ===========
-
-    Set cControl = cBar2.Controls.Add
-    With cControl
-        .FaceId = 688
-        .OnAction = "GSPRM_Multiple_Main"
-        .TooltipText = "Process a group of reports"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "Group"
-    End With
-
-    Set cControl = cBar2.Controls.Add
+    
+    Set cControl = cBar1.Controls.Add
     With cControl
         .FaceId = 418
         .OnAction = "GSPR_Build_Charts_Singe_Button"
@@ -113,8 +96,26 @@ Sub GSPR_Create_CommandBar()
         .Caption = "Chart"
     End With
 
-' ROW 3 ===========
+' ROW 2 ===========
+    Set cControl = cBar2.Controls.Add
+    With cControl
+        .FaceId = 124
+        .OnAction = "GSPR_show_sheet_index"
+        .TooltipText = "Show this sheet's index"
+        .Control.Style = msoButtonIconAndCaption
+        .Caption = "ShIndex"
+    End With
     
+    Set cControl = cBar2.Controls.Add
+    With cControl
+        .FaceId = 205
+        .OnAction = "GSPR_Go_to_sheet_index"
+        .TooltipText = "Go to sheet with your index"
+        .Control.Style = msoButtonIconAndCaption
+        .Caption = "ToIndex"
+    End With
+
+' ROW 3 ===========
     Set cControl = cBar3.Controls.Add
     With cControl
         .FaceId = 585
@@ -134,9 +135,7 @@ Sub GSPR_Create_CommandBar()
     End With
     
     ' SEPARATOR
-    
     user_switched = False
-    
     Set cControl = cBar3.Controls.Add
     With cControl
         .FaceId = 98
@@ -147,26 +146,26 @@ Sub GSPR_Create_CommandBar()
     End With
 
 ' ROW 4 ===========
-    
     Set cControl = cBar4.Controls.Add
     With cControl
         .FaceId = 688
         .OnAction = "GSPRM_Merge_Summaries"
         .TooltipText = "Merge on recovery factor"
         .Control.Style = msoButtonIconAndCaption
-        .Caption = "Recovery"
+        .Caption = "MergeRF"
     End With
     
     Set cControl = cBar4.Controls.Add
     With cControl
-        .FaceId = 1576
-        .OnAction = "GSPR_Change_Folder_Link"
-        .TooltipText = "Refresh hyperlinks"
+        .FaceId = 688 ' 477
+        .OnAction = "GSPRM_Merge_Sharpe"
+        .TooltipText = "Merge reports on Sharpe"
         .Control.Style = msoButtonIconAndCaption
-        .Caption = "HLinks"
+        .Caption = "MergeSR"
     End With
     
-    Set cControl = cBar4.Controls.Add
+' ROW 5 ===========
+    Set cControl = cBar5.Controls.Add
     With cControl
         .FaceId = 279    ' 31, 279
         .OnAction = "GSPR_Mixer_Copy_Sheet_To_Book"
@@ -175,26 +174,6 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ToMix"
     End With
 
-' ROW 5 ===========
-    
-    Set cControl = cBar5.Controls.Add
-    With cControl
-        .FaceId = 124
-        .OnAction = "GSPR_show_sheet_index"
-        .TooltipText = "Show this sheet's index"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "ShIndex"
-    End With
-    
-    Set cControl = cBar5.Controls.Add
-    With cControl
-        .FaceId = 205
-        .OnAction = "GSPR_Go_to_sheet_index"
-        .TooltipText = "Go to sheet with your index"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "ToIndex"
-    End With
-    
     Set cControl = cBar5.Controls.Add
     With cControl
         .FaceId = 645   ' 601
@@ -204,9 +183,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "MIX"
     End With
 
-' ROW 6 ===========
-    
-    Set cControl = cBar6.Controls.Add
+    Set cControl = cBar5.Controls.Add
     With cControl
         .FaceId = 424   ' 601
         .OnAction = "GSPR_trades_to_days"
@@ -214,37 +191,18 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "MixChart"
     End With
-    
+
+' ROW 6 ===========
     Set cControl = cBar6.Controls.Add
     With cControl
-        .FaceId = 601   ' 601
-        .OnAction = "Check_Window_Bulk"
-        .TooltipText = "Check errors"
+        .FaceId = 283
+        .OnAction = "CalcMore"
+        .TooltipText = "Calculate rest of KPI"
         .Control.Style = msoButtonIconAndCaption
-        .Caption = "CheckErrs"
+        .Caption = "CalcMore"
     End With
     
     Set cControl = cBar6.Controls.Add
-    With cControl
-        .FaceId = 28    ' 7, 28, 159, 176
-        .OnAction = "Create_JFX_file_Main"
-        .TooltipText = "Create code snippet for JFX"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "JFX"
-    End With
-
-' ROW 7 ===========
-
-    Set cControl = cBar7.Controls.Add
-    With cControl
-        .FaceId = 7
-        .OnAction = "Settings_To_Launch_Log"
-        .TooltipText = "Настройки робота из java в журнал"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "java-log"
-    End With
-    
-    Set cControl = cBar7.Controls.Add
     With cControl
         .FaceId = 424   ' 601
         .OnAction = "Stats_Chart_from_Joined_Windows"
@@ -253,7 +211,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ChartJ"
     End With
     
-    Set cControl = cBar7.Controls.Add
+    Set cControl = cBar6.Controls.Add
     With cControl
         .FaceId = 435   ' 601
         .OnAction = "Calc_Sharpe_Ratio"
@@ -261,8 +219,8 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "Sharpe"
     End With
-    
-    Set cControl = cBar8.Controls.Add
+' ROW 7 ===========
+    Set cControl = cBar7.Controls.Add
     With cControl
         .FaceId = 191
         .OnAction = "Params_To_Summary"
@@ -271,7 +229,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ParamJ-Summary"
     End With
     
-    Set cControl = cBar8.Controls.Add
+    Set cControl = cBar7.Controls.Add
     With cControl
         .FaceId = 477   ' 601
         .OnAction = "Sharpe_to_all"
@@ -279,7 +237,8 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "Sharpe all"
     End With
-    
+
+' ROW 8 ===========
     Set cControl = cBar8.Controls.Add
     With cControl
         .FaceId = 430
@@ -289,7 +248,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ScatterPlots"
     End With
     
-    Set cControl = cBar9.Controls.Add
+    Set cControl = cBar8.Controls.Add
     With cControl
         .FaceId = 478
         .OnAction = "RemoveScatters"
@@ -298,25 +257,8 @@ Sub GSPR_Create_CommandBar()
         .Caption = "DelScatter"
     End With
     
+' ROW 9 ===========
     Set cControl = cBar9.Controls.Add
-    With cControl
-        .FaceId = 477
-        .OnAction = "GSPRM_Merge_Sharpe"
-        .TooltipText = "Merge reports on Sharpe"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "SharpeMerge"
-    End With
-    
-    Set cControl = cBar9.Controls.Add
-    With cControl
-        .FaceId = 283
-        .OnAction = "CalcMore"
-        .TooltipText = "Calculate rest of KPI"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "CalcMore"
-    End With
-    
-    Set cControl = cBar10.Controls.Add
     With cControl
         .FaceId = 143
         .OnAction = "SharpePivot"

@@ -1,7 +1,7 @@
 Attribute VB_Name = "Inits"
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.17.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.20.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 

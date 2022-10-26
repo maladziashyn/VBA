@@ -15,10 +15,6 @@ Private Sub Workbook_BeforeClose(Cancel As Boolean)
 
 End Sub
 
-' MODULE: Sheet3
-' empty
-
-
 ' MODULE: Mixer
 Option Explicit
 Option Base 1
@@ -471,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.17"
+    Const macro_name As String = "GetStats Pro v1.20"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -558,12 +554,17 @@ Option Base 1
     Dim current_decimal As String
     Dim undo_sep As Boolean, undo_usesyst As Boolean
 Private Sub GSPR_Single_Extra()
-'
-' RIBBON > BUTTON "Экстра"
-'
+    Dim MbAnswer As Variant
+    
     On Error Resume Next
+    
+    If MsgBox("Works only for reports made with Platform version 1. CONTINUE?", _
+        vbYesNo) <> vbYes Then
+        Exit Sub
+    End If
+    
     Application.ScreenUpdating = False
-    Application.StatusBar = "Создаю отчет ""Экстра""."
+    Application.StatusBar = "Creating report ""Extra""."
     Call GSPR_Separator_Auto_Switcher_Single_Extra
     Call GSPR_Open_Report_f
     If open_fail = True Then
@@ -948,8 +949,8 @@ Private Sub GSPR_Fill_Trade_Log()
     ' 7. open date
     ' 8. close date
     ' 9. comment
-    ' 10. кривая доходности
-    ' 11. сумма пунктов
+    ' 10. equity curve
+    ' 11. pips sum
 ' Tlog() - trades only
     For rI = LBound(Tlog, 1) To UBound(Tlog, 1)
         For cI = LBound(Tlog, 2) To UBound(Tlog, 2) - 2
@@ -997,8 +998,8 @@ Private Sub GSPR_Fill_Trade_Log()
     For cI = LBound(Tlog_head) To UBound(Tlog_head) - 2
         Tlog_head(cI) = rc(tl_r, cI + 1)
     Next cI
-    Tlog_head(10) = "Кривая доходности"
-    Tlog_head(11) = "Сумма пунктов"
+    Tlog_head(10) = "Equity curve"
+    Tlog_head(11) = "Pips sum"
 ' trade amount to CDbl
     For rI = LBound(Tlog, 1) To UBound(Tlog, 1)
         Tlog(rI, 1) = CDbl(Tlog(rI, 1))
@@ -1966,139 +1967,139 @@ Private Sub GSPR_Get_All_Stats_part_2()
 End Sub
 Private Sub GSPR_Prep_SN()
 ' STATISTICS NAMES
-    SN(r_s_report) = "ОТЧЕТ"
-    SN(r_name) = "Макрос"
-    SN(r_type) = "Тип отчета"
-    SN(r_date_gen) = "Дата получения"
-    SN(r_time_gen) = "Время получения"
-    SN(r_file) = "Отчет Dukascopy, ссылка"
-    SN(r_s_basic) = "ОСНОВНЫЕ ДАННЫЕ"
-    SN(r_strat) = "Название стратегии"
-    SN(r_ac) = "Валюта счета (в/с)"
-    SN(r_ins) = "Инструмент"
-    SN(r_init_depo) = "Начальный депозит"
-    SN(r_fin_depo) = "Конечный депозит"
-    SN(r_s_return) = "ДОХОДНОСТЬ"
-    SN(r_net_pc) = "Чистая, %"
-    SN(r_net_ac) = "Чистая, в/с"
-    SN(r_mon_won) = "Сумма прибыльных сделок"
-    SN(r_mon_lost) = "Сумма убыточных сделок"
-    SN(r_ann_ret) = "Годовой прирост, %"
-    SN(r_mn_ret) = "Месячный прирост, %"
-    SN(r_s_pips) = "ПУНКТЫ"
-    SN(r_net_pp) = "Сумма"
-    SN(r_won_pp) = "В прибыльных сделках"
-    SN(r_lost_pp) = "В убыточных сделках"
-    SN(r_per_yr_pp) = "В год, сред."
-    SN(r_per_mn_pp) = "В месяц, сред."
-    SN(r_per_w_pp) = "В неделю, сред."
-    SN(r_s_rsq) = "R-КВАДРАТ"
-    SN(r_rsq_tr_cve) = "R-кв по кривой сделок (пп)"
-    SN(r_rsq_eq_cve) = "R-кв по кривой капитала"
-    SN(r_s_pf) = "ПРОФИТ-ФАКТОР"
-    SN(r_pf_ac) = "В в/с"
-    SN(r_pf_pp) = "В пунктах"
-    SN(r_s_rf) = "КОЭФ. ВОССТАНОВЛЕНИЯ"
-    SN(r_rf_ac) = "В в/с"
-    SN(r_rf_pp) = "В пунктах"
-    SN(r_s_avgs_pp) = "СРЕД.ЗНАЧ. В ПУНКТАХ"
-    SN(r_avg_td_pp) = "Сделка"
-    SN(r_avg_win_pp) = "Прибыльная"
-    SN(r_avg_los_pp) = "Убыточная"
-    SN(r_avg_win_los_pp) = "Приб/Убыт"
-    SN(r_s_avgs_ac) = "СРЕД.ЗНАЧ. В В/С"
-    SN(r_avg_td_ac) = "Сделка"
-    SN(r_avg_win_ac) = "Прибыльная"
-    SN(r_avg_los_ac) = "Убыточная"
-    SN(r_avg_win_los_ac) = "Приб/Убыт"
-    SN(r_s_intvl) = "ВРЕМЕННЫЕ ИНТЕРВАЛЫ"
-    SN(r_mn_win) = "Месяцев прибыльных"
-    SN(r_mn_los) = "Месяцев убыточных"
-    SN(r_mn_no_tds) = "Месяцев без сделок"
-    SN(r_mn_win_los) = "Мес. приб/убыт"
-    SN(r_w_win) = "Недель прибыльных"
-    SN(r_w_los) = "Недель убыточных"
-    SN(r_w_no_tds) = "Недель без сделок"
-    SN(r_w_win_los) = "Нед. приб/убыт"
-    SN(r_d_win) = "Дней прибыльных"
-    SN(r_d_los) = "Дней убыточных"
-    SN(r_d_no_tds) = "Дней без сделок"
-    SN(r_d_win_los) = "Дней приб/убыт"
-    SN(r_s_act_intvl) = "АКТИВНЫЕ ИНТЕРВАЛЫ"
-    SN(r_mn_act) = "Месяцев активных"
-    SN(r_mn_act_all) = "Мес. акт/все"
-    SN(r_w_act) = "Недель активных"
-    SN(r_w_act_all) = "Нед. акт/все"
-    SN(r_d_act) = "Дней активных"
-    SN(r_d_act_all) = "Дней акт/все"
-    SN(r_s_std) = "СТАНДАРТНЫЕ ОТКЛОН."
-    SN(r_std_tds_pp) = "Сделки (пп)"
-    SN(r_std_tds_ac) = "Сделки (в/с)"
+    SN(r_s_report) = "REPORT"
+    SN(r_name) = "Macro"
+    SN(r_type) = "Report type"
+    SN(r_date_gen) = "Date obtained"
+    SN(r_time_gen) = "Time obtained"
+    SN(r_file) = "Dukascopy report, link"
+    SN(r_s_basic) = "MAIN DATA"
+    SN(r_strat) = "Strategy name"
+    SN(r_ac) = "Account currency (a/c)"
+    SN(r_ins) = "Instrument"
+    SN(r_init_depo) = "Deposit start"
+    SN(r_fin_depo) = "Deposit finish"
+    SN(r_s_return) = "RETURNS"
+    SN(r_net_pc) = "Net, %"
+    SN(r_net_ac) = "Net, a/c"
+    SN(r_mon_won) = "Winning trades sum"
+    SN(r_mon_lost) = "Losing trades sum"
+    SN(r_ann_ret) = "Annualized return, %"
+    SN(r_mn_ret) = "Monthly return, %"
+    SN(r_s_pips) = "PIPS"
+    SN(r_net_pp) = "Sum"
+    SN(r_won_pp) = "Winning trades"
+    SN(r_lost_pp) = "Losing trades"
+    SN(r_per_yr_pp) = "Avg yearly"
+    SN(r_per_mn_pp) = "Avg monthly"
+    SN(r_per_w_pp) = "Avg weekly"
+    SN(r_s_rsq) = "R-SQUARED"
+    SN(r_rsq_tr_cve) = "Pips sum curve"
+    SN(r_rsq_eq_cve) = "Equity curve"
+    SN(r_s_pf) = "PROFIT FACTOR"
+    SN(r_pf_ac) = "A/c"
+    SN(r_pf_pp) = "Pips"
+    SN(r_s_rf) = "RECOVERY FACTOR"
+    SN(r_rf_ac) = "A/c"
+    SN(r_rf_pp) = "Pips"
+    SN(r_s_avgs_pp) = "AVG PIPS"
+    SN(r_avg_td_pp) = "Trade"
+    SN(r_avg_win_pp) = "Winner"
+    SN(r_avg_los_pp) = "Loser"
+    SN(r_avg_win_los_pp) = "Winner/Loser"
+    SN(r_s_avgs_ac) = "AVG IN A/C"
+    SN(r_avg_td_ac) = "Trade"
+    SN(r_avg_win_ac) = "Winner"
+    SN(r_avg_los_ac) = "Loser"
+    SN(r_avg_win_los_ac) = "Winner/Loser"
+    SN(r_s_intvl) = "TIME INTERVALS"
+    SN(r_mn_win) = "Months winning"
+    SN(r_mn_los) = "Months losing"
+    SN(r_mn_no_tds) = "Months no trades"
+    SN(r_mn_win_los) = "Months win/los"
+    SN(r_w_win) = "Weeks winning"
+    SN(r_w_los) = "Weeks losing"
+    SN(r_w_no_tds) = "Weeks no trades"
+    SN(r_w_win_los) = "Weeks win/los"
+    SN(r_d_win) = "Days winninng"
+    SN(r_d_los) = "Days losing"
+    SN(r_d_no_tds) = "Days no trades"
+    SN(r_d_win_los) = "Days win/los"
+    SN(r_s_act_intvl) = "ACTIVE INTERVALS"
+    SN(r_mn_act) = "Months active"
+    SN(r_mn_act_all) = "Months act/all"
+    SN(r_w_act) = "Weeks active"
+    SN(r_w_act_all) = "Weeks act/all"
+    SN(r_d_act) = "Days active"
+    SN(r_d_act_all) = "Days act/all"
+    SN(r_s_std) = "STD DEV"
+    SN(r_std_tds_pp) = "Trades (pips)"
+    SN(r_std_tds_ac) = "Trades (a/c)"
 '
-    SN(r_s_time) = "ИСТОРИЧЕСКОЕ ОКНО"
-    SN(r_dt_begin) = "Начало теста"
-    SN(r_dt_end) = "Конец теста"
-    SN(r_yrs) = "Лет"
-    SN(r_mns) = "Месяцев"
-    SN(r_wks) = "Недель"
-    SN(r_cds) = "Календарных дней"
-    SN(r_s_cmsn) = "КОМИССИИ"
-    SN(r_cmsn_amnt_ac) = "Сумма в в/с"
-    SN(r_cmsn_avg_per_d) = "Средняя в день в в/с"
-    SN(r_s_mdd_ac) = "MDD, MFE В В/С"
-    SN(r_mdd_ec_ac) = "MDD от кривой капитала"
-    SN(r_mfe_ec_ac) = "MFE от кривой капитала"
-    SN(r_abs_hi_ac) = "Абс. максимум"
-    SN(r_abs_lo_ac) = "Абс. минимум"
-    SN(r_s_mdd_pp) = "MDD, MFE В ПП"
-    SN(r_mdd_ec_pp) = "MDD от кривой суммы пп."
-    SN(r_mfe_ec_pp) = "MFE от кривой суммы пп."
-    SN(r_abs_hi_pp) = "Абс. максимум"
-    SN(r_abs_lo_pp) = "Абс. минимум"
-    SN(r_s_trades) = "ПОЗИЦИИ"
-    SN(r_tds_closed) = "Закрыто"             ' trades closed
-    SN(r_tds_per_yr) = "В год"
-    SN(r_tds_per_mn) = "В месяц"
-    SN(r_tds_per_w) = "В неделю"
-    SN(r_tds_max_per_d) = "Максимум в день"
-    SN(r_tds_win_count) = "Прибыльных"
-    SN(r_tds_los_count) = "Убыточных"
-    SN(r_tds_win_pc) = "Прибыльных, %"
-    SN(r_tds_lg) = "Лонг"
-    SN(r_tds_sh) = "Шорт"
-    SN(r_tds_lg_sh) = "Лонг/Шорт"
-    SN(r_tds_lg_win_pc) = "Лонг, прибыльные, %"
-    SN(r_tds_sh_win_pc) = "Шорт, прибыльные, %"
-    SN(r_s_dur) = "ПРОДОЛЖ-ТЬ ПОЗИЦИЙ"
-    SN(r_avg_dur) = "Средняя, дней"
-    SN(r_avg_win_dur) = "Средняя прибыльная, дней"
-    SN(r_avg_los_dur) = "Средняя убыточная, дней"
-    SN(r_avg_dur_win_los) = "Средняя приб/убыт"
-    SN(r_s_stks) = "СЕРИИ"
-    SN(r_stk_win_tds) = "Max прибыльная, поз."
-    SN(r_stk_los_tds) = "Max убыточная, поз."
-    SN(r_stk_win_mns) = "Max прибыльная, мес."
-    SN(r_stk_los_mns) = "Max убыточная, мес."
-    SN(r_stk_win_wks) = "Max прибыльная, нед."
-    SN(r_stk_los_wks) = "Max убыточная, нед."
-    SN(r_stk_win_ds) = "Max прибыльная, дн."
-    SN(r_stk_los_ds) = "Max убыточная, дн."
-    SN(r_runs_tds) = "Серий, позиций"
-    SN(r_zscore_tds) = "Z-оценка, позиции"
-    SN(r_runs_wks) = "Серий, нед."
-    SN(r_zscore_wks) = "Z-оценка, нед."
-    SN(r_s_over) = "ОВЕРНАЙТЫ"
-    SN(r_over_amnt_pp) = "Сумма, пп"
-    SN(r_ds_over) = "Дней с овернайтами"
-    SN(r_dwo_per_mn) = "Дней с оверн. в мес."
-    SN(r_s_expo) = "ЭКСПОЗИЦИЯ"
-    SN(r_tm_in_tds) = "Дней в позициях"
-    SN(r_tm_in_win_tds) = "Дней в прибыльных поз."
-    SN(r_tm_in_los_tds) = "Дней в убыточных поз."
-    SN(r_tm_win_los) = "Дней в приб/убыт"
-    SN(r_s_orders) = "ОРДЕРА"
-    SN(r_ord_sent) = "Ордеров отправлено"
-    SN(r_ord_tds) = "Ордеров/Позиций"
+    SN(r_s_time) = "HISTORICAL WINDOWS"
+    SN(r_dt_begin) = "Test begin"
+    SN(r_dt_end) = "Test end"
+    SN(r_yrs) = "Years"
+    SN(r_mns) = "Months"
+    SN(r_wks) = "Weeks"
+    SN(r_cds) = "Calendar days"
+    SN(r_s_cmsn) = "COMMISSIONS"
+    SN(r_cmsn_amnt_ac) = "Sum in a/c"
+    SN(r_cmsn_avg_per_d) = "Avg per day in a/c"
+    SN(r_s_mdd_ac) = "MDD, MFE IN A/C"
+    SN(r_mdd_ec_ac) = "MDD on equity curve"
+    SN(r_mfe_ec_ac) = "MFE on equity curve"
+    SN(r_abs_hi_ac) = "Abs max"
+    SN(r_abs_lo_ac) = "Abs min"
+    SN(r_s_mdd_pp) = "MDD, MFE IN PIPS"
+    SN(r_mdd_ec_pp) = "MDD on pips curve"
+    SN(r_mfe_ec_pp) = "MFE on pips curve"
+    SN(r_abs_hi_pp) = "Abs max"
+    SN(r_abs_lo_pp) = "Abs min"
+    SN(r_s_trades) = "TRADES"
+    SN(r_tds_closed) = "Clsoed"
+    SN(r_tds_per_yr) = "Per year"
+    SN(r_tds_per_mn) = "Per month"
+    SN(r_tds_per_w) = "Per week"
+    SN(r_tds_max_per_d) = "Max per day"
+    SN(r_tds_win_count) = "Winners"
+    SN(r_tds_los_count) = "Losers"
+    SN(r_tds_win_pc) = "Winners, %"
+    SN(r_tds_lg) = "Long"
+    SN(r_tds_sh) = "Short"
+    SN(r_tds_lg_sh) = "Long/Short"
+    SN(r_tds_lg_win_pc) = "Long, winners, %"
+    SN(r_tds_sh_win_pc) = "Short, winners, %"
+    SN(r_s_dur) = "TRADE DURATION"
+    SN(r_avg_dur) = "Avg, days"
+    SN(r_avg_win_dur) = "Avg winner, days"
+    SN(r_avg_los_dur) = "Avg loser, days"
+    SN(r_avg_dur_win_los) = "Avg win/los"
+    SN(r_s_stks) = "STREAKS"
+    SN(r_stk_win_tds) = "Max winning, trades"
+    SN(r_stk_los_tds) = "Max losing, trades"
+    SN(r_stk_win_mns) = "Max winning, months"
+    SN(r_stk_los_mns) = "Max losing, months"
+    SN(r_stk_win_wks) = "Max winning, weeks"
+    SN(r_stk_los_wks) = "Max losing, weeks"
+    SN(r_stk_win_ds) = "Max winning, days"
+    SN(r_stk_los_ds) = "Max losing, days"
+    SN(r_runs_tds) = "Streaks, trades"
+    SN(r_zscore_tds) = "Z-score, trades"
+    SN(r_runs_wks) = "Streaks, weeks"
+    SN(r_zscore_wks) = "Z-score, weeks"
+    SN(r_s_over) = "OVERNIGHTS"
+    SN(r_over_amnt_pp) = "Sum, pips"
+    SN(r_ds_over) = "Days with overnights"
+    SN(r_dwo_per_mn) = "Days with o/n per mn"
+    SN(r_s_expo) = "EXPOSURE"
+    SN(r_tm_in_tds) = "Days in positions"
+    SN(r_tm_in_win_tds) = "Days in winners"
+    SN(r_tm_in_los_tds) = "Days in losers"
+    SN(r_tm_win_los) = "Days in win/los"
+    SN(r_s_orders) = "ORDERS"
+    SN(r_ord_sent) = "Orders sent"
+    SN(r_ord_tds) = "Orders/Positions ratio"
 End Sub
 Private Sub GSPR_Prep_all_fm()
 ' Column A
@@ -2317,52 +2318,52 @@ Private Sub GSPR_Format_SV_SN()
 End Sub
 Private Sub GSPR_Fill_Logs_Heads()
 ' daily log head
-    Dlog_head(1) = "Конец дня"
-    Dlog_head(2) = "Доход"
-    Dlog_head(3) = "Открытие"
-    Dlog_head(4) = "Хай"
-    Dlog_head(5) = "Лоу"
-    Dlog_head(6) = "Закрытие"
-    Dlog_head(7) = "Свопы, пп"
-    Dlog_head(8) = "Комиссия"
-    Dlog_head(9) = "Доход"
-    Dlog_head(10) = "Открытие"
-    Dlog_head(11) = "Хай"
-    Dlog_head(12) = "Лоу"
-    Dlog_head(13) = "Закрытие"
+    Dlog_head(1) = "EOD"
+    Dlog_head(2) = "Return"
+    Dlog_head(3) = "Open"
+    Dlog_head(4) = "High"
+    Dlog_head(5) = "Low"
+    Dlog_head(6) = "Close"
+    Dlog_head(7) = "Swaps, pips"
+    Dlog_head(8) = "Cmsn"
+    Dlog_head(9) = "Return"
+    Dlog_head(10) = "Open"
+    Dlog_head(11) = "High"
+    Dlog_head(12) = "Low"
+    Dlog_head(13) = "Clsoe"
 ' weekly log head
-    Wlog_head(1) = "Конец недели"
-    Wlog_head(2) = "Доход"
-    Wlog_head(3) = "Открытие"
-    Wlog_head(4) = "Хай"
-    Wlog_head(5) = "Лоу"
-    Wlog_head(6) = "Закрытие"
-    Wlog_head(7) = "Свопы, пп"
-    Wlog_head(8) = "Комиссия"
-    Wlog_head(9) = "Доход"
-    Wlog_head(10) = "Открытие"
-    Wlog_head(11) = "Хай"
-    Wlog_head(12) = "Лоу"
-    Wlog_head(13) = "Закрытие"
+    Wlog_head(1) = "EOW"
+    Wlog_head(2) = "Return"
+    Wlog_head(3) = "Open"
+    Wlog_head(4) = "High"
+    Wlog_head(5) = "Low"
+    Wlog_head(6) = "Close"
+    Wlog_head(7) = "Swaps, pips"
+    Wlog_head(8) = "Cmsn"
+    Wlog_head(9) = "Return"
+    Wlog_head(10) = "Open"
+    Wlog_head(11) = "High"
+    Wlog_head(12) = "Low"
+    Wlog_head(13) = "Close"
 ' monthly log head
-    Mlog_head(1) = "Конец месяца"
-    Mlog_head(2) = "Доход"
-    Mlog_head(3) = "Открытие"
-    Mlog_head(4) = "Хай"
-    Mlog_head(5) = "Лоу"
-    Mlog_head(6) = "Закрытие"
-    Mlog_head(7) = "Свопы, пп"
-    Mlog_head(8) = "Комиссия"
-    Mlog_head(9) = "Доход"
-    Mlog_head(10) = "Открытие"
-    Mlog_head(11) = "Хай"
-    Mlog_head(12) = "Лоу"
-    Mlog_head(13) = "Закрытие"
+    Mlog_head(1) = "EOM"
+    Mlog_head(2) = "Return"
+    Mlog_head(3) = "Open"
+    Mlog_head(4) = "High"
+    Mlog_head(5) = "Low"
+    Mlog_head(6) = "Close"
+    Mlog_head(7) = "Swaps, pips"
+    Mlog_head(8) = "Cmsn"
+    Mlog_head(9) = "Return"
+    Mlog_head(10) = "Open"
+    Mlog_head(11) = "High"
+    Mlog_head(12) = "Low"
+    Mlog_head(13) = "Close"
 End Sub
 Private Sub GSPR_Show_All_Logs()
     Dim rI As Integer, cI As Integer, tI_co As Integer
 ' PARAMETERS
-    nc(di_r, di_c) = "ПАРАМЕТРЫ"
+    nc(di_r, di_c) = "PARAMETERS"
 ' show parameters
     For rI = LBound(Par, 1) To UBound(Par, 1)
         For cI = LBound(Par, 2) To UBound(Par, 2)
@@ -2382,7 +2383,7 @@ Private Sub GSPR_Show_All_Logs()
     End With
 ' TRADE LOG
     tI_co = di_c + UBound(Par, 2)
-    nc(di_r, tI_co) = "Журнал позиций"
+    nc(di_r, tI_co) = "Trade log"
 ' show trade log head
     For cI = LBound(Tlog_head) To UBound(Tlog_head)
         nc(di_r + 1, tI_co - 1 + cI) = Tlog_head(cI)
@@ -2395,9 +2396,9 @@ Private Sub GSPR_Show_All_Logs()
     Next rI
 ' DAILY LOG
     tI_co = tI_co + UBound(Tlog_head)
-    nc(di_r, tI_co) = "Журнал позиций по календарным дням"
-    nc(di_r, tI_co + 1) = "В валюте счета"
-    nc(di_r, tI_co + 8) = "В пунктах"
+    nc(di_r, tI_co) = "Trade log, calendar days"
+    nc(di_r, tI_co + 1) = "In account currency"
+    nc(di_r, tI_co + 8) = "In pips"
 ' show head
     For cI = LBound(Dlog_head) To UBound(Dlog_head)
         nc(di_r + 1, tI_co - 1 + cI) = Dlog_head(cI)
@@ -2410,9 +2411,9 @@ Private Sub GSPR_Show_All_Logs()
     Next rI
 ' WEEKLY LOG
     tI_co = tI_co + UBound(Wlog_head)
-    nc(di_r, tI_co) = "Журнал позиций по неделям"
-    nc(di_r, tI_co + 1) = "В валюте счета"
-    nc(di_r, tI_co + 8) = "В пунктах"
+    nc(di_r, tI_co) = "Trade log, weeks"
+    nc(di_r, tI_co + 1) = "In account currency"
+    nc(di_r, tI_co + 8) = "In pips"
 ' show head
     For cI = LBound(Wlog_head) To UBound(Wlog_head)
         nc(di_r + 1, tI_co - 1 + cI) = Wlog_head(cI)
@@ -2425,9 +2426,9 @@ Private Sub GSPR_Show_All_Logs()
     Next rI
 ' MONTHLY LOG
     tI_co = tI_co + UBound(Mlog_head)
-    nc(di_r, tI_co) = "Журнал позиций по месяцам"
-    nc(di_r, tI_co + 1) = "В валюте счета"
-    nc(di_r, tI_co + 8) = "В пунктах"
+    nc(di_r, tI_co) = "Trade log in monghts"
+    nc(di_r, tI_co + 1) = "In account currency"
+    nc(di_r, tI_co + 8) = "In pips"
 ' show head
     For cI = LBound(Mlog_head) To UBound(Mlog_head)
         nc(di_r + 1, tI_co - 1 + cI) = Mlog_head(cI)
@@ -2464,7 +2465,7 @@ Private Sub GSPR_Build_Charts()
     t_rof = di_r + 2
     t_rol = di_r + 1 + UBound(Tlog, 1)
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co))
-    ChTitle = "СУММА ПУНКТОВ. Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Итог = " & SV(r_net_pp) & " пп."
+    ChTitle = "PIPS SUM. Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Result = " & SV(r_net_pp) & " pips."
 ' pips abs high low
     If SV(r_abs_lo_pp) < 0 Then
         MinVal = 100 * Int(SV(r_abs_lo_pp) / 100)
@@ -2484,7 +2485,7 @@ Private Sub GSPR_Build_Charts()
     t_rof = di_r + 2
     t_rol = di_r + 1 + UBound(Tlog, 1)
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co))
-    ChTitle = "РЕЗУЛЬТАТ ПОЗИЦИЙ В ПП. Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
+    ChTitle = "TRADES IN PIPS. Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
     chobj_n = chobj_n + 1
     Call GSPR_Charts_Hist_Y(chsht, ulr, ulc, chW, chH, rngY, ChTitle, chobj_n)
 ' =====================================
@@ -2498,7 +2499,7 @@ Private Sub GSPR_Build_Charts()
     t_rol = di_r + 2 + UBound(Dlog, 1)
     Set rngX = Range(nc(t_rof, t_co - 5), nc(t_rol, t_co - 5))
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co))
-    ChTitle = "КРИВАЯ КАПИТАЛА ПО ДНЯМ. Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Итог = " & SV(r_fin_depo) & " " & SV(r_ac) & "."
+    ChTitle = "DAILY EQUITY CURVE. Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Result = " & SV(r_fin_depo) & " " & SV(r_ac) & "."
 ' pips abs high low
     MinVal = ch_round * Int(SV(r_abs_lo_ac) / ch_round) ' minus 1000 - no
     maxVal = ch_round * Int(SV(r_abs_hi_ac) / ch_round) + ch_round
@@ -2511,7 +2512,7 @@ Private Sub GSPR_Build_Charts()
     chH = Int(di_r * 0.4)
     t_co = ulc + 1
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co))
-    ChTitle = "ИТОГ ДНЯ В " & SV(r_ac) & ". Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
+    ChTitle = "DAY RESULT IN " & SV(r_ac) & ". Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
     chobj_n = chobj_n + 1
     Call GSPR_Charts_Hist_Y(chsht, ulr, ulc, chW, chH, rngY, ChTitle, chobj_n)
 ' =====================================
@@ -2525,7 +2526,7 @@ Private Sub GSPR_Build_Charts()
     t_rol = di_r + 2 + UBound(Wlog, 1)
     Set rngX = Range(nc(t_rof, t_co - 2), nc(t_rol, t_co - 2))
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co + 3))
-    ChTitle = "КРИВАЯ КАПИТАЛА ПО НЕДЕЛЯМ, OHLC. Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Итог = " & SV(r_fin_depo) & " " & SV(r_ac) & "."
+    ChTitle = "WEEKLY EQUITY CURVE, OHLC. Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Sates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Result = " & SV(r_fin_depo) & " " & SV(r_ac) & "."
 ' pips abs high low
     MinVal = ch_round * Int(SV(r_abs_lo_ac) / ch_round)
     maxVal = ch_round * Int(SV(r_abs_hi_ac) / ch_round) + ch_round
@@ -2538,7 +2539,7 @@ Private Sub GSPR_Build_Charts()
     chH = Int(di_r * 0.4)
     t_co = ulc + 1
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co))
-    ChTitle = "ИТОГ НЕДЕЛИ В " & SV(r_ac) & ". Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
+    ChTitle = "WEEK RESULT INT " & SV(r_ac) & ". Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
     chobj_n = chobj_n + 1
     Call GSPR_Charts_Hist_Y(chsht, ulr, ulc, chW, chH, rngY, ChTitle, chobj_n)
 ' =====================================
@@ -2552,7 +2553,7 @@ Private Sub GSPR_Build_Charts()
     t_rol = di_r + 2 + UBound(Mlog, 1)
     Set rngX = Range(nc(t_rof, t_co - 2), nc(t_rol, t_co - 2))
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co + 3))
-    ChTitle = "КРИВАЯ КАПИТАЛА ПО МЕСЯЦАМ, OHLC. Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Итог = " & SV(r_fin_depo) & " " & SV(r_ac) & "."
+    ChTitle = "MONTHLY EQUITY CURVE, OHLC. Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & ". Result = " & SV(r_fin_depo) & " " & SV(r_ac) & "."
 ' pips abs high low
     MinVal = ch_round * Int(SV(r_abs_lo_ac) / ch_round)
     maxVal = ch_round * Int(SV(r_abs_hi_ac) / ch_round) + ch_round
@@ -2565,7 +2566,7 @@ Private Sub GSPR_Build_Charts()
     chH = Int(di_r * 0.4)
     t_co = ulc + 1
     Set rngY = Range(nc(t_rof, t_co), nc(t_rol, t_co))
-    ChTitle = "ИТОГ МЕСЯЦА В " & SV(r_ac) & ". Стратегия: " & SV(r_strat) & ". Инструмент: " & SV(r_ins) & ". Даты: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
+    ChTitle = "MONTH RESULT IN " & SV(r_ac) & ". Strategy: " & SV(r_strat) & ". Instrument: " & SV(r_ins) & ". Dates: " & SV(r_dt_begin) & "-" & Int(SV(r_dt_end)) & "."
     chobj_n = chobj_n + 1
     Call GSPR_Charts_Hist_Y(chsht, ulr, ulc, chW, chH, rngY, ChTitle, chobj_n)
     nc(1, 1).Activate
@@ -2717,9 +2718,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.17.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.20.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.17"
+    Const macro_ver As String = "GetStats Pro v1.20"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -3365,6 +3366,7 @@ Private Sub GSPRM_Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
     Dim win_ct As Integer, los_ct As Integer
     Dim rsqX() As Double, rsqY() As Double
     Dim s As String
+    Dim ArrCommis As Variant
     
 ' get trade log first row - header
     tl_r = rc.Find(what:="Closed orders:", after:=rc(ins_td_r, 1), LookIn:=xlValues, LookAt _
@@ -3445,11 +3447,13 @@ Private Sub GSPRM_Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 ' compare dates
         If t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1))) Then
             Do While t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1)))
-                If rc(oc_fr + ro_d, 2) = "Commissions" Then
+                If Left(rc(oc_fr + ro_d, 2), 6) = "Commis" Then
                     s = rc(oc_fr + ro_d, 3)
-                    s = Right(s, Len(s) - 13)
-                    s = Left(s, Len(s) - 1)
-                    s = Replace(s, ".", ",", 1, 1, 1)   ' cmsn extracted
+                    ArrCommis = Split(s, " ")
+                    s = ArrCommis(UBound(ArrCommis))
+                    s = Replace(s, ".", ",")
+                    s = Replace(s, "[", "")
+                    s = Replace(s, "]", "")
                     If CDbl(s) <> 0 Then
                         t2(r, 3) = CDbl(s)              ' enter cmsn
                     End If
@@ -3992,7 +3996,7 @@ Private Sub GSPR_Check_Window()
     Dim dates_ok_counter As Integer
 
     Set addin_book = Workbooks(addin_file_name)
-    Set addin_c = addin_book.Sheets("настройки").Cells
+    Set addin_c = addin_book.Sheets("Settings").Cells
     win_start = addin_c(3, 2)
     win_end = addin_c(4, 2)
     html_count = addin_c(5, 2)
@@ -4564,7 +4568,7 @@ Private Sub GSPR_Extract_stats()
 ' sort parameters alphabetically
     Call GSPR_Par_Bubblesort
 ' Test begin
-    SV(s_date_begin, 2) = CDate(rc(ins_td_r - 7, 2))
+    SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2)))
 ' Test end
 '    SV(s_date_end, 2) = Int(rc(ins_td_r - 4, 2))
     SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2)))
@@ -4642,6 +4646,7 @@ Private Sub GSPR_Fill_Tradelog()
     Dim win_ct As Integer, los_ct As Integer
     Dim rsqX() As Double, rsqY() As Double
     Dim s As String
+    Dim ArrCommis As Variant
     
 ' get trade log first row - header
     tl_r = rc.Find(what:="Closed orders:", after:=rc(ins_td_r, 1), LookIn:=xlValues, LookAt _
@@ -4722,11 +4727,13 @@ Private Sub GSPR_Fill_Tradelog()
 ' compare dates
         If t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1))) Then  ' *! cdate
             Do While t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1))) ' *! cdate
-                If rc(oc_fr + ro_d, 2) = "Commissions" Then
+                If Left(rc(oc_fr + ro_d, 2), 6) = "Commis" Then
                     s = rc(oc_fr + ro_d, 3)
-                    s = Right(s, Len(s) - 13)
-                    s = Left(s, Len(s) - 1)
+                    ArrCommis = Split(s, " ")
+                    s = ArrCommis(UBound(ArrCommis))
                     s = Replace(s, ".", ",", 1, 1, 1)
+                    s = Replace(s, "[", "")
+                    s = Replace(s, "]", "")
                     If CDbl(s) <> 0 Then
                         t2(r, 3) = CDbl(s)              ' enter cmsn
                     End If
@@ -5182,7 +5189,7 @@ Sub GSPR_Remove_CommandBar()
     
     On Error Resume Next
     
-    For i = 1 To 10
+    For i = 1 To 9
         Application.CommandBars("GSPR-" & i).Delete
     Next i
     
@@ -5199,7 +5206,6 @@ Sub GSPR_Create_CommandBar()
     Dim cBar7 As CommandBar
     Dim cBar8 As CommandBar
     Dim cBar9 As CommandBar
-    Dim cBar10 As CommandBar
     Dim cControl As CommandBarControl
     
     Call GSPR_Remove_CommandBar
@@ -5239,13 +5245,8 @@ Sub GSPR_Create_CommandBar()
     Set cBar9 = Application.CommandBars.Add
     cBar9.Name = "GSPR-9"
     cBar9.Visible = True
-' Create toolbar 10
-    Set cBar10 = Application.CommandBars.Add
-    cBar10.Name = "GSPR-10"
-    cBar10.Visible = True
 
 ' ROW 1 ===========
-
     Set cControl = cBar1.Controls.Add
     With cControl
         .FaceId = 351
@@ -5263,19 +5264,8 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "Extra"
     End With
-
-' ROW 2 ===========
-
-    Set cControl = cBar2.Controls.Add
-    With cControl
-        .FaceId = 688
-        .OnAction = "GSPRM_Multiple_Main"
-        .TooltipText = "Process a group of reports"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "Group"
-    End With
-
-    Set cControl = cBar2.Controls.Add
+    
+    Set cControl = cBar1.Controls.Add
     With cControl
         .FaceId = 418
         .OnAction = "GSPR_Build_Charts_Singe_Button"
@@ -5284,8 +5274,26 @@ Sub GSPR_Create_CommandBar()
         .Caption = "Chart"
     End With
 
-' ROW 3 ===========
+' ROW 2 ===========
+    Set cControl = cBar2.Controls.Add
+    With cControl
+        .FaceId = 124
+        .OnAction = "GSPR_show_sheet_index"
+        .TooltipText = "Show this sheet's index"
+        .Control.Style = msoButtonIconAndCaption
+        .Caption = "ShIndex"
+    End With
     
+    Set cControl = cBar2.Controls.Add
+    With cControl
+        .FaceId = 205
+        .OnAction = "GSPR_Go_to_sheet_index"
+        .TooltipText = "Go to sheet with your index"
+        .Control.Style = msoButtonIconAndCaption
+        .Caption = "ToIndex"
+    End With
+
+' ROW 3 ===========
     Set cControl = cBar3.Controls.Add
     With cControl
         .FaceId = 585
@@ -5305,9 +5313,7 @@ Sub GSPR_Create_CommandBar()
     End With
     
     ' SEPARATOR
-    
     user_switched = False
-    
     Set cControl = cBar3.Controls.Add
     With cControl
         .FaceId = 98
@@ -5318,26 +5324,26 @@ Sub GSPR_Create_CommandBar()
     End With
 
 ' ROW 4 ===========
-    
     Set cControl = cBar4.Controls.Add
     With cControl
         .FaceId = 688
         .OnAction = "GSPRM_Merge_Summaries"
         .TooltipText = "Merge on recovery factor"
         .Control.Style = msoButtonIconAndCaption
-        .Caption = "Recovery"
+        .Caption = "MergeRF"
     End With
     
     Set cControl = cBar4.Controls.Add
     With cControl
-        .FaceId = 1576
-        .OnAction = "GSPR_Change_Folder_Link"
-        .TooltipText = "Refresh hyperlinks"
+        .FaceId = 688 ' 477
+        .OnAction = "GSPRM_Merge_Sharpe"
+        .TooltipText = "Merge reports on Sharpe"
         .Control.Style = msoButtonIconAndCaption
-        .Caption = "HLinks"
+        .Caption = "MergeSR"
     End With
     
-    Set cControl = cBar4.Controls.Add
+' ROW 5 ===========
+    Set cControl = cBar5.Controls.Add
     With cControl
         .FaceId = 279    ' 31, 279
         .OnAction = "GSPR_Mixer_Copy_Sheet_To_Book"
@@ -5346,26 +5352,6 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ToMix"
     End With
 
-' ROW 5 ===========
-    
-    Set cControl = cBar5.Controls.Add
-    With cControl
-        .FaceId = 124
-        .OnAction = "GSPR_show_sheet_index"
-        .TooltipText = "Show this sheet's index"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "ShIndex"
-    End With
-    
-    Set cControl = cBar5.Controls.Add
-    With cControl
-        .FaceId = 205
-        .OnAction = "GSPR_Go_to_sheet_index"
-        .TooltipText = "Go to sheet with your index"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "ToIndex"
-    End With
-    
     Set cControl = cBar5.Controls.Add
     With cControl
         .FaceId = 645   ' 601
@@ -5375,9 +5361,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "MIX"
     End With
 
-' ROW 6 ===========
-    
-    Set cControl = cBar6.Controls.Add
+    Set cControl = cBar5.Controls.Add
     With cControl
         .FaceId = 424   ' 601
         .OnAction = "GSPR_trades_to_days"
@@ -5385,37 +5369,18 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "MixChart"
     End With
-    
+
+' ROW 6 ===========
     Set cControl = cBar6.Controls.Add
     With cControl
-        .FaceId = 601   ' 601
-        .OnAction = "Check_Window_Bulk"
-        .TooltipText = "Check errors"
+        .FaceId = 283
+        .OnAction = "CalcMore"
+        .TooltipText = "Calculate rest of KPI"
         .Control.Style = msoButtonIconAndCaption
-        .Caption = "CheckErrs"
+        .Caption = "CalcMore"
     End With
     
     Set cControl = cBar6.Controls.Add
-    With cControl
-        .FaceId = 28    ' 7, 28, 159, 176
-        .OnAction = "Create_JFX_file_Main"
-        .TooltipText = "Create code snippet for JFX"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "JFX"
-    End With
-
-' ROW 7 ===========
-
-    Set cControl = cBar7.Controls.Add
-    With cControl
-        .FaceId = 7
-        .OnAction = "Settings_To_Launch_Log"
-        .TooltipText = "Настройки робота из java в журнал"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "java-log"
-    End With
-    
-    Set cControl = cBar7.Controls.Add
     With cControl
         .FaceId = 424   ' 601
         .OnAction = "Stats_Chart_from_Joined_Windows"
@@ -5424,7 +5389,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ChartJ"
     End With
     
-    Set cControl = cBar7.Controls.Add
+    Set cControl = cBar6.Controls.Add
     With cControl
         .FaceId = 435   ' 601
         .OnAction = "Calc_Sharpe_Ratio"
@@ -5432,8 +5397,8 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "Sharpe"
     End With
-    
-    Set cControl = cBar8.Controls.Add
+' ROW 7 ===========
+    Set cControl = cBar7.Controls.Add
     With cControl
         .FaceId = 191
         .OnAction = "Params_To_Summary"
@@ -5442,7 +5407,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ParamJ-Summary"
     End With
     
-    Set cControl = cBar8.Controls.Add
+    Set cControl = cBar7.Controls.Add
     With cControl
         .FaceId = 477   ' 601
         .OnAction = "Sharpe_to_all"
@@ -5450,7 +5415,8 @@ Sub GSPR_Create_CommandBar()
         .Control.Style = msoButtonIconAndCaption
         .Caption = "Sharpe all"
     End With
-    
+
+' ROW 8 ===========
     Set cControl = cBar8.Controls.Add
     With cControl
         .FaceId = 430
@@ -5460,7 +5426,7 @@ Sub GSPR_Create_CommandBar()
         .Caption = "ScatterPlots"
     End With
     
-    Set cControl = cBar9.Controls.Add
+    Set cControl = cBar8.Controls.Add
     With cControl
         .FaceId = 478
         .OnAction = "RemoveScatters"
@@ -5469,25 +5435,8 @@ Sub GSPR_Create_CommandBar()
         .Caption = "DelScatter"
     End With
     
+' ROW 9 ===========
     Set cControl = cBar9.Controls.Add
-    With cControl
-        .FaceId = 477
-        .OnAction = "GSPRM_Merge_Sharpe"
-        .TooltipText = "Merge reports on Sharpe"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "SharpeMerge"
-    End With
-    
-    Set cControl = cBar9.Controls.Add
-    With cControl
-        .FaceId = 283
-        .OnAction = "CalcMore"
-        .TooltipText = "Calculate rest of KPI"
-        .Control.Style = msoButtonIconAndCaption
-        .Caption = "CalcMore"
-    End With
-    
-    Set cControl = cBar10.Controls.Add
     With cControl
         .FaceId = 143
         .OnAction = "SharpePivot"
@@ -5849,7 +5798,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.17.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.20.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -7626,6 +7575,7 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
     Dim win_ct As Integer, los_ct As Integer
     Dim rsqX() As Double, rsqY() As Double
     Dim s As String
+    Dim ArrCommis As Variant
     
 ' get trade log first row - header
     tl_r = rc.Find(what:="Closed orders:", after:=rc(ins_td_r, 1), LookIn:=xlValues, LookAt _
@@ -7711,11 +7661,13 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 ' compare dates
         If t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1))) Then
             Do While t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1)))
-                If rc(oc_fr + ro_d, 2) = "Commissions" Then
+                If Left(rc(oc_fr + ro_d, 2), 6) = "Commis" Then
                     s = rc(oc_fr + ro_d, 3)
-                    s = Right(s, Len(s) - 13)
-                    s = Left(s, Len(s) - 1)
-                    s = Replace(s, ".", ",", 1, 1, 1)   ' cmsn extracted
+                    ArrCommis = Split(s, " ")
+                    s = ArrCommis(UBound(ArrCommis))
+                    s = Replace(s, ".", ",")
+                    s = Replace(s, "[", "")
+                    s = Replace(s, "]", "")
                     If CDbl(s) <> 0 Then
                         t2(r, 3) = CDbl(s)              ' enter cmsn
                     End If
@@ -8065,7 +8017,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.17.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.20.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 

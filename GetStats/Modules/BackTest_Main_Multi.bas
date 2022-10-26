@@ -717,6 +717,7 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
     Dim win_ct As Integer, los_ct As Integer
     Dim rsqX() As Double, rsqY() As Double
     Dim s As String
+    Dim ArrCommis As Variant
     
 ' get trade log first row - header
     tl_r = rc.Find(what:="Closed orders:", after:=rc(ins_td_r, 1), LookIn:=xlValues, LookAt _
@@ -802,11 +803,13 @@ Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 ' compare dates
         If t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1))) Then
             Do While t2(r, 1) = Int(CDate(rc(oc_fr + ro_d, 1)))
-                If rc(oc_fr + ro_d, 2) = "Commissions" Then
+                If Left(rc(oc_fr + ro_d, 2), 6) = "Commis" Then
                     s = rc(oc_fr + ro_d, 3)
-                    s = Right(s, Len(s) - 13)
-                    s = Left(s, Len(s) - 1)
-                    s = Replace(s, ".", ",", 1, 1, 1)   ' cmsn extracted
+                    ArrCommis = Split(s, " ")
+                    s = ArrCommis(UBound(ArrCommis))
+                    s = Replace(s, ".", ",")
+                    s = Replace(s, "[", "")
+                    s = Replace(s, "]", "")
                     If CDbl(s) <> 0 Then
                         t2(r, 3) = CDbl(s)              ' enter cmsn
                     End If
