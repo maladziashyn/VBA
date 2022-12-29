@@ -2,9 +2,7 @@ Attribute VB_Name = "VersionControl"
 Option Explicit
 
 ' Run GitSave() to export code and modules.
-'
 ' Source: https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
-' Source is slightly modified to include a list of modules to ignore.
 
     Dim ignoreList As Variant
     Dim parentFolder As String
@@ -19,8 +17,8 @@ Sub GitSave()
     Call DeleteAndMake
     Call ExportModules
     Call PrintAllCode
-    Call PrintModulesCode
-    Call PrintAllContainers
+'    Call PrintModulesCode
+'    Call PrintAllContainers
     
     MsgBox "Code exported"
     

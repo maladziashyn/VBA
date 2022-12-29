@@ -138,7 +138,7 @@ End Sub
 Option Explicit
 
 Const addinFileName As String = "JFTools"
-Const addinVersion As String = "0.24"
+Const addinVersion As String = "0.24.1"
 
 Const btGroupShNm As String = "Back-test"
 Dim btGroupWs As Worksheet
@@ -4151,7 +4151,7 @@ Function CalcKPIs_SharpeRatio(ByVal tradeReturnOnly As Variant, _
     Else
         annStd = WorksheetFunction.StDev(tradeReturnOnly) * Sqr(365)
     End If
-    If annStd = "N/A" Then
+    If annStd = "N/A" Or annStd = 0 Then
         CalcKPIs_SharpeRatio = "N/A"
     Else
         CalcKPIs_SharpeRatio = annReturn / annStd
@@ -5477,9 +5477,7 @@ End Sub
 Option Explicit
 
 ' Run GitSave() to export code and modules.
-'
 ' Source: https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
-' Source is slightly modified to include a list of modules to ignore.
 
     Dim ignoreList As Variant
     Dim parentFolder As String
@@ -5494,8 +5492,8 @@ Sub GitSave()
     Call DeleteAndMake
     Call ExportModules
     Call PrintAllCode
-    Call PrintModulesCode
-    Call PrintAllContainers
+'    Call PrintModulesCode
+'    Call PrintAllContainers
     
     MsgBox "Code exported"
     

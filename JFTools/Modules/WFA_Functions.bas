@@ -1273,7 +1273,7 @@ Function CalcKPIs_SharpeRatio(ByVal tradeReturnOnly As Variant, _
     Else
         annStd = WorksheetFunction.StDev(tradeReturnOnly) * Sqr(365)
     End If
-    If annStd = "N/A" Then
+    If annStd = "N/A" Or annStd = 0 Then
         CalcKPIs_SharpeRatio = "N/A"
     Else
         CalcKPIs_SharpeRatio = annReturn / annStd
