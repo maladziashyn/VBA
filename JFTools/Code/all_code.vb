@@ -117,7 +117,7 @@ Sub CreateCommandBars()
     Set cControl = cBar3.Controls.Add
     With cControl
         .FaceId = 601
-        .OnAction = "DescriptionFilterChart"
+        .OnAction = "ClickFilterByDescription"
         .TooltipText = "Statement filter and chart"
         .Control.Style = msoButtonIconAndCaption
         .Caption = "StatementChart"
@@ -138,7 +138,7 @@ End Sub
 Option Explicit
 
 Const addinFileName As String = "JFTools"
-Const addinVersion As String = "0.24.1"
+Const addinVersion As String = "0.24.3"
 
 Const btGroupShNm As String = "Back-test"
 Dim btGroupWs As Worksheet
@@ -387,16 +387,16 @@ End Sub
 Sub Click_Clear_Sources_Inits(ByRef ws As Worksheet, _
             ByRef clrRng As Range)
     
-    Dim C As Range
+    Dim c As Range
     Dim lastRow As Integer
     
     Set ws = Workbooks(AddInFullFileName(addinFileName, addinVersion)).Sheets(wfaMainShNm)
-    Set C = ws.Cells
-    lastRow = C(ws.rows.Count, stgKeyCol).End(xlUp).Row
+    Set c = ws.Cells
+    lastRow = c(ws.rows.Count, stgKeyCol).End(xlUp).Row
     If lastRow = sourceZeroRow Then
         lastRow = lastRow + 1
     End If
-    Set clrRng = ws.Range(C(sourceZeroRow + 1, stgKeyCol), C(lastRow, stgKeyCol))
+    Set clrRng = ws.Range(c(sourceZeroRow + 1, stgKeyCol), c(lastRow, stgKeyCol))
 
 End Sub
 
@@ -735,7 +735,7 @@ Sub WFA_Run()
                 Next iSheet
 ' ***** SHEET ********************************************************
                 
-                scanWb.Close savechanges:=False
+                scanWb.Close SaveChanges:=False
                 
                 ' IF MaxiMinimize
                 If param("MaxiMinimize")(1) <> "none" Then
@@ -1109,7 +1109,7 @@ Sub PrintResultArraySaveClose()
         hyperLinkLastRow = targetC(1, 7).End(xlDown).Row
         Set rg = targetWs.Range(targetC(2, 7), targetC(hyperLinkLastRow, 7))
         For Each cell In rg
-            refCol = targetC.Find(what:=cell.Value, after:=targetC(1, 1), _
+            refCol = targetC.Find(What:=cell.Value, after:=targetC(1, 1), _
                     searchorder:=xlByRows).Column
             targetWs.Hyperlinks.Add Anchor:=cell, Address:="", _
                     SubAddress:="'" & targetWs.Name & "'!R1C" _
@@ -1314,7 +1314,7 @@ Sub DecreaseChIndex(ByRef ws As Worksheet, _
     Dim i As Integer
     Dim the_last_col As Integer
     Dim the_first_col As Integer
-    the_first_col = wc.Find(what:="Forward Compiled", after:=wc(1, 1), _
+    the_first_col = wc.Find(What:="Forward Compiled", after:=wc(1, 1), _
             searchorder:=xlByRows).Column + 1
     the_last_col = wc(1, ws.columns.Count).End(xlToLeft).Column
     For i = the_first_col To the_last_col + 1 Step 7
@@ -1385,12 +1385,12 @@ Sub NavigateToWfaSheet()
     
     Dim shIndex As String
     Dim ws As Worksheet
-    Dim C As Range
+    Dim c As Range
     Application.ScreenUpdating = False
     If ActiveSheet.Name = "Summary" Then
         Set ws = ActiveSheet
-        Set C = ws.Cells
-        shIndex = C(ActiveCell.Row, 1).Value
+        Set c = ws.Cells
+        shIndex = c(ActiveCell.Row, 1).Value
         If shIndex <> "" Then
             If IsNumeric(shIndex) Then
                 Sheets(shIndex).Activate
@@ -1500,7 +1500,7 @@ Sub MergeWfaSummaries()
             End If
             pasteCol = pasteCol + UBound(filesList)
         Next iCol
-        sourceWb.Close savechanges:=False
+        sourceWb.Close SaveChanges:=False
         
         If pasteInitialData Then
             pasteOneKpiName = False
@@ -1565,7 +1565,7 @@ Sub WfaPreviews()
         Set ws = Sheets(iSheet)
         Set wc = ws.Cells
         If doInits Then
-            fwdCol = wc.Find(what:="Forward Compiled", after:=wc(1, 1), _
+            fwdCol = wc.Find(What:="Forward Compiled", after:=wc(1, 1), _
                     searchorder:=xlByRows).Column
             insertRow = 11
             insertCol = tC(insertRow, tWs.columns.Count).End(xlToLeft).Column + 1
@@ -1733,7 +1733,7 @@ Sub WfaDateSlotPreviews()
             ' build & export chart
             Call WFA_Chart_Classic3(Rng, 1, 17, myFileName)
 
-            wb.Close savechanges:=False
+            wb.Close SaveChanges:=False
             ' insert as preview
             actSh.Activate
             With actSh.rows(cell.Row)
@@ -1838,7 +1838,7 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
     
     Dim r As Long
-    Dim C As Integer
+    Dim c As Integer
     Dim print_row As Long
     Dim print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
@@ -1865,14 +1865,14 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = C + add_cols + col_offset
+        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = c + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(C, r)
+                print_cells(print_row, print_col) = print_arr(c, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, C)
+                print_cells(print_row, print_col) = print_arr(r, c)
             End If
-        Next C
+        Next c
     Next r
 
 End Sub
@@ -1995,7 +1995,7 @@ Sub WfaDateSlotPreviews_SOURCE()
         Set ws = Sheets(iSheet)
         Set wc = ws.Cells
         If doInits Then
-            fwdCol = wc.Find(what:="Forward Compiled", after:=wc(1, 1), _
+            fwdCol = wc.Find(What:="Forward Compiled", after:=wc(1, 1), _
                     searchorder:=xlByRows).Column
             insertRow = 11
             insertCol = tC(insertRow, tWs.columns.Count).End(xlToLeft).Column + 1
@@ -2282,7 +2282,7 @@ Sub ExtractTestDates(ByRef filePath As String, _
     Set wbDates = Workbooks.Open(filePath)
     date0 = wbDates.Sheets(3).Cells(8, 2)
     date9 = wbDates.Sheets(3).Cells(9, 2)
-    wbDates.Close savechanges:=False
+    wbDates.Close SaveChanges:=False
 End Sub
 
 Function FirstFileFromSelectedDir(ByVal mainCells As Range, _
@@ -2337,7 +2337,7 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
     
 '    Dim wb_print As Workbook
 '    Dim c_print As Range
-    Dim r As Integer, C As Integer
+    Dim r As Integer, c As Integer
     Dim print_row As Integer, print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
     Dim add_rows As Integer, add_cols As Integer
@@ -2363,14 +2363,14 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = C + add_cols + col_offset
+        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = c + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(C, r)
+                print_cells(print_row, print_col) = print_arr(c, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, C)
+                print_cells(print_row, print_col) = print_arr(r, c)
             End If
-        Next C
+        Next c
     Next r
 End Sub
 Sub GenerateIsOsCodes()
@@ -2673,13 +2673,13 @@ End Sub
 Function LooksLikeDirectory(ByRef dirPath As String) As Boolean
 ' Find out if a suggested path is a directory and it exists.
 ' Boolean
-    Dim result As Boolean
-    result = False
+    Dim Result As Boolean
+    Result = False
     If InStr(1, dirPath, "\", vbTextCompare) > 0 Then
         dirPath = StringRemoveBackslash(dirPath)
-        result = True
+        Result = True
     End If
-    LooksLikeDirectory = result
+    LooksLikeDirectory = Result
 End Function
 Sub ManuallyApplyDateFilter()
     Dim i As Integer
@@ -3036,7 +3036,7 @@ Function GetIsOsWindows(ByVal mainWs As Worksheet, _
 ' NOT INVERTED.
 ' Filtered: windows exceeding available dates will be filtered out.
     
-    Dim C As New Collection
+    Dim c As New Collection
     Dim MinOSTo As Date
     Dim OSFrom As Date
     Dim OSTo As Date
@@ -3054,15 +3054,15 @@ Function GetIsOsWindows(ByVal mainWs As Worksheet, _
         OSTo = DateAdd("d", arr(i, 2) * 7 - 1, OSFrom)
         MinOSTo = DateAdd("d", Int(DateDiff("d", OSFrom, OSTo) * 0.75), OSTo)
         If DateEnd >= MinOSTo Then
-            C.Add Array(arr(i, 1), arr(i, 2), arr(i, 3))
+            c.Add Array(arr(i, 1), arr(i, 2), arr(i, 3))
         End If
     Next i
     
-    If C.Count = 0 Then
+    If c.Count = 0 Then
         GetIsOsWindows = False
     Else
         ' Convert collection to array
-        GetIsOsWindows = ConvertCollToArr(C)
+        GetIsOsWindows = ConvertCollToArr(c)
     End If
     
 End Function
@@ -4131,7 +4131,7 @@ Function CalcKPIs_RecoveryFactor(ByVal annReturn As Double, _
     End If
 End Function
 Function CalcKPIs_AvgWinnerToLoser(ByVal servDict As Dictionary) As Double
-    Dim result As Double
+    Dim Result As Double
     If servDict("Winners Count") = 0 Then
         CalcKPIs_AvgWinnerToLoser = -999
     ElseIf servDict("Losers Count") = 0 _
@@ -4304,16 +4304,16 @@ Function ExtendTradeList(ByVal originalList As Variant, _
     Dim r As Long
     Dim rowInExtended As Long
     Dim origUbnd As Long
-    Dim C As Integer
+    Dim c As Integer
 
     origUbnd = UBound(originalList, 2)
     extendedList = originalList
     ReDim Preserve extendedList(1 To 4, 0 To origUbnd + UBound(newList, 2))
     For r = 1 To UBound(newList, 2)
         rowInExtended = origUbnd + r
-        For C = LBound(newList, 1) To UBound(newList, 1)
-            extendedList(C, rowInExtended) = newList(C, r)
-        Next C
+        For c = LBound(newList, 1) To UBound(newList, 1)
+            extendedList(c, rowInExtended) = newList(c, r)
+        Next c
     Next r
     ExtendTradeList = extendedList
 End Function
@@ -4894,11 +4894,11 @@ Sub ProcessStatementsMain()
         ' edit dates, remove duplicates, sort ascending
         For iDateCol = 0 To datesDict.Count - 1
             dateColValue = datesDict.Keys(iDateCol)
-            If Not wsC.Find(what:=dateColValue, _
+            If Not wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole) Is Nothing Then
-                dateCol = wsC.Find(what:=dateColValue, _
+                dateCol = wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole).Column
@@ -4917,7 +4917,7 @@ Sub ProcessStatementsMain()
                 Next cell
                 ' add "_n/a_"
                 If ws.Name = "Positions Close" Then
-                    descrCol = wsC.Find(what:="description", _
+                    descrCol = wsC.Find(What:="description", _
                         after:=wsC(1, 1), _
                         searchorder:=xlByRows, _
                         lookat:=xlWhole).Column
@@ -4951,11 +4951,11 @@ Sub ProcessStatementsMain()
         ' Sort ascending
         For iDateCol = 0 To sortDatesDict.Count - 1
             dateColValue = sortDatesDict.Keys(iDateCol)
-            If Not wsC.Find(what:=dateColValue, _
+            If Not wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole) Is Nothing Then
-                dateCol = wsC.Find(what:=dateColValue, _
+                dateCol = wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole).Column
@@ -5012,7 +5012,7 @@ Sub PositionDescriptionsInstruments(ByVal desValue As String, _
     
     Set posWs = targetWb.Sheets("Positions Close")
     Set posC = posWs.Cells
-    desCol = posC.Find(what:=desValue, _
+    desCol = posC.Find(What:=desValue, _
             after:=posC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -5127,23 +5127,23 @@ Sub PositionDescriptionsInstruments(ByVal desValue As String, _
 End Sub
 Function GetColumnsDictionary(ByVal wsC As Range) As Dictionary
     Dim dict As New Dictionary
-    dict.Add "side", wsC.Find(what:="side", after:=wsC(1, 1), _
+    dict.Add "side", wsC.Find(What:="side", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "amount", wsC.Find(what:="amount", after:=wsC(1, 1), _
+    dict.Add "amount", wsC.Find(What:="amount", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "openPrice", wsC.Find(what:="openPrice", after:=wsC(1, 1), _
+    dict.Add "openPrice", wsC.Find(What:="openPrice", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "closePrice", wsC.Find(what:="closePrice", after:=wsC(1, 1), _
+    dict.Add "closePrice", wsC.Find(What:="closePrice", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "swap", wsC.Find(what:="swap", after:=wsC(1, 1), _
+    dict.Add "swap", wsC.Find(What:="swap", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "commission", wsC.Find(what:="commission", after:=wsC(1, 1), _
+    dict.Add "commission", wsC.Find(What:="commission", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "netPl", wsC.Find(what:="netPl", after:=wsC(1, 1), _
+    dict.Add "netPl", wsC.Find(What:="netPl", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "grossPl", wsC.Find(what:="grossPl", after:=wsC(1, 1), _
+    dict.Add "grossPl", wsC.Find(What:="grossPl", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "_approxReturn", wsC.Find(what:="_approxReturn", after:=wsC(1, 1), _
+    dict.Add "_approxReturn", wsC.Find(What:="_approxReturn", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
     Set GetColumnsDictionary = dict
 End Function
@@ -5191,7 +5191,7 @@ Sub PositionsCloseComputations()
     wsPos.rows("1:1").AutoFilter
     approxRetCol = cPos(1, wsPos.columns.Count).End(xlToLeft).Column + 1
     cPos(1, approxRetCol) = "_approxReturn"
-    netPlCol = cPos.Find(what:="netPl", _
+    netPlCol = cPos.Find(What:="netPl", _
             after:=cPos(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -5199,7 +5199,7 @@ Sub PositionsCloseComputations()
     Set rg = wsPos.Range(cPos(2, netPlCol), cPos(lastRow, netPlCol))
     lastRow = cPort(wsPort.rows.Count, 1).End(xlUp).Row
     Set sumRg = wsPort.Range(cPort(3, 2), cPort(lastRow, 2))
-    balanceCol = cPort.Find(what:="balance", _
+    balanceCol = cPort.Find(What:="balance", _
             after:=cPort(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -5208,6 +5208,9 @@ Sub PositionsCloseComputations()
         For Each sumCell In sumRg
             If Int(sumCell.Value) = tradeDate Then
                 prevSettl = cPort(sumCell.Row - 1, balanceCol)
+                If prevSettl = 0 Then
+                    prevSettl = cPort(sumCell.Row, 5)
+                End If
 '                cPos(cell.Row, approxRetCol) = cPos(cell.Row, netPlCol) / prevSettl
                 Exit For
             End If
@@ -5300,7 +5303,7 @@ Sub PortfolioSummaryComputations(ByRef ws As Worksheet, _
     ws.rows("1:1").AutoFilter
     ws.columns.AutoFit
 ' Chart
-    rngCol = wsC.Find(what:="date", _
+    rngCol = wsC.Find(What:="date", _
             after:=wsC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -5359,6 +5362,17 @@ Sub ClickLocateADirectory(ByVal sourceType As String)
         Application.ScreenUpdating = True
     End If
 End Sub
+
+Sub ClickFilterByDescription()
+    
+    Application.ScreenUpdating = False
+
+    Call DescriptionFilterChart
+    
+    Application.ScreenUpdating = True
+    
+End Sub
+
 Sub DescriptionFilterChart()
 ' Dictionary
     Dim kpis As Dictionary
@@ -5393,7 +5407,7 @@ Sub DescriptionFilterChart()
     Dim tarWs As Worksheet
     Dim tmpWs As Worksheet
 
-    Application.ScreenUpdating = False
+
     desVal = ActiveCell.Value
     desType = Cells(1, ActiveCell.Column)
     
@@ -5401,10 +5415,10 @@ Sub DescriptionFilterChart()
     Set posWs = Sheets("Positions Close")
     Set posC = posWs.Cells
     
-    If Not posC.Find(what:=desType, after:=posC(1, 1), _
+    If Not posC.Find(What:=desType, after:=posC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole) Is Nothing Then
-        desCol = posC.Find(what:=desType, after:=posC(1, 1), _
+        desCol = posC.Find(What:=desType, after:=posC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
     Else
@@ -5470,7 +5484,7 @@ Sub DescriptionFilterChart()
     Set rangeY = tarC(4, 21).CurrentRegion
     Set rangeY = rangeY.Offset(0, 1).Resize(rangeY.rows.Count, rangeY.columns.Count - 1)
     Call StatementChartRangesXandY(rangeX, rangeY, tarC, 4, 23, False, 1, "Equity curve, filter=" & desVal)
-    Application.ScreenUpdating = True
+    
 End Sub
 
 ' MODULE: VersionControl
@@ -5663,3 +5677,455 @@ Function IsStringInList(ByVal whatString As String, whatList As Variant) As Bool
     IsStringInList = Not (IsError(Application.Match(whatString, whatList, 0)))
 
 End Function
+
+' MODULE: wsIsOs
+Option Explicit
+
+
+' MODULE: ISvsOS
+Option Explicit
+
+Dim AlgoStmtSheet As Long
+
+' RANGE
+Dim cMix As Range
+Dim cSt As Range
+Dim cTg As Range
+
+' WORKBOOK
+Dim wbMix As Workbook   ' mixer
+Dim wbSt As Workbook    ' statement "Positions Close"
+Dim wbTg As Workbook    ' target
+
+' WORKSHEET
+Dim wsMix As Worksheet  ' mixer
+Dim wsSt As Worksheet   ' statement
+Dim wsTg As Worksheet   ' target
+
+' RegEx
+Dim rePostFix As Object
+Dim Matches As Object, Match As Object
+
+
+Sub Run_ISvsOS()
+    
+    Const TgFName As String = "is_vs_os"
+    
+    Dim i As Long
+    Dim SheetsInMix As Long
+    Dim TgFPath As String
+    
+    Call OnStart
+    
+    On Error GoTo eh
+    
+    ' Target
+    Set wbTg = Workbooks.Add()
+    
+    ' Statement
+    Set wbSt = Workbooks.Open(wsIsOs.Range("PathStatement"))
+    AlgoStmtSheet = wbSt.Sheets.Count + 1
+    Set wsSt = wbSt.Sheets("Positions Close")
+    Set cSt = wsSt.Cells
+    
+    ' Mixer
+    Set wbMix = Workbooks.Open(wsIsOs.Range("PathMixer"))
+    
+    Set rePostFix = New RegExp
+    With rePostFix
+        .Pattern = "_(mux|mxu|cux|cxu){1}$"
+        .Global = False
+        .MultiLine = False
+    End With
+    
+    SheetsInMix = wbMix.Sheets.Count - 1
+    For i = 1 To SheetsInMix
+        Application.StatusBar = "Sheet " & i & " of " & SheetsInMix & "."
+        Call OneFromMixer(i)
+        wbTg.Sheets(1).Activate
+    Next i
+    
+' Close workbooks
+    TgFPath = PathIncrementIndex(wsIsOs.Range("PathTargetDir") & "\" & TgFName, True)
+    wbTg.SaveAs fileName:=TgFPath
+    wbMix.Close SaveChanges:=False
+    wbSt.Close SaveChanges:=False
+
+eh:
+    Call OnExit
+
+End Sub
+Sub OneFromMixer(ByVal ShId As Long)
+    
+    Dim StratTag As String
+    Dim rgCopy As Range
+    Dim rgDescription As Range
+    Dim cAlgoStmt As Range
+    Dim wsAlgoStmt As Worksheet
+    Dim img As Shape
+    Dim rangeX As Range, rangeY As Range
+    
+    Set wsMix = wbMix.Sheets(ShId)
+    Set cMix = wsMix.Cells
+    StratTag = GetStrategyTag(cMix(1, 2), cMix(2, 2))
+    Set rgDescription = cSt.Find(What:=StratTag, after:=cSt(1, 1))
+    
+    If wbTg.Sheets.Count < ShId Then
+        wbTg.Sheets.Add after:=wbTg.Sheets(wbTg.Sheets.Count)
+    End If
+    Set wsTg = wbTg.Sheets(ShId)
+    
+    If rgDescription Is Nothing Then
+        wsTg.Name = StratTag & "_NOT_FOUND"
+        Exit Sub
+    Else
+        wsTg.Name = StratTag
+    End If
+    Set cTg = wsTg.Cells
+    
+    ' Copy from mixer
+    wsMix.Activate
+    Set rgCopy = wsMix.columns("A:M")
+    rgCopy.Copy cTg(1, 1)
+    wsTg.Activate
+    Call Stats_Chart_from_Joined_Windows_ISOS
+    
+    
+    ' Copy from statement
+    wbSt.Activate
+    wsSt.Activate
+    rgDescription.Activate
+    Call DescriptionFilterChart
+    For Each img In ActiveSheet.Shapes
+        img.Delete
+    Next img
+    
+    Set wsAlgoStmt = wbSt.Sheets(AlgoStmtSheet)
+    Set cAlgoStmt = wsAlgoStmt.Cells
+    Set rgCopy = wsAlgoStmt.columns("A:AF")
+    rgCopy.Copy cTg(1, 28)
+
+    wbTg.Activate
+    wsTg.Activate
+    
+    Set rangeX = cTg(4, 48).CurrentRegion
+    Set rangeX = rangeX.Resize(rangeX.rows.Count, rangeX.columns.Count - 1)
+    Set rangeY = cTg(4, 48).CurrentRegion
+    Set rangeY = rangeY.Offset(0, 1).Resize(rangeY.rows.Count, rangeY.columns.Count - 1)
+    Call StatementChartRangesXandY(rangeX, rangeY, cTg, 4, 50, False, _
+        1, "Equity curve, filter=" & "description")
+    cTg(1, 1).Activate
+    
+    Application.DisplayAlerts = False
+    wsAlgoStmt.Delete
+    Application.DisplayAlerts = True
+    Set wsAlgoStmt = Nothing
+    
+End Sub
+
+Sub Stats_Chart_from_Joined_Windows_ISOS()
+    
+    Dim ws As Worksheet
+    Dim Rng As Range
+    Dim ubnd As Long
+    Dim tradesSet() As Variant
+    Dim daysSet() As Variant
+    
+    Set ws = ActiveSheet
+    Set Rng = ws.Cells
+    ubnd = Rng(ws.rows.Count, 3).End(xlUp).Row - 1
+
+    ' move to RAM
+    tradesSet = Load_Slot_to_RAM2(Rng, ubnd)
+    ' add Calendar x2 columns
+    daysSet = Get_Calendar_Days_Equity2(tradesSet, Rng)
+    ' print out
+    Call Print_2D_Array2(daysSet, True, 0, 14, Rng)
+    ' build chart
+    Call WFA_Chart_Classic2(Rng, 1, 17)
+
+End Sub
+
+Sub WFA_Chart_Classic2(sc As Range, _
+                ulr As Integer, _
+                ulc As Integer)
+    
+    Const ch_wdth_cells As Integer = 9
+    Const ch_hght_cells As Integer = 20
+    Const my_rnd = 0.1
+    
+    Dim last_date_row As Integer
+    Dim rngX As Range, rngY As Range
+    Dim ChTitle As String
+    Dim MinVal As Double, maxVal As Double
+    Dim chFontSize As Integer                   ' chart title font size
+    Dim rng_to_cover As Range
+    Dim chObj_idx As Integer
+       
+    chObj_idx = ActiveSheet.ChartObjects.Count + 1
+    ChTitle = "Equity curve, " & sc(1, 2)
+'    If Left(sc(1, first_col), 2) = "IS" And logScale Then
+'        ChTitle = ChTitle & ", log scale"         ' log scale
+'    End If
+    last_date_row = sc(2, 15).End(xlDown).Row
+    chFontSize = 12
+    Set rng_to_cover = Range(sc(ulr, ulc), sc(ulr + ch_hght_cells, ulc + ch_wdth_cells))
+    Set rngX = Range(sc(1, 15), sc(last_date_row, 15))
+    Set rngY = Range(sc(1, 16), sc(last_date_row, 16))
+    MinVal = WorksheetFunction.Min(rngY)
+    maxVal = WorksheetFunction.Max(rngY)
+    MinVal = my_rnd * Int(MinVal / my_rnd)
+    maxVal = my_rnd * Int(maxVal / my_rnd) + my_rnd
+    rngY.Select
+    ActiveSheet.Shapes.AddChart.Select
+    With ActiveSheet.ChartObjects(chObj_idx)
+        .Left = Cells(ulr, ulc).Left
+        .Top = Cells(ulr, ulc).Top
+        .Width = rng_to_cover.Width
+        .Height = rng_to_cover.Height
+'        .Placement = xlFreeFloating ' do not resize chart if cells resized
+    End With
+    With ActiveChart
+        .SetSourceData Source:=Application.Union(rngX, rngY)
+        .ChartType = xlLine
+        .Legend.Delete
+        .Axes(xlValue).MinimumScale = MinVal
+        .Axes(xlValue).MaximumScale = maxVal
+'        If Left(sc(1, first_col), 2) = "IS" And logScale Then
+'            .Axes(xlValue).ScaleType = xlScaleLogarithmic   ' log scale
+'        End If
+        .SetElement (msoElementChartTitleAboveChart) ' chart title position
+        .chartTitle.Text = ChTitle
+        .chartTitle.Characters.Font.Size = chFontSize
+        .Axes(xlCategory).TickLabelPosition = xlLow
+    End With
+'    sc(1, first_col + 1) = chObj_idx
+    sc(1, 15).Select
+
+End Sub
+
+
+Private Sub Print_2D_Array2(ByVal print_arr As Variant, _
+        ByVal is_inverted As Boolean, _
+        ByVal row_offset As Integer, _
+        ByVal col_offset As Integer, _
+        ByVal print_cells As Range)
+' Procedure prints any 2-dimensional array in a new Workbook, sheet 1.
+' Arguments:
+'       1) 2-D array
+'       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
+    
+    Dim r As Long
+    Dim c As Integer
+    Dim print_row As Long
+    Dim print_col As Integer
+    Dim row_dim As Integer, col_dim As Integer
+    Dim add_rows As Integer, add_cols As Integer
+
+    If is_inverted Then
+        row_dim = 2
+        col_dim = 1
+    Else
+        row_dim = 1
+        col_dim = 2
+    End If
+    If LBound(print_arr, row_dim) = 0 Then
+        add_rows = 1
+    Else
+        add_rows = 0
+    End If
+    If LBound(print_arr, col_dim) = 0 Then
+        add_cols = 1
+    Else
+        add_cols = 0
+    End If
+'    Set wb_print = Workbooks.Add
+'    Set c_print = wb_print.Sheets(1).cells
+    For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
+        print_row = r + add_rows + row_offset
+        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = c + add_cols + col_offset
+            If is_inverted Then
+                print_cells(print_row, print_col) = print_arr(c, r)
+            Else
+                print_cells(print_row, print_col) = print_arr(r, c)
+            End If
+        Next c
+    Next r
+
+End Sub
+
+
+
+Function Get_Calendar_Days_Equity2(ByVal tset As Variant, _
+                                   ByVal wc As Range) As Variant
+' INVERTED: columns, rows
+    
+    Dim i As Integer, j As Integer
+    Dim arr() As Variant
+    Dim date_0 As Date
+    Dim date_1 As Date
+    Dim calendar_days As Integer
+    
+    date_0 = Int(wc(8, 2))
+    date_1 = Int(wc(9, 2))
+    calendar_days = date_1 - date_0 + 2
+    ReDim arr(1 To 2, 1 To calendar_days)
+        ' 1. calendar days
+        ' 2. equity curve
+    arr(1, 1) = date_0 - 1
+    arr(2, 1) = 1
+    j = 1
+    For i = 2 To UBound(arr, 2)
+        arr(1, i) = arr(1, i - 1) + 1   ' populate with dates
+        arr(2, i) = arr(2, i - 1)
+        If arr(1, i) = Int(tset(2, j)) Then
+            Do While arr(1, i) = Int(tset(2, j)) ' And j <= UBound(trades_arr, 2)
+                arr(2, i) = arr(2, i) * (1 + tset(3, j))
+                If j < UBound(tset, 2) Then
+                    j = j + 1
+                ElseIf j = UBound(tset, 2) Then
+                    Exit Do
+                End If
+            Loop
+        End If
+    Next i
+    Get_Calendar_Days_Equity2 = arr
+
+End Function
+
+
+Function Load_Slot_to_RAM2(ByVal wc As Range, _
+                           ByVal upBnd As Long) As Variant
+' Function loads excel report from WFA-sheet to RAM
+' Returns (1 To 3, 1 To trades_count) array - INVERTED
+    
+    Dim arr() As Variant
+    Dim i As Long, j As Long
+    
+    ReDim arr(1 To 3, 1 To upBnd)
+    For i = LBound(arr, 2) To UBound(arr, 2)
+        j = i + 1
+        arr(1, i) = wc(j, 9)     ' open date
+        arr(2, i) = wc(j, 10)    ' close date
+        arr(3, i) = wc(j, 13)    ' return
+    Next i
+    Load_Slot_to_RAM2 = arr
+
+End Function
+
+Function GetStrategyTag(ByVal StratName As String, _
+        ByVal CurrPair As String) As String
+    
+    Dim Postfix As String
+    Dim Result As String
+    
+    Result = IIf(rePostFix.Test(StratName), _
+        rePostFix.Replace(StratName, "_"), _
+        StratName & "_")
+    Postfix = GetCurrPairAsPostfix(CurrPair)
+    
+    GetStrategyTag = Result & Postfix
+    
+End Function
+
+Function GetCurrPairAsPostfix(ByVal CurrPair As String) As String
+    
+    Dim c1 As String, c2 As String
+    
+    If Len(CurrPair) = 7 _
+            And InStr(1, CurrPair, "/", vbTextCompare) > 0 Then
+        c1 = LCase(Left(CurrPair, 3))
+        c1 = IIf(CurrIsCHF(c1), "f", Left(c1, 1))
+        c2 = LCase(Right(CurrPair, 3))
+        c2 = IIf(CurrIsCHF(c2), "f", Left(c2, 1))
+        GetCurrPairAsPostfix = c1 & c2
+    Else
+        Err.Raise 801, , "Unknown currency pair"
+    End If
+    
+End Function
+
+Private Function CurrIsCHF(ByVal Curr As String) As Boolean
+    If Curr = "chf" Then
+        CurrIsCHF = True
+    End If
+End Function
+
+Sub ClickLocatePathMixer()
+    Call ClickLocateSomething(True, "Locate 'MIXER' file", _
+        wsIsOs.Range("PathMixer"))
+End Sub
+Sub ClickLocatePathStatement()
+    Call ClickLocateSomething(True, "Locate 'STATEMENT' file", _
+        wsIsOs.Range("PathStatement"))
+End Sub
+Sub ClickLocatePathTarget()
+    Call ClickLocateSomething(False, "Locate target directory", _
+        wsIsOs.Range("PathTargetDir"))
+End Sub
+Sub ClickLocateSomething(ByVal blFilePicker As Boolean, _
+        ByVal strTitle As String, _
+        ByRef rgTarget As Range)
+' Show file dialog, let user pick a file directory
+    Dim fd As FileDialog
+    
+    If blFilePicker Then
+        Set fd = Application.FileDialog(msoFileDialogFilePicker)
+    Else
+        Set fd = Application.FileDialog(msoFileDialogFolderPicker)
+    End If
+    With fd
+        .Title = strTitle
+        If blFilePicker Then
+            .AllowMultiSelect = False
+        End If
+    End With
+    If fd.Show = 0 Then
+        Exit Sub
+    End If
+    rgTarget.Value = fd.SelectedItems(1)
+    wsIsOs.columns(rgTarget.Column).AutoFit
+    
+End Sub
+
+
+' MODULE: GlobalsConstantsHelpers
+Option Explicit
+
+Const MsgBoxTitle As String = "JFTools"
+
+Sub OnStart()
+
+    With Application
+        .ScreenUpdating = False
+        .Calculation = xlCalculationManual
+        .EnableEvents = False
+        .DisplayAlerts = False
+        .Cursor = xlWait
+    End With
+
+End Sub
+
+Sub OnExit()
+
+    Dim Message As String
+
+    With Application
+        .ScreenUpdating = True
+        .Calculation = xlCalculationAutomatic
+        .EnableEvents = True
+        .StatusBar = False
+        .DisplayAlerts = True
+        .Cursor = xlDefault
+    End With
+
+    If Err.Number > 0 Then
+        Message = Message & "Error " & Err.Number & ". " _
+            & vbNewLine & Err.Description
+        MsgBox Message, vbCritical, MsgBoxTitle
+        Err.Clear
+    End If
+
+End Sub
+

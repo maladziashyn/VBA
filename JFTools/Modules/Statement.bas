@@ -91,11 +91,11 @@ Sub ProcessStatementsMain()
         ' edit dates, remove duplicates, sort ascending
         For iDateCol = 0 To datesDict.Count - 1
             dateColValue = datesDict.Keys(iDateCol)
-            If Not wsC.Find(what:=dateColValue, _
+            If Not wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole) Is Nothing Then
-                dateCol = wsC.Find(what:=dateColValue, _
+                dateCol = wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole).Column
@@ -114,7 +114,7 @@ Sub ProcessStatementsMain()
                 Next cell
                 ' add "_n/a_"
                 If ws.Name = "Positions Close" Then
-                    descrCol = wsC.Find(what:="description", _
+                    descrCol = wsC.Find(What:="description", _
                         after:=wsC(1, 1), _
                         searchorder:=xlByRows, _
                         lookat:=xlWhole).Column
@@ -148,11 +148,11 @@ Sub ProcessStatementsMain()
         ' Sort ascending
         For iDateCol = 0 To sortDatesDict.Count - 1
             dateColValue = sortDatesDict.Keys(iDateCol)
-            If Not wsC.Find(what:=dateColValue, _
+            If Not wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole) Is Nothing Then
-                dateCol = wsC.Find(what:=dateColValue, _
+                dateCol = wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
                     lookat:=xlWhole).Column
@@ -209,7 +209,7 @@ Sub PositionDescriptionsInstruments(ByVal desValue As String, _
     
     Set posWs = targetWb.Sheets("Positions Close")
     Set posC = posWs.Cells
-    desCol = posC.Find(what:=desValue, _
+    desCol = posC.Find(What:=desValue, _
             after:=posC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -324,23 +324,23 @@ Sub PositionDescriptionsInstruments(ByVal desValue As String, _
 End Sub
 Function GetColumnsDictionary(ByVal wsC As Range) As Dictionary
     Dim dict As New Dictionary
-    dict.Add "side", wsC.Find(what:="side", after:=wsC(1, 1), _
+    dict.Add "side", wsC.Find(What:="side", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "amount", wsC.Find(what:="amount", after:=wsC(1, 1), _
+    dict.Add "amount", wsC.Find(What:="amount", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "openPrice", wsC.Find(what:="openPrice", after:=wsC(1, 1), _
+    dict.Add "openPrice", wsC.Find(What:="openPrice", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "closePrice", wsC.Find(what:="closePrice", after:=wsC(1, 1), _
+    dict.Add "closePrice", wsC.Find(What:="closePrice", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "swap", wsC.Find(what:="swap", after:=wsC(1, 1), _
+    dict.Add "swap", wsC.Find(What:="swap", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "commission", wsC.Find(what:="commission", after:=wsC(1, 1), _
+    dict.Add "commission", wsC.Find(What:="commission", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "netPl", wsC.Find(what:="netPl", after:=wsC(1, 1), _
+    dict.Add "netPl", wsC.Find(What:="netPl", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "grossPl", wsC.Find(what:="grossPl", after:=wsC(1, 1), _
+    dict.Add "grossPl", wsC.Find(What:="grossPl", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
-    dict.Add "_approxReturn", wsC.Find(what:="_approxReturn", after:=wsC(1, 1), _
+    dict.Add "_approxReturn", wsC.Find(What:="_approxReturn", after:=wsC(1, 1), _
             searchorder:=xlByRows, lookat:=xlWhole).Column
     Set GetColumnsDictionary = dict
 End Function
@@ -388,7 +388,7 @@ Sub PositionsCloseComputations()
     wsPos.rows("1:1").AutoFilter
     approxRetCol = cPos(1, wsPos.columns.Count).End(xlToLeft).Column + 1
     cPos(1, approxRetCol) = "_approxReturn"
-    netPlCol = cPos.Find(what:="netPl", _
+    netPlCol = cPos.Find(What:="netPl", _
             after:=cPos(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -396,7 +396,7 @@ Sub PositionsCloseComputations()
     Set rg = wsPos.Range(cPos(2, netPlCol), cPos(lastRow, netPlCol))
     lastRow = cPort(wsPort.rows.Count, 1).End(xlUp).Row
     Set sumRg = wsPort.Range(cPort(3, 2), cPort(lastRow, 2))
-    balanceCol = cPort.Find(what:="balance", _
+    balanceCol = cPort.Find(What:="balance", _
             after:=cPort(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -405,6 +405,9 @@ Sub PositionsCloseComputations()
         For Each sumCell In sumRg
             If Int(sumCell.Value) = tradeDate Then
                 prevSettl = cPort(sumCell.Row - 1, balanceCol)
+                If prevSettl = 0 Then
+                    prevSettl = cPort(sumCell.Row, 5)
+                End If
 '                cPos(cell.Row, approxRetCol) = cPos(cell.Row, netPlCol) / prevSettl
                 Exit For
             End If
@@ -497,7 +500,7 @@ Sub PortfolioSummaryComputations(ByRef ws As Worksheet, _
     ws.rows("1:1").AutoFilter
     ws.columns.AutoFit
 ' Chart
-    rngCol = wsC.Find(what:="date", _
+    rngCol = wsC.Find(What:="date", _
             after:=wsC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
@@ -556,6 +559,17 @@ Sub ClickLocateADirectory(ByVal sourceType As String)
         Application.ScreenUpdating = True
     End If
 End Sub
+
+Sub ClickFilterByDescription()
+    
+    Application.ScreenUpdating = False
+
+    Call DescriptionFilterChart
+    
+    Application.ScreenUpdating = True
+    
+End Sub
+
 Sub DescriptionFilterChart()
 ' Dictionary
     Dim kpis As Dictionary
@@ -590,7 +604,7 @@ Sub DescriptionFilterChart()
     Dim tarWs As Worksheet
     Dim tmpWs As Worksheet
 
-    Application.ScreenUpdating = False
+
     desVal = ActiveCell.Value
     desType = Cells(1, ActiveCell.Column)
     
@@ -598,10 +612,10 @@ Sub DescriptionFilterChart()
     Set posWs = Sheets("Positions Close")
     Set posC = posWs.Cells
     
-    If Not posC.Find(what:=desType, after:=posC(1, 1), _
+    If Not posC.Find(What:=desType, after:=posC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole) Is Nothing Then
-        desCol = posC.Find(what:=desType, after:=posC(1, 1), _
+        desCol = posC.Find(What:=desType, after:=posC(1, 1), _
             searchorder:=xlByRows, _
             lookat:=xlWhole).Column
     Else
@@ -667,5 +681,5 @@ Sub DescriptionFilterChart()
     Set rangeY = tarC(4, 21).CurrentRegion
     Set rangeY = rangeY.Offset(0, 1).Resize(rangeY.rows.Count, rangeY.columns.Count - 1)
     Call StatementChartRangesXandY(rangeX, rangeY, tarC, 4, 23, False, 1, "Equity curve, filter=" & desVal)
-    Application.ScreenUpdating = True
+    
 End Sub

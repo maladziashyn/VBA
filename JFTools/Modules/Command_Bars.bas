@@ -100,7 +100,7 @@ Sub CreateCommandBars()
     Set cControl = cBar3.Controls.Add
     With cControl
         .FaceId = 601
-        .OnAction = "DescriptionFilterChart"
+        .OnAction = "ClickFilterByDescription"
         .TooltipText = "Statement filter and chart"
         .Control.Style = msoButtonIconAndCaption
         .Caption = "StatementChart"

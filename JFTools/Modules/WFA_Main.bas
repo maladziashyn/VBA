@@ -186,7 +186,7 @@ Sub WFA_Run()
                 Next iSheet
 ' ***** SHEET ********************************************************
                 
-                scanWb.Close savechanges:=False
+                scanWb.Close SaveChanges:=False
                 
                 ' IF MaxiMinimize
                 If param("MaxiMinimize")(1) <> "none" Then
@@ -560,7 +560,7 @@ Sub PrintResultArraySaveClose()
         hyperLinkLastRow = targetC(1, 7).End(xlDown).Row
         Set rg = targetWs.Range(targetC(2, 7), targetC(hyperLinkLastRow, 7))
         For Each cell In rg
-            refCol = targetC.Find(what:=cell.Value, after:=targetC(1, 1), _
+            refCol = targetC.Find(What:=cell.Value, after:=targetC(1, 1), _
                     searchorder:=xlByRows).Column
             targetWs.Hyperlinks.Add Anchor:=cell, Address:="", _
                     SubAddress:="'" & targetWs.Name & "'!R1C" _
@@ -765,7 +765,7 @@ Sub DecreaseChIndex(ByRef ws As Worksheet, _
     Dim i As Integer
     Dim the_last_col As Integer
     Dim the_first_col As Integer
-    the_first_col = wc.Find(what:="Forward Compiled", after:=wc(1, 1), _
+    the_first_col = wc.Find(What:="Forward Compiled", after:=wc(1, 1), _
             searchorder:=xlByRows).Column + 1
     the_last_col = wc(1, ws.columns.Count).End(xlToLeft).Column
     For i = the_first_col To the_last_col + 1 Step 7
@@ -836,12 +836,12 @@ Sub NavigateToWfaSheet()
     
     Dim shIndex As String
     Dim ws As Worksheet
-    Dim C As Range
+    Dim c As Range
     Application.ScreenUpdating = False
     If ActiveSheet.Name = "Summary" Then
         Set ws = ActiveSheet
-        Set C = ws.Cells
-        shIndex = C(ActiveCell.Row, 1).Value
+        Set c = ws.Cells
+        shIndex = c(ActiveCell.Row, 1).Value
         If shIndex <> "" Then
             If IsNumeric(shIndex) Then
                 Sheets(shIndex).Activate
@@ -951,7 +951,7 @@ Sub MergeWfaSummaries()
             End If
             pasteCol = pasteCol + UBound(filesList)
         Next iCol
-        sourceWb.Close savechanges:=False
+        sourceWb.Close SaveChanges:=False
         
         If pasteInitialData Then
             pasteOneKpiName = False
@@ -1016,7 +1016,7 @@ Sub WfaPreviews()
         Set ws = Sheets(iSheet)
         Set wc = ws.Cells
         If doInits Then
-            fwdCol = wc.Find(what:="Forward Compiled", after:=wc(1, 1), _
+            fwdCol = wc.Find(What:="Forward Compiled", after:=wc(1, 1), _
                     searchorder:=xlByRows).Column
             insertRow = 11
             insertCol = tC(insertRow, tWs.columns.Count).End(xlToLeft).Column + 1
@@ -1184,7 +1184,7 @@ Sub WfaDateSlotPreviews()
             ' build & export chart
             Call WFA_Chart_Classic3(Rng, 1, 17, myFileName)
 
-            wb.Close savechanges:=False
+            wb.Close SaveChanges:=False
             ' insert as preview
             actSh.Activate
             With actSh.rows(cell.Row)
@@ -1289,7 +1289,7 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '       2) rows-colums (is_inverted = False) or columns-rows (is_inverted = True)
     
     Dim r As Long
-    Dim C As Integer
+    Dim c As Integer
     Dim print_row As Long
     Dim print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
@@ -1316,14 +1316,14 @@ Private Sub Print_2D_Array3(ByVal print_arr As Variant, ByVal is_inverted As Boo
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = C + add_cols + col_offset
+        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = c + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(C, r)
+                print_cells(print_row, print_col) = print_arr(c, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, C)
+                print_cells(print_row, print_col) = print_arr(r, c)
             End If
-        Next C
+        Next c
     Next r
 
 End Sub
@@ -1446,7 +1446,7 @@ Sub WfaDateSlotPreviews_SOURCE()
         Set ws = Sheets(iSheet)
         Set wc = ws.Cells
         If doInits Then
-            fwdCol = wc.Find(what:="Forward Compiled", after:=wc(1, 1), _
+            fwdCol = wc.Find(What:="Forward Compiled", after:=wc(1, 1), _
                     searchorder:=xlByRows).Column
             insertRow = 11
             insertCol = tC(insertRow, tWs.columns.Count).End(xlToLeft).Column + 1

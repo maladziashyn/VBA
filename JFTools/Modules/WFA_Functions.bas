@@ -158,7 +158,7 @@ Function GetIsOsWindows(ByVal mainWs As Worksheet, _
 ' NOT INVERTED.
 ' Filtered: windows exceeding available dates will be filtered out.
     
-    Dim C As New Collection
+    Dim c As New Collection
     Dim MinOSTo As Date
     Dim OSFrom As Date
     Dim OSTo As Date
@@ -176,15 +176,15 @@ Function GetIsOsWindows(ByVal mainWs As Worksheet, _
         OSTo = DateAdd("d", arr(i, 2) * 7 - 1, OSFrom)
         MinOSTo = DateAdd("d", Int(DateDiff("d", OSFrom, OSTo) * 0.75), OSTo)
         If DateEnd >= MinOSTo Then
-            C.Add Array(arr(i, 1), arr(i, 2), arr(i, 3))
+            c.Add Array(arr(i, 1), arr(i, 2), arr(i, 3))
         End If
     Next i
     
-    If C.Count = 0 Then
+    If c.Count = 0 Then
         GetIsOsWindows = False
     Else
         ' Convert collection to array
-        GetIsOsWindows = ConvertCollToArr(C)
+        GetIsOsWindows = ConvertCollToArr(c)
     End If
     
 End Function
@@ -1253,7 +1253,7 @@ Function CalcKPIs_RecoveryFactor(ByVal annReturn As Double, _
     End If
 End Function
 Function CalcKPIs_AvgWinnerToLoser(ByVal servDict As Dictionary) As Double
-    Dim result As Double
+    Dim Result As Double
     If servDict("Winners Count") = 0 Then
         CalcKPIs_AvgWinnerToLoser = -999
     ElseIf servDict("Losers Count") = 0 _
@@ -1426,16 +1426,16 @@ Function ExtendTradeList(ByVal originalList As Variant, _
     Dim r As Long
     Dim rowInExtended As Long
     Dim origUbnd As Long
-    Dim C As Integer
+    Dim c As Integer
 
     origUbnd = UBound(originalList, 2)
     extendedList = originalList
     ReDim Preserve extendedList(1 To 4, 0 To origUbnd + UBound(newList, 2))
     For r = 1 To UBound(newList, 2)
         rowInExtended = origUbnd + r
-        For C = LBound(newList, 1) To UBound(newList, 1)
-            extendedList(C, rowInExtended) = newList(C, r)
-        Next C
+        For c = LBound(newList, 1) To UBound(newList, 1)
+            extendedList(c, rowInExtended) = newList(c, r)
+        Next c
     Next r
     ExtendTradeList = extendedList
 End Function

@@ -109,7 +109,7 @@ Sub ExtractTestDates(ByRef filePath As String, _
     Set wbDates = Workbooks.Open(filePath)
     date0 = wbDates.Sheets(3).Cells(8, 2)
     date9 = wbDates.Sheets(3).Cells(9, 2)
-    wbDates.Close savechanges:=False
+    wbDates.Close SaveChanges:=False
 End Sub
 
 Function FirstFileFromSelectedDir(ByVal mainCells As Range, _
@@ -164,7 +164,7 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
     
 '    Dim wb_print As Workbook
 '    Dim c_print As Range
-    Dim r As Integer, C As Integer
+    Dim r As Integer, c As Integer
     Dim print_row As Integer, print_col As Integer
     Dim row_dim As Integer, col_dim As Integer
     Dim add_rows As Integer, add_cols As Integer
@@ -190,14 +190,14 @@ Sub Print_2D_Array(ByVal print_arr As Variant, _
 '    Set c_print = wb_print.Sheets(1).cells
     For r = LBound(print_arr, row_dim) To UBound(print_arr, row_dim)
         print_row = r + add_rows + row_offset
-        For C = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
-            print_col = C + add_cols + col_offset
+        For c = LBound(print_arr, col_dim) To UBound(print_arr, col_dim)
+            print_col = c + add_cols + col_offset
             If is_inverted Then
-                print_cells(print_row, print_col) = print_arr(C, r)
+                print_cells(print_row, print_col) = print_arr(c, r)
             Else
-                print_cells(print_row, print_col) = print_arr(r, C)
+                print_cells(print_row, print_col) = print_arr(r, c)
             End If
-        Next C
+        Next c
     Next r
 End Sub
 Sub GenerateIsOsCodes()
@@ -500,13 +500,13 @@ End Sub
 Function LooksLikeDirectory(ByRef dirPath As String) As Boolean
 ' Find out if a suggested path is a directory and it exists.
 ' Boolean
-    Dim result As Boolean
-    result = False
+    Dim Result As Boolean
+    Result = False
     If InStr(1, dirPath, "\", vbTextCompare) > 0 Then
         dirPath = StringRemoveBackslash(dirPath)
-        result = True
+        Result = True
     End If
-    LooksLikeDirectory = result
+    LooksLikeDirectory = Result
 End Function
 Sub ManuallyApplyDateFilter()
     Dim i As Integer
