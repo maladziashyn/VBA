@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.20"
+    Const macro_name As String = "GetStats Pro v1.21"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2057,7 +2057,7 @@ Private Sub GSPR_Prep_SN()
     SN(r_abs_hi_pp) = "Abs max"
     SN(r_abs_lo_pp) = "Abs min"
     SN(r_s_trades) = "TRADES"
-    SN(r_tds_closed) = "Clsoed"
+    SN(r_tds_closed) = "Closed"
     SN(r_tds_per_yr) = "Per year"
     SN(r_tds_per_mn) = "Per month"
     SN(r_tds_per_w) = "Per week"
@@ -2718,7 +2718,7 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.20.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.21.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
     Const macro_ver As String = "GetStats Pro v1.20"
     Const max_htmls As Integer = 999
@@ -3813,13 +3813,13 @@ Private Sub GSPRM_Merge_Summaries()
         Loop
     End If
     For i = 1 To sel_count
-        Application.StatusBar = "Добавляю лист " & i & " (" & sel_count & ")."
+        Application.StatusBar = "Adding sheet " & i & " (" & sel_count & ")."
         Set wbB = Workbooks.Open(fd.SelectedItems(i))
         tstr = wbB.Name
         pos = InStr(1, tstr, "-", 1)
         tstr = Right(Left(tstr, pos + 6), 6)
-        If wbB.Sheets(2).Name = "результаты" Then
-            wbB.Sheets("результаты").Copy after:=wbA.Sheets(wbA.Sheets.count)
+        If wbB.Sheets(2).Name = "results" Then
+            wbB.Sheets("results").Copy after:=wbA.Sheets(wbA.Sheets.count)
             Set s = wbA.Sheets(wbA.Sheets.count)
             s.Name = i & "_" & tstr
             lr = s.Cells(1, 1).End(xlDown).Row
@@ -4370,10 +4370,13 @@ Option Base 1
     Dim current_decimal As String
     Dim undo_sep As Boolean, undo_usesyst As Boolean
 Private Sub GSPR_Single_Core()
+'    Dim oTimer As clsTimer
 '
 ' RIBBON > BUTTON "Main"
 '
 '    On Error Resume Next
+'    Set oTimer = New clsTimer
+    
     Application.ScreenUpdating = False
     Call GSPR_Separator_Auto_Switcher_Single_Core
     Call GSPR_Prepare_sv_fm
@@ -5798,7 +5801,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.20.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.21.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -8017,7 +8020,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.20.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.21.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8847,4 +8850,24 @@ Function IsStringInList(ByVal whatString As String, whatList As Variant) As Bool
     IsStringInList = Not (IsError(Application.Match(whatString, whatList, 0)))
 
 End Function
+
+
+' MODULE: clsTimer
+Option Explicit
+
+Public dtTime0 As Date
+Public dtTime1 As Date
+Public strSubOrFunc As String
+
+Private Sub Class_Initialize(ByVal argSubOrFunc As String)
+    dtTime0 = Timer
+    strSubOrFunc = argSubOrFunc
+End Sub
+
+Private Sub Class_Terminate()
+    dtTime1 = Timer
+    Debug.Print "terminated " & suborfunc & " - " & (dtTime1 - dtTime0)
+End Sub
+'public property let strSubOrFunc as String
+
 

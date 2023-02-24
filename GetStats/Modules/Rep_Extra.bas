@@ -4,7 +4,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.20"
+    Const macro_name As String = "GetStats Pro v1.21"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -1594,7 +1594,7 @@ Private Sub GSPR_Prep_SN()
     SN(r_abs_hi_pp) = "Abs max"
     SN(r_abs_lo_pp) = "Abs min"
     SN(r_s_trades) = "TRADES"
-    SN(r_tds_closed) = "Clsoed"
+    SN(r_tds_closed) = "Closed"
     SN(r_tds_per_yr) = "Per year"
     SN(r_tds_per_mn) = "Per month"
     SN(r_tds_per_w) = "Per week"

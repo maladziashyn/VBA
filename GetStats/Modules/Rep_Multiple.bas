@@ -1,7 +1,7 @@
 Attribute VB_Name = "Rep_Multiple"
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.20.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.21.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
     Const macro_ver As String = "GetStats Pro v1.20"
     Const max_htmls As Integer = 999
@@ -1096,13 +1096,13 @@ Private Sub GSPRM_Merge_Summaries()
         Loop
     End If
     For i = 1 To sel_count
-        Application.StatusBar = "Добавляю лист " & i & " (" & sel_count & ")."
+        Application.StatusBar = "Adding sheet " & i & " (" & sel_count & ")."
         Set wbB = Workbooks.Open(fd.SelectedItems(i))
         tstr = wbB.Name
         pos = InStr(1, tstr, "-", 1)
         tstr = Right(Left(tstr, pos + 6), 6)
-        If wbB.Sheets(2).Name = "результаты" Then
-            wbB.Sheets("результаты").Copy after:=wbA.Sheets(wbA.Sheets.count)
+        If wbB.Sheets(2).Name = "results" Then
+            wbB.Sheets("results").Copy after:=wbA.Sheets(wbA.Sheets.count)
             Set s = wbA.Sheets(wbA.Sheets.count)
             s.Name = i & "_" & tstr
             lr = s.Cells(1, 1).End(xlDown).Row

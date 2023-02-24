@@ -31,10 +31,13 @@ Option Base 1
     Dim current_decimal As String
     Dim undo_sep As Boolean, undo_usesyst As Boolean
 Private Sub GSPR_Single_Core()
+'    Dim oTimer As clsTimer
 '
 ' RIBBON > BUTTON "Main"
 '
 '    On Error Resume Next
+'    Set oTimer = New clsTimer
+    
     Application.ScreenUpdating = False
     Call GSPR_Separator_Auto_Switcher_Single_Core
     Call GSPR_Prepare_sv_fm
