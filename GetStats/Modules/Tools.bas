@@ -99,6 +99,15 @@ Sub GSPR_Create_CommandBar()
 ' ROW 2 ===========
     Set cControl = cBar2.Controls.Add
     With cControl
+        .FaceId = 659
+        .OnAction = "ProcessManySelected"
+        .TooltipText = "Process many selected HTMLs"
+        .Control.Style = msoButtonIconAndCaption
+        .Caption = "ProcessMany"
+    End With
+    
+    Set cControl = cBar2.Controls.Add
+    With cControl
         .FaceId = 124
         .OnAction = "GSPR_show_sheet_index"
         .TooltipText = "Show this sheet's index"

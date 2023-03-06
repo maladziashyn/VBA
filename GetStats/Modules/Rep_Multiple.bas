@@ -1,9 +1,9 @@
 Attribute VB_Name = "Rep_Multiple"
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.21.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.22.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.20"
+    Const macro_ver As String = "GetStats Pro v1.22"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -250,11 +250,8 @@ Sub Create_WB_N_Sheets(ByRef newWB As Workbook, _
     Application.SheetsInNewWorkbook = origSheetsCount
 End Sub
 
-Private Sub GSPRM_Multiple_Main()
-'
-' RIBBON > BUTTON "Группа"
-'
-'    On Error Resume Next
+Private Sub ProcessManySelected()
+    
     Application.ScreenUpdating = False
 ' separator ON
     Call GSPR_Separator_Auto_Switcher_Multiple
@@ -269,14 +266,15 @@ Private Sub GSPRM_Multiple_Main()
     End If
 ' Process one report and print
     Call GSPRM_Process_Each_Print
-' check window
-    Call GSPR_Check_Window
-' save
-    Call GSPRM_Save_To_Desktop
+'' check window
+'    Call GSPR_Check_Window
+'' save
+'    Call GSPRM_Save_To_Desktop
 '    mb.Sheets(1).Activate
 ' separator OFF
     Call GSPR_Separator_Undo_Multiple
     Application.ScreenUpdating = True
+
 End Sub
 Private Sub GSPR_Separator_Auto_Switcher_Multiple()
     undo_sep = False
@@ -329,26 +327,26 @@ Private Sub GSPRM_Prepare_sv_ov_fm()
     s_rep_type = s_link + 1
     ReDim SV(1 To s_rep_type, 1 To 2)
 ' SN
-    SV(s_strat, 1) = "Стратегия"
-    SV(s_ins, 1) = "Инструмент"
-    SV(s_tpm, 1) = "Сделок в месяц"
-    SV(s_ar, 1) = "Годовой прирост, %"
-    SV(s_mdd, 1) = "Максимальная просадка, %"
-    SV(s_rf, 1) = "Коэффициент восстановления"
-    SV(s_rsq, 1) = "R-квадрат"
-    SV(s_date_begin, 1) = "Начало теста"
-    SV(s_date_end, 1) = "Конец теста"
-    SV(s_mns, 1) = "Месяцев"
-    SV(s_trades, 1) = "Сделок"
-    SV(s_win_pc, 1) = "Прибыльных сделок, %"
-    SV(s_pips, 1) = "Пунктов"
-    SV(s_avg_w2l, 1) = "Сред.приб/убыт, пп"
-    SV(s_avg_pip, 1) = "Средняя сделка, пп"
-    SV(s_depo_ini, 1) = "Начальный капитал"
-    SV(s_depo_fin, 1) = "Конечный капитал"
-    SV(s_cmsn, 1) = "Комиссии"
-    SV(s_link, 1) = "Размер отчета (МБ), ссылка"
-    SV(s_rep_type, 1) = "Тип отчета"
+    SV(s_strat, 1) = "Strategy"
+    SV(s_ins, 1) = "Instrument"
+    SV(s_tpm, 1) = "Trades per month"
+    SV(s_ar, 1) = "Annualized return, %"
+    SV(s_mdd, 1) = "Maximum drawdown, %"
+    SV(s_rf, 1) = "Recovery factor"
+    SV(s_rsq, 1) = "R-squared"
+    SV(s_date_begin, 1) = "Test begin date"
+    SV(s_date_end, 1) = "Test end date"
+    SV(s_mns, 1) = "Months"
+    SV(s_trades, 1) = "Positions closed"
+    SV(s_win_pc, 1) = "Winners, %"
+    SV(s_pips, 1) = "Pips"
+    SV(s_avg_w2l, 1) = "Avg. winner/loser, pips"
+    SV(s_avg_pip, 1) = "Avg. trade, pips"
+    SV(s_depo_ini, 1) = "Initial balance"
+    SV(s_depo_fin, 1) = "End balance"
+    SV(s_cmsn, 1) = "Commissions"
+    SV(s_link, 1) = "Report size (MB), link"
+    SV(s_rep_type, 1) = "Report type"
     SV(s_rep_type, 2) = rep_type
 ' overview
     s_ov_strat = 1
@@ -362,16 +360,15 @@ Private Sub GSPRM_Prepare_sv_ov_fm()
     s_ov_created = s_ov_params + 1
     s_ov_macro_ver = s_ov_created + 1
     ReDim ov(1 To s_ov_macro_ver, 1 To 2)
-    ov(s_ov_strat, 1) = "Стратегия"
-    ov(s_ov_ins, 1) = "Инструмент"
-    ov(s_ov_htmls, 1) = "Обработано отчетов"
-    ov(s_ov_mns, 1) = "Истор. окно, месяцев"
-    ov(s_ov_from, 1) = "Начало теста"
-    ov(s_ov_to, 1) = "Конец теста"
-    ov(s_ov_params, 1) = "Параметров робота"
-'    ov(s_ov_params_vbl, 1) = "Parameters variable"
-    ov(s_ov_created, 1) = "Отчет создан"
-    ov(s_ov_macro_ver, 1) = "Версия"
+    ov(s_ov_strat, 1) = "Strategy"
+    ov(s_ov_ins, 1) = "Instrument"
+    ov(s_ov_htmls, 1) = "Reports processed"
+    ov(s_ov_mns, 1) = "Hist. window, months"
+    ov(s_ov_from, 1) = "Test start date"
+    ov(s_ov_to, 1) = "Test end date"
+    ov(s_ov_params, 1) = "Parameters count"
+    ov(s_ov_created, 1) = "Report generated"
+    ov(s_ov_macro_ver, 1) = "Version"
 ' formats
     ' "yyyy-mm-dd"
     fm_date(1) = s_date_begin
@@ -401,11 +398,11 @@ End Sub
 Private Sub GSPRM_Open_Reports()
     Set fd = Application.FileDialog(msoFileDialogFilePicker)
     With fd
-        .Title = "GetStats: Выбрать HTML отчеты (максимум " & max_htmls & ")"
+        .Title = "GetStats: Select HTML reports (max. " & max_htmls & ")"
         .AllowMultiSelect = True
         .Filters.Clear
-        .Filters.Add "Отчеты оптимизатора JForex", "*.html"
-        .ButtonName = "Вперед"
+        .Filters.Add "JForex back-test reports", "*.html"
+'        .ButtonName = "Вперед"
     End With
     If fd.Show = 0 Then
         open_fail = True
@@ -414,7 +411,7 @@ Private Sub GSPRM_Open_Reports()
     End If
     ov(s_ov_htmls, 2) = fd.SelectedItems.count
     If ov(s_ov_htmls, 2) > max_htmls Then
-        MsgBox "GetStats не может обработать более " & max_htmls & " отчетов. Отмена."
+        MsgBox "GetStats cannot process more than " & max_htmls & " reports. Exiting."
         open_fail = True
         Exit Sub
     End If
@@ -462,9 +459,9 @@ Private Sub GSPRM_Process_Each_Print()
         mb.Sheets.Add after:=mb.Sheets(mb.Sheets.count)
     End If
     Set os = mb.Sheets(1)
-    os.Name = "сводка"
+    os.Name = "summary"
     Set ss = mb.Sheets(2)
-    ss.Name = "результаты"
+    ss.Name = "results"
 ' open and process each html-report
     time_started = Now
     counter_timer = 0
@@ -483,9 +480,9 @@ Private Sub GSPRM_Process_Each_Print()
             time_rem = rem_min & ":" & rem_sec_s
         End If
         If i < timer_step Then
-            sta = "Обрабатываю отчет " & i & " (" & ov(s_ov_htmls, 2) & ")."
+            sta = "Working on report " & i & " (" & ov(s_ov_htmls, 2) & ")."
         Else
-            sta = "Обрабатываю отчет " & i & " (" & ov(s_ov_htmls, 2) & "). Осталось времени " & time_rem
+            sta = "Working on report " & i & " (" & ov(s_ov_htmls, 2) & "). Est. time remaining " & time_rem
         End If
         Application.StatusBar = sta
         Set rb = Workbooks.Open(fd.SelectedItems(i))
@@ -866,7 +863,7 @@ Private Sub GSPRM_Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
         Next c
     Next r
 ' print parameters
-    hc(UBound(SV) + 2, 1) = "Параметры"
+    hc(UBound(SV) + 2, 1) = "Parameters"
     For r = LBound(Par, 1) To UBound(Par, 1)
         For c = LBound(Par, 2) To UBound(Par, 2)
             hc(UBound(SV) + 2 + r, c) = Par(r, c)
@@ -874,10 +871,10 @@ Private Sub GSPRM_Proc_Print_stats(ByRef hs As Worksheet, ByRef i As Integer)
     Next r
 ' print "back to summary" link
     With hc(UBound(SV) + 2, 2)
-        .Value = "результаты"
+        .Value = "results"
         .HorizontalAlignment = xlRight
     End With
-    hs.Hyperlinks.Add anchor:=hc(UBound(SV) + 2, 2), Address:="", SubAddress:="'результаты'!A1"
+    hs.Hyperlinks.Add anchor:=hc(UBound(SV) + 2, 2), Address:="", SubAddress:="'results'!A1"
 
     If all_zeros = False Then
     ' print tradelog-1
@@ -949,13 +946,13 @@ Private Sub GSPRM_Overview_Summary_Extract_Print(ByRef os As Worksheet, ByRef ss
     os.Columns(2).AutoFit
 ' fill summary header
     sM(0, 0) = "html_link"
-    sM(0, 1) = "№_ссылка"
-    sM(0, 2) = "сделок_мес"
-    sM(0, 3) = "год_прир"
-    sM(0, 4) = "макс_прос"
-    sM(0, 5) = "восст"
-    sM(0, 6) = "r_кв"
-    sM(0, 7) = "сред_сд_пп"
+    sM(0, 1) = "№_link"
+    sM(0, 2) = "trades_per_month"
+    sM(0, 3) = "annualized_return"
+    sM(0, 4) = "max_drawdown"
+    sM(0, 5) = "recovery_factor"
+    sM(0, 6) = "r_squared"
+    sM(0, 7) = "avg_trade_pips"
 ' print SUMMARY
     For r = LBound(sM, 1) To UBound(sM, 1)
         For c = 1 To UBound(sM, 2)
@@ -1009,7 +1006,7 @@ Private Sub GSPRM_Save_To_Desktop()
     Dim s_yr As String, s_mn As String, s_dy As String
     Dim vers As Integer, j As Integer
     
-    Application.StatusBar = "Сохраняюсь."
+    Application.StatusBar = "Saving..."
 '    envir = Environ("UserProfile") & "\Desktop\"
 ' date begin
     s_yr = Year(SV(s_date_begin, 2))
@@ -1054,7 +1051,6 @@ Private Sub GSPRM_Save_To_Desktop()
         mb.SaveAs fileName:=fNm, FileFormat:=xlOpenXMLWorkbook, CreateBackup:=False
     End If
     addin_c(last_row_reports, 4) = fNm
-'    MsgBox "Отчеты успешно обработаны. Файл сохранен на рабочем столе:" & vbNewLine & fnm, , "GetStats Pro"
     mb.Close savechanges:=False
     Application.StatusBar = False
 End Sub

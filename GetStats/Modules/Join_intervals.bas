@@ -1,7 +1,7 @@
 Attribute VB_Name = "Join_intervals"
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.21.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.22.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
