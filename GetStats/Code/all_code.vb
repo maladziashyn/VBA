@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.22"
+    Const macro_name As String = "GetStats Pro v1.23"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2718,7 +2718,7 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.22.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.23.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
     Const macro_ver As String = "GetStats Pro v1.22"
     Const max_htmls As Integer = 999
@@ -3305,11 +3305,11 @@ Private Sub GSPRM_Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
         SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
 '    End If
 ' Initial deposit
-    SV(s_depo_ini, 2) = rc(5, 2)
+    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 '' Finish deposit
 '    sv(s_depo_fin, 2) = CDbl(rc(6, 2))
 ' Commissions
-    SV(s_cmsn, 2) = rc(8, 2)
+    SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
     
     If rc(ins_td_r, 2) = 0 Then
         all_zeros = True
@@ -5806,7 +5806,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.22.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.23.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -8025,7 +8025,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.22.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.23.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
