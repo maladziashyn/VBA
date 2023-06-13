@@ -638,7 +638,7 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
 ' Test begin
     SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2))) ' *! new cdate
 ' Test end
-    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
+'    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
 ' Months
     SV(s_mns, 2) = (SV(s_date_end, 2) - SV(s_date_begin, 2)) * 12 / 365
 ' TPM

@@ -200,6 +200,7 @@ Private Sub GSPR_Extract_stats()
     Set rc = rb.Sheets(1).Cells
 ' strategy name
     s = rc(3, 1).Value
+    SV(s_date_end, 2) = CDate(Left(Right(s, 19), 10))
     j = InStr(1, s, " strategy report for", 1)
     SV(s_strat, 2) = Left(s, j - 1)
 ' get trades count
@@ -235,7 +236,7 @@ Private Sub GSPR_Extract_stats()
     SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2)))
 ' Test end
 '    SV(s_date_end, 2) = Int(rc(ins_td_r - 4, 2))
-    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2)))
+'    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2)))
 ' Months
     SV(s_mns, 2) = (SV(s_date_end, 2) - SV(s_date_begin, 2)) * 12 / 365
 ' TPM

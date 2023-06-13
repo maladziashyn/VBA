@@ -1,9 +1,9 @@
 Attribute VB_Name = "Rep_Multiple"
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.23.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.24.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.22"
+    Const macro_ver As String = "GetStats Pro v1.24"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -578,7 +578,7 @@ Private Sub GSPRM_Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
 ' Test begin
     SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2))) ' *! new cdate
 ' Test end
-    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
+'    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
 ' Months
     SV(s_mns, 2) = (SV(s_date_end, 2) - SV(s_date_begin, 2)) * 12 / 365
 ' TPM

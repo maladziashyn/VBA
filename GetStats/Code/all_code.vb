@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.23"
+    Const macro_name As String = "GetStats Pro v1.24"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2718,9 +2718,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.23.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.24.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.22"
+    Const macro_ver As String = "GetStats Pro v1.24"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -3295,7 +3295,7 @@ Private Sub GSPRM_Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
 ' Test begin
     SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2))) ' *! new cdate
 ' Test end
-    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
+'    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
 ' Months
     SV(s_mns, 2) = (SV(s_date_end, 2) - SV(s_date_begin, 2)) * 12 / 365
 ' TPM
@@ -4535,6 +4535,7 @@ Private Sub GSPR_Extract_stats()
     Set rc = rb.Sheets(1).Cells
 ' strategy name
     s = rc(3, 1).Value
+    SV(s_date_end, 2) = CDate(Left(Right(s, 19), 10))
     j = InStr(1, s, " strategy report for", 1)
     SV(s_strat, 2) = Left(s, j - 1)
 ' get trades count
@@ -4570,7 +4571,7 @@ Private Sub GSPR_Extract_stats()
     SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2)))
 ' Test end
 '    SV(s_date_end, 2) = Int(rc(ins_td_r - 4, 2))
-    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2)))
+'    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2)))
 ' Months
     SV(s_mns, 2) = (SV(s_date_end, 2) - SV(s_date_begin, 2)) * 12 / 365
 ' TPM
@@ -5806,7 +5807,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.23.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.24.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -7504,7 +7505,7 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
 ' Test begin
     SV(s_date_begin, 2) = CDate(Int(rc(ins_td_r - 7, 2))) ' *! new cdate
 ' Test end
-    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
+'    SV(s_date_end, 2) = CDate(Int(rc(ins_td_r - 4, 2).Value))    ' *! removed "-1"
 ' Months
     SV(s_mns, 2) = (SV(s_date_end, 2) - SV(s_date_begin, 2)) * 12 / 365
 ' TPM
@@ -8025,7 +8026,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.23.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.24.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 

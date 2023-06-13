@@ -4,7 +4,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.23"
+    Const macro_name As String = "GetStats Pro v1.24"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
