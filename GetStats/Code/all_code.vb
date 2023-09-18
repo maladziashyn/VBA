@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.24"
+    Const macro_name As String = "GetStats Pro v1.25"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2718,9 +2718,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.24.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.25.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.24"
+    Const macro_ver As String = "GetStats Pro v1.25"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -4366,12 +4366,7 @@ Option Base 1
     Dim current_decimal As String
     Dim undo_sep As Boolean, undo_usesyst As Boolean
 Private Sub GSPR_Single_Core()
-'    Dim oTimer As clsTimer
-'
 ' RIBBON > BUTTON "Main"
-'
-'    On Error Resume Next
-'    Set oTimer = New clsTimer
     
     Application.ScreenUpdating = False
     Call GSPR_Separator_Auto_Switcher_Single_Core
@@ -5807,7 +5802,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.24.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.25.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -8026,7 +8021,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.24.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.25.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8040,10 +8035,10 @@ Const stratNmRow As Integer = 7 ' strategy name row
 Const stratNmCol As Integer = 1 ' strategy name column
 
 Const instrFRow As Integer = 2
-Const instrLRow As Integer = 47
+Const instrLRow As Integer = 53
 Const instrCol As Integer = 2
 Const instrGrpFRow As Integer = 2
-Const instrGrpLRow As Integer = 47
+Const instrGrpLRow As Integer = 53
 Const instrGrpFCol As Integer = 4
 Const instrGrpLCol As Integer = 5
 
@@ -8211,7 +8206,7 @@ Sub Init_DeSelect_Instruments(ByRef setWs As Worksheet, _
     Set btWs = Workbooks(addInFName).Sheets(backSheetName)
     Set btC = btWs.Cells
     Set selectAll = setC(1, 2)
-    Set instrumentsList = setWs.Range(setC(2, 2), setC(47, 2))
+    Set instrumentsList = setWs.Range(setC(2, 2), setC(53, 2))
     
 End Sub
 
@@ -8856,24 +8851,4 @@ Function IsStringInList(ByVal whatString As String, whatList As Variant) As Bool
     IsStringInList = Not (IsError(Application.Match(whatString, whatList, 0)))
 
 End Function
-
-
-' MODULE: clsTimer
-Option Explicit
-
-Public dtTime0 As Date
-Public dtTime1 As Date
-Public strSubOrFunc As String
-
-Private Sub Class_Initialize(ByVal argSubOrFunc As String)
-    dtTime0 = Timer
-    strSubOrFunc = argSubOrFunc
-End Sub
-
-Private Sub Class_Terminate()
-    dtTime1 = Timer
-    Debug.Print "terminated " & suborfunc & " - " & (dtTime1 - dtTime0)
-End Sub
-'public property let strSubOrFunc as String
-
 
