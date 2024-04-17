@@ -141,7 +141,7 @@ Sub SharpeScattersToOneBook()
     Application.ScreenUpdating = True
 End Sub
 Function PlotXMinMax(ByVal Rng As Range) As Variant
-    Dim result(1 To 3) As Variant
+    Dim Result(1 To 3) As Variant
     Dim rngMin As Double, rngMax As Double, rngStep As Double
     Dim listVals As Object
     Dim cell As Range
@@ -156,15 +156,15 @@ Function PlotXMinMax(ByVal Rng As Range) As Variant
             End If
         Next cell
         rngStep = (rngMax - rngMin) / (listVals.count - 1)
-        result(1) = rngMin - rngStep
-        result(2) = rngMax + rngStep
-        result(3) = rngStep
+        Result(1) = rngMin - rngStep
+        Result(2) = rngMax + rngStep
+        Result(3) = rngStep
     Else
-        result(1) = rngMin
-        result(2) = rngMax
-        result(3) = 0.1
+        Result(1) = rngMin
+        Result(2) = rngMax
+        Result(3) = 0.1
     End If
-    PlotXMinMax = result
+    PlotXMinMax = Result
 End Function
 Sub Scatterplot_Sharpe(chsht As Worksheet, _
                         ulr As Integer, _

@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.25"
+    Const macro_name As String = "GetStats Pro v1.26"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2718,9 +2718,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.25.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.26.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.25"
+    Const macro_ver As String = "GetStats Pro v1.26"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -5802,7 +5802,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.25.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.26.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -7510,7 +7510,8 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
         SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
     End If
 ' Initial deposit
-    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
+    SV(s_depo_ini, 2) = CleanFloat(rc(5, 2).Value)
+'    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 '' Finish deposit
 '    SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", ""))
 ' Commissions
@@ -7568,6 +7569,23 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
     rb.Close savechanges:=False
     
 End Sub
+
+Function CleanFloat(ByVal OldVal As String) As Double
+    
+    Dim i As Long
+    Dim AscNum As Long
+    Dim Result As String
+    
+    For i = 1 To Len(OldVal)
+        AscNum = Asc(Mid(OldVal, i, 1))
+        If AscNum = 44 Or (AscNum > 47 And AscNum < 58) Then
+            Result = Result & Mid(OldVal, i, 1)
+        End If
+    Next i
+'Debug.Print CDbl(Result)
+    CleanFloat = CDbl(Result)
+    
+End Function
 
 Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 
@@ -8021,7 +8039,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.25.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.26.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8415,7 +8433,7 @@ Sub SharpeScattersToOneBook()
     Application.ScreenUpdating = True
 End Sub
 Function PlotXMinMax(ByVal Rng As Range) As Variant
-    Dim result(1 To 3) As Variant
+    Dim Result(1 To 3) As Variant
     Dim rngMin As Double, rngMax As Double, rngStep As Double
     Dim listVals As Object
     Dim cell As Range
@@ -8430,15 +8448,15 @@ Function PlotXMinMax(ByVal Rng As Range) As Variant
             End If
         Next cell
         rngStep = (rngMax - rngMin) / (listVals.count - 1)
-        result(1) = rngMin - rngStep
-        result(2) = rngMax + rngStep
-        result(3) = rngStep
+        Result(1) = rngMin - rngStep
+        Result(2) = rngMax + rngStep
+        Result(3) = rngStep
     Else
-        result(1) = rngMin
-        result(2) = rngMax
-        result(3) = 0.1
+        Result(1) = rngMin
+        Result(2) = rngMax
+        Result(3) = 0.1
     End If
-    PlotXMinMax = result
+    PlotXMinMax = Result
 End Function
 Sub Scatterplot_Sharpe(chsht As Worksheet, _
                         ulr As Integer, _

@@ -648,7 +648,8 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
         SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
     End If
 ' Initial deposit
-    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
+    SV(s_depo_ini, 2) = CleanFloat(rc(5, 2).Value)
+'    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 '' Finish deposit
 '    SV(s_depo_fin, 2) = CDbl(Replace(rc(6, 2), "’", ""))
 ' Commissions
@@ -706,6 +707,23 @@ Sub Proc_Extract_stats(ByRef rb As Workbook, ByRef i As Integer)
     rb.Close savechanges:=False
     
 End Sub
+
+Function CleanFloat(ByVal OldVal As String) As Double
+    
+    Dim i As Long
+    Dim AscNum As Long
+    Dim Result As String
+    
+    For i = 1 To Len(OldVal)
+        AscNum = Asc(Mid(OldVal, i, 1))
+        If AscNum = 44 Or (AscNum > 47 And AscNum < 58) Then
+            Result = Result & Mid(OldVal, i, 1)
+        End If
+    Next i
+'Debug.Print CDbl(Result)
+    CleanFloat = CDbl(Result)
+    
+End Function
 
 Sub Fill_Tradelogs(ByRef rc As Range, ByRef ins_td_r As Integer)
 
