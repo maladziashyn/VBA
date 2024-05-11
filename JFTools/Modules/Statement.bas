@@ -18,10 +18,13 @@ Sub ProcessStatementsMain()
     Dim iDir As Integer
     Dim nextFreeRow As Integer
 ' Long
+    Dim DelCol As Long
     Dim lastRow As Long
+    Dim i As Long
 ' Range
     Dim cell As Range
     Dim rg As Range
+    Dim rgDel As Range
     Dim wsC As Range
 ' String
     Dim dateColValue As String
@@ -50,6 +53,7 @@ Sub ProcessStatementsMain()
         For iCsv = LBound(filesList) To UBound(filesList)
             qtName = GetBasename(filesList(iCsv))
             qtName = Left(qtName, Len(qtName) - 4)
+'Debug.Print qtName
             With ws.QueryTables.Add( _
                 Connection:="TEXT;" & filesList(iCsv), _
                 Destination:=wsC(nextFreeRow, 1))
@@ -79,6 +83,19 @@ Sub ProcessStatementsMain()
                 .TextFileTrailingMinusNumbers = True
                 .Refresh BackgroundQuery:=False
             End With
+            
+            ' Remove "ifttTax..." columns from 2023-q3+ reports
+            If reportType = "Positions Close" Then
+                ' Find column numbers
+                Set rg = Range(wsC(nextFreeRow, 1), Selection.End(xlToRight))
+                lastRow = wsC(ws.rows.Count, 1).End(xlUp).Row
+                Do While Not rg.Find(What:="ifttTax", LookAt:=xlPart) Is Nothing
+                    DelCol = rg.Find(What:="ifttTax", LookAt:=xlPart).Column
+                    Set rgDel = ws.Range(wsC(nextFreeRow, DelCol), wsC(lastRow, DelCol))
+                    rgDel.Delete shift:=xlToLeft
+                Loop
+            End If
+            
             If nextFreeRow > 1 Then ' remove header of newly added CSV
                 ws.rows(nextFreeRow).EntireRow.Delete
             End If
@@ -87,6 +104,7 @@ Sub ProcessStatementsMain()
                 ws.rows(nextFreeRow - 1).EntireRow.Delete
                 nextFreeRow = nextFreeRow - 1
             End If
+            
         Next iCsv
         ' edit dates, remove duplicates, sort ascending
         For iDateCol = 0 To datesDict.Count - 1
@@ -94,11 +112,11 @@ Sub ProcessStatementsMain()
             If Not wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
-                    lookat:=xlWhole) Is Nothing Then
+                    LookAt:=xlWhole) Is Nothing Then
                 dateCol = wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
-                    lookat:=xlWhole).Column
+                    LookAt:=xlWhole).Column
                 ' edit dates
                 lastRow = wsC(ws.rows.Count, dateCol).End(xlUp).Row
                 Set rg = ws.Range(wsC(2, dateCol), wsC(lastRow, dateCol))
@@ -117,7 +135,7 @@ Sub ProcessStatementsMain()
                     descrCol = wsC.Find(What:="description", _
                         after:=wsC(1, 1), _
                         searchorder:=xlByRows, _
-                        lookat:=xlWhole).Column
+                        LookAt:=xlWhole).Column
                     Set rg = ws.Range(wsC(2, descrCol), wsC(lastRow, descrCol))
                     For Each cell In rg
                         If cell.Value = "" Then
@@ -151,11 +169,11 @@ Sub ProcessStatementsMain()
             If Not wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
-                    lookat:=xlWhole) Is Nothing Then
+                    LookAt:=xlWhole) Is Nothing Then
                 dateCol = wsC.Find(What:=dateColValue, _
                     after:=wsC(1, 1), _
                     searchorder:=xlByRows, _
-                    lookat:=xlWhole).Column
+                    LookAt:=xlWhole).Column
                 Set rg = wsC(1, 1).CurrentRegion
                 Set rg = rg.Offset(1).Resize(rg.rows.Count - 1)
                 With ws.Sort
@@ -212,7 +230,7 @@ Sub PositionDescriptionsInstruments(ByVal desValue As String, _
     desCol = posC.Find(What:=desValue, _
             after:=posC(1, 1), _
             searchorder:=xlByRows, _
-            lookat:=xlWhole).Column
+            LookAt:=xlWhole).Column
     
     Set columnsDict = GetColumnsDictionary(posC)
     
@@ -325,23 +343,23 @@ End Sub
 Function GetColumnsDictionary(ByVal wsC As Range) As Dictionary
     Dim dict As New Dictionary
     dict.Add "side", wsC.Find(What:="side", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "amount", wsC.Find(What:="amount", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "openPrice", wsC.Find(What:="openPrice", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "closePrice", wsC.Find(What:="closePrice", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "swap", wsC.Find(What:="swap", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "commission", wsC.Find(What:="commission", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "netPl", wsC.Find(What:="netPl", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "grossPl", wsC.Find(What:="grossPl", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     dict.Add "_approxReturn", wsC.Find(What:="_approxReturn", after:=wsC(1, 1), _
-            searchorder:=xlByRows, lookat:=xlWhole).Column
+            searchorder:=xlByRows, LookAt:=xlWhole).Column
     Set GetColumnsDictionary = dict
 End Function
 
@@ -391,7 +409,7 @@ Sub PositionsCloseComputations()
     netPlCol = cPos.Find(What:="netPl", _
             after:=cPos(1, 1), _
             searchorder:=xlByRows, _
-            lookat:=xlWhole).Column
+            LookAt:=xlWhole).Column
     lastRow = cPos(wsPos.rows.Count, 1).End(xlUp).Row
     Set rg = wsPos.Range(cPos(2, netPlCol), cPos(lastRow, netPlCol))
     lastRow = cPort(wsPort.rows.Count, 1).End(xlUp).Row
@@ -399,7 +417,7 @@ Sub PositionsCloseComputations()
     balanceCol = cPort.Find(What:="balance", _
             after:=cPort(1, 1), _
             searchorder:=xlByRows, _
-            lookat:=xlWhole).Column
+            LookAt:=xlWhole).Column
     For Each cell In rg
         tradeDate = Int(cPos(cell.Row, 1).Value)
         For Each sumCell In sumRg
@@ -503,7 +521,7 @@ Sub PortfolioSummaryComputations(ByRef ws As Worksheet, _
     rngCol = wsC.Find(What:="date", _
             after:=wsC(1, 1), _
             searchorder:=xlByRows, _
-            lookat:=xlWhole).Column
+            LookAt:=xlWhole).Column
     Set rngX = ws.Range(wsC(1, rngCol), wsC(lastRow, rngCol))
     Set rngY = ws.Range(wsC(1, dayReturnCol), wsC(lastRow, dayReturnCol))
     Set rngZ = ws.Range(wsC(1, returnCurveCol), wsC(lastRow, returnCurveCol))
@@ -614,10 +632,10 @@ Sub DescriptionFilterChart()
     
     If Not posC.Find(What:=desType, after:=posC(1, 1), _
             searchorder:=xlByRows, _
-            lookat:=xlWhole) Is Nothing Then
+            LookAt:=xlWhole) Is Nothing Then
         desCol = posC.Find(What:=desType, after:=posC(1, 1), _
             searchorder:=xlByRows, _
-            lookat:=xlWhole).Column
+            LookAt:=xlWhole).Column
     Else
         Application.ScreenUpdating = True
         Exit Sub

@@ -2,7 +2,7 @@ Attribute VB_Name = "Inits"
 Option Explicit
 
 Const addinFileName As String = "JFTools"
-Const addinVersion As String = "0.24.3"
+Const addinVersion As String = "0.24.4"
 
 Const btGroupShNm As String = "Back-test"
 Dim btGroupWs As Worksheet

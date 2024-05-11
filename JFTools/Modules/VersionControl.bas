@@ -1,9 +1,6 @@
 Attribute VB_Name = "VersionControl"
 Option Explicit
 
-' Run GitSave() to export code and modules.
-' Source: https://github.com/Vitosh/VBA_personal/blob/master/VBE/GitSave.vb
-
     Dim ignoreList As Variant
     Dim parentFolder As String
     
