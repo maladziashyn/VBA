@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.26"
+    Const macro_name As String = "GetStats Pro v1.27"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2718,9 +2718,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.26.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.27.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.26"
+    Const macro_ver As String = "GetStats Pro v1.27"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -4572,7 +4572,8 @@ Private Sub GSPR_Extract_stats()
 ' TPM
     SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
 ' Initial deposit
-    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
+    SV(s_depo_ini, 2) = CleanFloat(rc(5, 2).Value)
+'    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 ' Commissions
     SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
 ' File size
@@ -5802,7 +5803,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.26.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.27.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -8039,7 +8040,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.26.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.27.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8053,7 +8054,7 @@ Const stratNmRow As Integer = 7 ' strategy name row
 Const stratNmCol As Integer = 1 ' strategy name column
 
 Const instrFRow As Integer = 2
-Const instrLRow As Integer = 53
+Const instrLRow As Integer = 54
 Const instrCol As Integer = 2
 Const instrGrpFRow As Integer = 2
 Const instrGrpLRow As Integer = 53

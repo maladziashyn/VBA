@@ -1,7 +1,7 @@
 Attribute VB_Name = "Inits"
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.26.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.27.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -15,7 +15,7 @@ Const stratNmRow As Integer = 7 ' strategy name row
 Const stratNmCol As Integer = 1 ' strategy name column
 
 Const instrFRow As Integer = 2
-Const instrLRow As Integer = 53
+Const instrLRow As Integer = 54
 Const instrCol As Integer = 2
 Const instrGrpFRow As Integer = 2
 Const instrGrpLRow As Integer = 53

@@ -237,7 +237,8 @@ Private Sub GSPR_Extract_stats()
 ' TPM
     SV(s_tpm, 2) = Round(SV(s_trades, 2) / SV(s_mns, 2), 2)
 ' Initial deposit
-    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
+    SV(s_depo_ini, 2) = CleanFloat(rc(5, 2).Value)
+'    SV(s_depo_ini, 2) = CDbl(Replace(rc(5, 2), "’", ""))
 ' Commissions
     SV(s_cmsn, 2) = CDbl(Replace(rc(8, 2), "’", ""))
 ' File size
