@@ -467,7 +467,7 @@ Option Base 1
     Const rep_type As String = "GS_Pro_Single_Core"
     Dim ch_rep_type As Boolean
 ' macro version
-    Const macro_name As String = "GetStats Pro v1.27"
+    Const macro_name As String = "GetStats Pro v1.28"
     Const report_type As String = "GS_Pro_Single_Extra"
 '
     Const logs_ubd As Integer = 13
@@ -2718,9 +2718,9 @@ End Sub
 ' MODULE: Rep_Multiple
 Option Explicit
 Option Base 1
-    Const addin_file_name As String = "GetStats_BackTest_v1.27.xlsm"
+    Const addin_file_name As String = "GetStats_BackTest_v1.28.xlsm"
     Const rep_type As String = "GS_Pro_Single_Core"
-    Const macro_ver As String = "GetStats Pro v1.27"
+    Const macro_ver As String = "GetStats Pro v1.28"
     Const max_htmls As Integer = 999
     Const depo_ini_ok As Double = 10000
     
@@ -5803,7 +5803,7 @@ End Sub
 ' MODULE: Join_intervals
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.27.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.28.xlsm"
 Const joinShName As String = "join"
 Const targetFdRow As Integer = 2
 Const sourceFdFRow As Integer = 5
@@ -8040,7 +8040,7 @@ End Sub
 ' MODULE: Inits
 Option Explicit
 
-Const addInFName As String = "GetStats_BackTest_v1.27.xlsm"
+Const addInFName As String = "GetStats_BackTest_v1.28.xlsm"
 Const settingsSheetName As String = "hSettings"
 Const backSheetName As String = "Back-test"
 
@@ -8054,10 +8054,10 @@ Const stratNmRow As Integer = 7 ' strategy name row
 Const stratNmCol As Integer = 1 ' strategy name column
 
 Const instrFRow As Integer = 2
-Const instrLRow As Integer = 54
+Const instrLRow As Integer = 57
 Const instrCol As Integer = 2
 Const instrGrpFRow As Integer = 2
-Const instrGrpLRow As Integer = 53
+Const instrGrpLRow As Integer = 57
 Const instrGrpFCol As Integer = 4
 Const instrGrpLCol As Integer = 5
 
@@ -8225,7 +8225,7 @@ Sub Init_DeSelect_Instruments(ByRef setWs As Worksheet, _
     Set btWs = Workbooks(addInFName).Sheets(backSheetName)
     Set btC = btWs.Cells
     Set selectAll = setC(1, 2)
-    Set instrumentsList = setWs.Range(setC(2, 2), setC(53, 2))
+    Set instrumentsList = setWs.Range(setC(2, 2), setC(57, 2))
     
 End Sub
 
